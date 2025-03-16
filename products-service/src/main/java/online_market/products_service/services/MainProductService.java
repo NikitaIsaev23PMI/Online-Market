@@ -21,7 +21,7 @@ public class MainProductService implements ProductService {
 
     @Override
     public Product findById(int id) {
-        return productRepository.findById(id).orElseThrow(NoSuchElementException::new);
+        return this.productRepository.findById(id).orElseThrow(NoSuchElementException::new);
     }
 
     @Override
@@ -43,6 +43,10 @@ public class MainProductService implements ProductService {
 
     @Override
     public void deleteProduct(int id) {
-        this.productRepository.deleteById(id);
+        if(this.productRepository.existsById(id)){
+            this.productRepository.deleteById(id);
+        } else {
+            throw new NoSuchElementException();
+        }
     }
 }
