@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Entity
-@Table(schema = "products_schema", name = "product")
+@Table(schema = "products_schema", name = "t_product")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Product {
 
     @Id

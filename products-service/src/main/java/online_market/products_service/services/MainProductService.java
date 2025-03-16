@@ -1,4 +1,48 @@
 package online_market.products_service.services;
 
+import lombok.RequiredArgsConstructor;
+import online_market.products_service.entity.Product;
+import online_market.products_service.repository.ProductRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.NoSuchElementException;
+
+@Service
+@RequiredArgsConstructor
 public class MainProductService implements ProductService {
+
+    private final ProductRepository productRepository;
+
+    @Override
+    public List<Product> findAllProduct() {
+        return productRepository.findAll();
+    }
+
+    @Override
+    public Product findById(int id) {
+        return productRepository.findById(id).orElseThrow(NoSuchElementException::new);
+    }
+
+    @Override
+    public Product create(String title, String details) {
+        return productRepository.save(new Product(null,title,details));
+    }
+
+    @Override
+    public void updateProduct(int id, String title, String details) {
+        this.productRepository.findById(id).ifPresentOrElse(
+                product -> {
+                    product.setTitle(title);
+                    product.setDetails(details);
+                }, () -> {
+                    throw new NoSuchElementException();
+                }
+        );
+    }
+
+    @Override
+    public void deleteProduct(int id) {
+        this.productRepository.deleteById(id);
+    }
 }
