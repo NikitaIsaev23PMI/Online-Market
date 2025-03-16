@@ -35,6 +35,7 @@ public class MainProductService implements ProductService {
                 product -> {
                     product.setTitle(title);
                     product.setDetails(details);
+                    productRepository.save(product);
                 }, () -> {
                     throw new NoSuchElementException();
                 }

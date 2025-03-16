@@ -65,7 +65,7 @@ public class MainProductsRestClient implements ProductRestClient{
     }
 
     @Override
-    public Optional<Product> findProduct(String id) {
+    public Optional<Product> findProduct(int id) {
         try {
             return Optional.ofNullable(this.restClient.get()
                     .uri("/products-service-api/products/" + id)
@@ -78,7 +78,7 @@ public class MainProductsRestClient implements ProductRestClient{
 
 
     @Override
-    public void deleteProduct(String id) {
+    public void deleteProduct(int id) {
         try {
             this.restClient.delete()
                     .uri("/products-service-api/products/" + id)
