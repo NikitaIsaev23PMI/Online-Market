@@ -15,8 +15,8 @@ public class MainProductService implements ProductService {
     private final ProductRepository productRepository;
 
     @Override
-    public List<Product> findAllProduct() {
-        return productRepository.findAll();
+    public List<Product> findAllProduct(String filter) {
+        return productRepository.findAllByTitleContainsIgnoreCase(filter);
     }
 
     @Override

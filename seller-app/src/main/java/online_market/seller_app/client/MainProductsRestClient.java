@@ -27,9 +27,9 @@ public class MainProductsRestClient implements ProductRestClient{
 
 
     @Override
-    public List<Product> findAllProducts() {
+    public List<Product> findAllProducts(String filter) {
         return this.restClient.get()
-                .uri("/products-service-api/products")
+                .uri("/products-service-api/products?filter={filter}",filter)
                 .retrieve()
                 .body(PRODUCTS_TYPE_REFERENCE);
     }
@@ -85,7 +85,7 @@ public class MainProductsRestClient implements ProductRestClient{
                     .retrieve()
                     .toBodilessEntity();
         }catch (HttpClientErrorException.NotFound exception){
-            throw new NoSuchElementException(exception);
+            throw new NoSuchElementException("Нельзя удалить товар с данным Id, так как его изначально не существовало");
         }
     }
 }

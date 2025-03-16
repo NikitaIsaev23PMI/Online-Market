@@ -15,7 +15,12 @@
         <textarea name="details" data-th-text="${payload?.details()}"></textarea>
     </label><br>
     <button type="submit">Создать</button>
-
 </form>
+<div data-th-if="${errors}">
+    <h2>Допушены ошибки</h2>
+    <ul>
+        <li data-th-each="error: ${errors}" data-th-text="${error}"></li>
+    </ul>
+</div>
 </body>
 </html>

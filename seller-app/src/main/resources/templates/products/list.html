@@ -5,6 +5,12 @@
     <title>Title</title>
 </head>
 <body>
+<form method="get" data-th-action="@{/online-market/products/list}">
+    <label>Фильтр:<input type="text" name="filter" data-th-value="${filter}">
+        <button type="submit">Поиск</button>
+    </label>
+</form>
+<a data-th-href="@{/online-market/products/create}">Создать товар</a>
 <table>
     <thead>
     <tr>

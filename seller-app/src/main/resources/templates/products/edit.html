@@ -19,5 +19,11 @@
 <form method="post" data-th-action="@{/online-market/products/{productId}/delete(productId=${product.id})}">
     <button type="submit">Удалить</button>
 </form>
+<div data-th-if="${errors}">
+    <h2>Допушены ошибки</h2>
+    <ul>
+        <li data-th-each="error: ${errors}" data-th-text="${error}"></li>
+    </ul>
+</div>
 </body>
 </html>

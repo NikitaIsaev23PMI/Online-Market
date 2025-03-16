@@ -17,7 +17,4 @@
     <li><strong>Описание</strong>: <span data-th-text="${product.details}"></span></li>
 </ul>
 </body>
-<form method="post" data-th-action="@{/online-market/products/{productId}/delete(productId=${product.id})}">
-    <button type="submit">Удалить</button>
-</form>
 </html>
