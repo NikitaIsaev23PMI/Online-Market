@@ -1,0 +1,91 @@
+package online_market.seller_app.client;
+
+
+import lombok.RequiredArgsConstructor;
+import online_market.seller_app.entity.Product;
+import online_market.seller_app.payload.NewProductPayload;
+import online_market.seller_app.payload.UpdateProductPayload;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.MediaType;
+import org.springframework.http.ProblemDetail;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClient;
+
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
+@RequiredArgsConstructor
+public class MainProductsRestClient implements ProductRestClient{
+
+    private static final ParameterizedTypeReference<List<Product>> PRODUCTS_TYPE_REFERENCE =
+
+            new ParameterizedTypeReference<>() {
+            };
+
+    private final RestClient restClient;
+
+
+    @Override
+    public List<Product> findAllProducts() {
+        return this.restClient.get()
+                .uri("/products-service-api/products")
+                .retrieve()
+                .body(PRODUCTS_TYPE_REFERENCE);
+    }
+
+    @Override
+    public Product createProduct(String title, String details) {
+        try {
+            return this.restClient.post()
+                    .uri("/products-service-api/products")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(new NewProductPayload(title, details))
+                    .retrieve()
+                    .body(Product.class);
+        } catch (HttpClientErrorException.BadRequest exception){
+            ProblemDetail problemDetail = exception.getResponseBodyAs(ProblemDetail.class);
+            throw new BadRequestException((List<String>)problemDetail.getProperties().get("errors"));
+        }
+    }
+
+    @Override
+    public void updateProduct(int id, String title, String details) {
+        try {
+            this.restClient.patch()
+                    .uri("products-service-api/products/" + id)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(new UpdateProductPayload(title, details))
+                    .retrieve()
+                    .toBodilessEntity();
+        } catch (HttpClientErrorException.BadRequest exception){
+            ProblemDetail problemDetail = exception.getResponseBodyAs(ProblemDetail.class);
+            throw new BadRequestException((List<String>)problemDetail.getProperties().get("errors"));
+        }
+    }
+
+    @Override
+    public Optional<Product> findProduct(String id) {
+        try {
+            return Optional.ofNullable(this.restClient.get()
+                    .uri("/products-service-api/products/" + id)
+                    .retrieve()
+                    .body(Product.class));
+        }catch (HttpClientErrorException.NotFound exception){
+            return Optional.empty();
+        }
+    }
+
+
+    @Override
+    public void deleteProduct(String id) {
+        try {
+            this.restClient.delete()
+                    .uri("/products-service-api/products/" + id)
+                    .retrieve()
+                    .toBodilessEntity();
+        }catch (HttpClientErrorException.NotFound exception){
+            throw new NoSuchElementException(exception);
+        }
+    }
+}

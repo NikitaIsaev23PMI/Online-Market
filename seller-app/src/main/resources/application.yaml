@@ -1,1 +1,5 @@
-spring.application.name=seller-app
+
+market:
+  services:
+    products:
+      uri: http://localhost:8081

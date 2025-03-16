@@ -77,5 +77,4 @@ public class ProductsRestController {
         this.productService.deleteProduct(productId);
         return ResponseEntity.noContent().build();
     }
-
 }
