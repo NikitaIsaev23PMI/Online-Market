@@ -1,0 +1,13 @@
+package online_market.seller_app;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class SellerAppApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(SellerAppApplication.class, args);
+	}
+
+}
