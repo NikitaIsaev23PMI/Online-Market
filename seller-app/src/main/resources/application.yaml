@@ -1,5 +1,21 @@
-
 market:
   services:
     products:
       uri: http://localhost:8081
+spring:
+  security:
+    oauth2:
+        client:
+          provider:
+            keycloak:
+              issuer-uri: http://localhost:8082/realms/online-market
+              user-name-attribute: preferred_username
+          registration:
+            keycloak:
+              provider: keycloak
+              client-id: online-market-app
+              client-secret: Ja89I0aHVgz5rJ9JoSjneoQLxc9tNFBI
+              scope:
+                - openid
+                - view_products
+
