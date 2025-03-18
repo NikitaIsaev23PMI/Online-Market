@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.NoSuchElementException;
 
 @Controller
@@ -21,10 +22,18 @@ public class ProductsController {
 
     @GetMapping("list")
     public String listProducts(@RequestParam(name = "filter", required = false) String filter,
-                               Model model) {
+                               Model model, Principal principal) {
         model.addAttribute("products", this.productRestClient.findAllProducts(filter));
         model.addAttribute("filter", filter);
+        model.addAttribute("principalName", principal.getName());
         return "products/list";
+    }
+
+    @GetMapping("myProducts")
+    public String getSellerProducts(Model model, Principal principal) {
+        model.addAttribute("products", this.productRestClient.getSellerProducts(principal.getName()));
+        model.addAttribute("username", principal.getName());
+        return "products/seller-products";
     }
 
     @GetMapping("{productId}")
@@ -60,9 +69,9 @@ public class ProductsController {
 
     @PostMapping("/create")
     public String createProduct(NewProductPayload payload,
-                                Model model){
+                                Model model,Principal principal){
         try {
-            Product product = this.productRestClient.createProduct(payload.title(), payload.details());
+            Product product = this.productRestClient.createProduct(payload.title(), payload.details(), principal.getName());
             return "redirect:/online-market/products/%d".formatted(product.getId());
         } catch (BadRequestException exception){
             model.addAttribute("errors", exception.getErrors());

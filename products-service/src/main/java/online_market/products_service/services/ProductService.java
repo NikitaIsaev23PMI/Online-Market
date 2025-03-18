@@ -10,9 +10,11 @@ public interface ProductService {
 
     Product findById(int id);
 
-    Product create(String title,String details);
+    Product create(String title,String details, String sellerUserName);
 
     void updateProduct(int id, String title, String details);
 
     void deleteProduct(int id);
+
+    List<Product> findProductsBySellerUserName(String sellerUserName);
 }

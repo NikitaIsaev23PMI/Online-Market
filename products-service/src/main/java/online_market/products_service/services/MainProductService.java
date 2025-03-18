@@ -25,8 +25,8 @@ public class MainProductService implements ProductService {
     }
 
     @Override
-    public Product create(String title, String details) {
-        return productRepository.save(new Product(null,title,details));
+    public Product create(String title, String details, String sellerUserName) {
+        return productRepository.save(new Product(null,title,details,sellerUserName));
     }
 
     @Override
@@ -49,5 +49,10 @@ public class MainProductService implements ProductService {
         } else {
             throw new NoSuchElementException();
         }
+    }
+
+    @Override
+    public List<Product> findProductsBySellerUserName(String sellerUserName) {
+        return this.productRepository.findAllBySellerUserName(sellerUserName);
     }
 }

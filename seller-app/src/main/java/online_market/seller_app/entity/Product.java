@@ -15,4 +15,5 @@ public class Product {
 
     private String details;
 
+    private String sellerName;
 }

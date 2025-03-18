@@ -9,12 +9,14 @@ public interface ProductRestClient {
 
     List<Product> findAllProducts(String filter);
 
-    Product createProduct(String title, String details);
+    Product createProduct(String title, String details, String sellerName);
 
     void updateProduct(int id, String title, String details);
 
     Optional<Product> findProduct(int id);
 
     void deleteProduct(int id);
+
+    List<Product> getSellerProducts(String sellerName);
 
 }

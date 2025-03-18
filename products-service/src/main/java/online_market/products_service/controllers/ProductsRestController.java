@@ -31,9 +31,14 @@ public class ProductsRestController {
         return this.productService.findAllProduct(filter);
     }
 
-    @GetMapping("{productId}")
+    @GetMapping("product/{productId}")
     public Product findProduct(@PathVariable("productId") int productId){
         return this.productService.findById(productId);
+    }
+
+    @GetMapping("{username}")
+    public List<Product> findProductByUsername(@PathVariable("username") String username){
+        return this.productService.findProductsBySellerUserName(username);
     }
 
     @PostMapping()
@@ -47,7 +52,7 @@ public class ProductsRestController {
                 throw new BindException(bindingResult);
             }
         } else {
-            Product product = this.productService.create(payload.title(), payload.details());
+            Product product = this.productService.create(payload.title(), payload.details(), payload.sellerName());
 
             return ResponseEntity.created(uriBuilder
                             .replacePath("products-service-api/products/{productId}")
