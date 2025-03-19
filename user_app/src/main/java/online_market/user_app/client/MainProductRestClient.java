@@ -22,16 +22,16 @@ public class MainProductRestClient implements ProductRestClient {
     @Override
     public List<Product> getAllProduct(String filter) {
         return this.restClient.get()
-                .uri("products-service-api/products")
+                .uri("products-service-api/products?filter={filter}",filter)
                 .retrieve()
                 .body(PRODUCTS_TYPE_REFERENCE);
     }
 
     @Override
-    public Product getProduct(String id) {
+    public Product getProduct(int id) {
         try {
         return this.restClient.get()
-                .uri("products-service-api/products/products/"+id)
+                .uri("products-service-api/products/product/"+id)
                 .retrieve()
                 .body(Product.class);
         } catch (HttpClientErrorException.BadRequest exception) {

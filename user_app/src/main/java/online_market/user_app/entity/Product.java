@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @NoArgsConstructor
 public class Product {
 
-    private String name;
+    private int id;
+
+    private String title;
 
     private String details;
 }

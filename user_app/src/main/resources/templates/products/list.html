@@ -5,12 +5,11 @@
     <title>Title</title>
 </head>
 <body>
-<form method="get" data-th-action="@{/online-market/products/list}">
+<form method="get" data-th-action="@{/online-market/buyer/products}">
     <label>Фильтр:<input type="text" name="filter" data-th-value="${filter}">
         <button type="submit">Поиск</button>
     </label>
 </form>
-<a data-th-href="@{/online-market/products/create}">Создать товар</a>
 <table>
     <thead>
     <tr>
@@ -20,15 +19,13 @@
     </thead>
     <tbody>
     <tr data-th-each="product : ${products}">
-        <td data-th-text="${product.id}"></td>
+        <td data-th-text="${product.title}"></td>
         <td>
-            <a data-th-href="@{/online-market/products/{productId}(productId=${product.id})}"
+            <a data-th-href="@{/online-market/buyer/products/{productId}(productId=${product.id})}"
                data-th-text="${product.title}"></a>
         </td>
     </tr>
     </tbody>
 </table>
-<p data-th-text="${principalName}"></p>
-<a data-th-href="@{/online-market/products/myProducts}">Мои Товары</a>
 </body>
 </html>

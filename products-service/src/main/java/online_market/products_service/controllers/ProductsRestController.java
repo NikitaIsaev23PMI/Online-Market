@@ -32,7 +32,6 @@ public class ProductsRestController {
     @GetMapping()
     public List<Product> getAllProducts(@RequestParam(name = "filter", required = false) String filter ,
                                         JwtAuthenticationToken token) {
-        System.out.println(token.getToken().getSubject());
         return this.productService.findAllProduct(filter);
     }
 

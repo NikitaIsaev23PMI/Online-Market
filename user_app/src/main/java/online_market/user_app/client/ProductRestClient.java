@@ -8,7 +8,7 @@ public interface ProductRestClient {
 
     List<Product> getAllProduct(String filter);
 
-    Product getProduct(String id);
+    Product getProduct(int id);
 
 
 }

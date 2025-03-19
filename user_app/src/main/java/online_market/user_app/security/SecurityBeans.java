@@ -1,4 +1,4 @@
-package online_market.seller_app.security;
+package online_market.user_app.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,8 +25,8 @@ public class SecurityBeans {
         return http
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests.anyRequest().authenticated())
-                .oauth2Login(Customizer.withDefaults())
                 .oauth2Client(Customizer.withDefaults())
+                .oauth2Login(Customizer.withDefaults())
                 .csrf(Customizer.withDefaults())
                 .build();
     }
@@ -37,12 +37,12 @@ public class SecurityBeans {
         return userRequest -> {
             OidcUser oidcUser = oidcUserService.loadUser(userRequest);
             List<GrantedAuthority> authorities =
-                    Stream.concat(oidcUser.getAuthorities().stream(),Optional.ofNullable(oidcUser.getClaimAsStringList("groups"))
-                    .orElseGet(List::of)
-                    .stream()
-                    .filter(role -> role.startsWith("ROLE_"))
-                    .map(SimpleGrantedAuthority::new))
-                    .toList();
+                    Stream.concat(oidcUser.getAuthorities().stream(), Optional.ofNullable(oidcUser.getClaimAsStringList("groups"))
+                                    .orElseGet(List::of)
+                                    .stream()
+                                    .filter(role -> role.startsWith("ROLE_"))
+                                    .map(SimpleGrantedAuthority::new))
+                            .toList();
 
             return new DefaultOidcUser(authorities, oidcUser.getIdToken(), oidcUser.getUserInfo());
         };
