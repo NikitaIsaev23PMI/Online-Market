@@ -5,6 +5,12 @@
     <title>Title</title>
 </head>
 <body>
+<h1>Новый товар</h1>
+<a data-th-href="@{/online-market/products/list}">К списку товаров</a>
+<br>
+<br>
+<a data-th-href="@{/online-market/products/{productId}/edit(productId=${product.id})}">Изменить товар</a>
+<h1 data-th-text="${product.title}"></h1>
 <ul>
     <li><strong>ID</strong>: <span data-th-text="${product.id}"></span></li>
     <li><strong>Название</strong>: <span data-th-text="${product.title}"></span></li>

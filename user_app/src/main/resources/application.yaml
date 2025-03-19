@@ -1,0 +1,4 @@
+market:
+  services:
+    products:
+      uri: http://localhost:8081

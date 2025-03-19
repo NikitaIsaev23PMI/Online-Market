@@ -1,0 +1,1 @@
+alter table products_schema.t_product rename column seller_user_name to seller_subject

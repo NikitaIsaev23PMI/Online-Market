@@ -11,3 +11,8 @@ spring:
     baseline-on-migrate: true
   jpa:
     show-sql: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8082/realms/online-market

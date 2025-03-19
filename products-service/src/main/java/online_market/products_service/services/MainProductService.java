@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,8 +26,8 @@ public class MainProductService implements ProductService {
     }
 
     @Override
-    public Product create(String title, String details, String sellerUserName) {
-        return productRepository.save(new Product(null,title,details,sellerUserName));
+    public Product create(String title, String details, String sellerSubject) {
+        return productRepository.save(new Product(null,title,details,sellerSubject));
     }
 
     @Override
@@ -52,7 +53,12 @@ public class MainProductService implements ProductService {
     }
 
     @Override
-    public List<Product> findProductsBySellerUserName(String sellerUserName) {
-        return this.productRepository.findAllBySellerUserName(sellerUserName);
+    public List<Product> findProductsBySellerSubject(String sellerSubject) {
+        return this.productRepository.findAllBySellerSubject(sellerSubject);
+    }
+
+    @Override
+    public Optional<Product> findProductBySellerSubject(String sellerSubject) {
+        return this.productRepository.findProductBySellerSubject(sellerSubject);
     }
 }

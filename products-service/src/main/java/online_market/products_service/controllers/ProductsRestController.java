@@ -10,6 +10,9 @@ import online_market.products_service.services.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +30,9 @@ public class ProductsRestController {
     private final ProductService productService;
 
     @GetMapping()
-    public List<Product> getAllProducts(@RequestParam(name = "filter", required = false) String filter) {
+    public List<Product> getAllProducts(@RequestParam(name = "filter", required = false) String filter ,
+                                        JwtAuthenticationToken token) {
+        System.out.println(token.getToken().getSubject());
         return this.productService.findAllProduct(filter);
     }
 
@@ -36,9 +41,9 @@ public class ProductsRestController {
         return this.productService.findById(productId);
     }
 
-    @GetMapping("{username}")
-    public List<Product> findProductByUsername(@PathVariable("username") String username){
-        return this.productService.findProductsBySellerUserName(username);
+    @GetMapping("{sub}")
+    public List<Product> findProductByUsername(@PathVariable("sub") String sellerSubject){
+        return this.productService.findProductsBySellerSubject(sellerSubject);
     }
 
     @PostMapping()
@@ -52,7 +57,7 @@ public class ProductsRestController {
                 throw new BindException(bindingResult);
             }
         } else {
-            Product product = this.productService.create(payload.title(), payload.details(), payload.sellerName());
+            Product product = this.productService.create(payload.title(), payload.details(), payload.sellerSubject());
 
             return ResponseEntity.created(uriBuilder
                             .replacePath("products-service-api/products/{productId}")
@@ -72,8 +77,12 @@ public class ProductsRestController {
                 throw new BindException(bindingResult);
             }
         } else {
-            this.productService.updateProduct(productId, payload.title(), payload.details());
-            return ResponseEntity.noContent().build();
+            if(this.productService.findById(productId).getSellerSubject().equals(payload.sellerSubject())) {
+                this.productService.updateProduct(productId, payload.title(), payload.details());
+                return ResponseEntity.noContent().build();
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
         }
     }
 

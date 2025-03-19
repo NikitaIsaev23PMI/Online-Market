@@ -7,14 +7,12 @@ import online_market.seller_app.entity.Product;
 import online_market.seller_app.payload.NewProductPayload;
 import online_market.seller_app.payload.UpdateProductPayload;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
-import java.security.Principal;
 import java.util.NoSuchElementException;
 
 @Controller
@@ -27,6 +25,7 @@ public class ProductsController {
     @GetMapping("list")
     public String listProducts(@RequestParam(name = "filter", required = false) String filter,
                                Model model, @AuthenticationPrincipal OidcUser user) {
+        System.out.println(user.getSubject());
         model.addAttribute("products", this.productRestClient.findAllProducts(filter));
         model.addAttribute("filter", filter);
         model.addAttribute("principalName", user.getName());
@@ -44,10 +43,10 @@ public class ProductsController {
     public String getProductPage(Model model, @PathVariable("productId") int id,
                                  @AuthenticationPrincipal OidcUser user){
         Product product = this.productRestClient.findProduct(id).get();
+            model.addAttribute("product", product);
 
         if(product.getSellerSubject().equals(user.getSubject())){
-            model.addAttribute("product", product);
-            return "products/product";
+            return "products/my-product";
         }
         return "products/product";
     }

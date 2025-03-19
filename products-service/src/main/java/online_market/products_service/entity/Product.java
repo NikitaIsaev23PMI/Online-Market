@@ -28,7 +28,7 @@ public class Product {
     @Size(min = 5,max = 1000, message = "Описание товара должно находиться в диапазоне от 5 до 1000 символов")
     private String details;
 
-    @Column(name = "seller_user_name")
-    private String sellerUserName;
+    @Column(name = "seller_subject")
+    private String sellerSubject;
 
 }

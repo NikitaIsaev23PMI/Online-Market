@@ -10,5 +10,7 @@ public record UpdateProductPayload(
 
         @NotNull(message = "Описание товара не может быть пустым")
         @Size(min = 5,max = 1000, message = "Описание товара должно находиться в диапазоне от 5 до 1000 символов")
-        String details
+        String details,
+
+        String sellerSubject
 ){}
