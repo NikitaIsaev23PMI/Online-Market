@@ -5,6 +5,6 @@ public record NewProductPayload(
 
         String details,
 
-        String sellerName
+        String sellerSubject
 ) {
 }

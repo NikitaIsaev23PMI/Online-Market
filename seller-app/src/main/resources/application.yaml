@@ -2,6 +2,7 @@ market:
   services:
     products:
       uri: http://localhost:8081
+      registration-id: keycloak
 spring:
   security:
     oauth2:
@@ -18,4 +19,5 @@ spring:
               scope:
                 - openid
                 - view_products
+                - edit_products
 

@@ -6,10 +6,14 @@ import online_market.seller_app.client.ProductRestClient;
 import online_market.seller_app.entity.Product;
 import online_market.seller_app.payload.NewProductPayload;
 import online_market.seller_app.payload.UpdateProductPayload;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.security.Principal;
 import java.util.NoSuchElementException;
 
@@ -22,37 +26,48 @@ public class ProductsController {
 
     @GetMapping("list")
     public String listProducts(@RequestParam(name = "filter", required = false) String filter,
-                               Model model, Principal principal) {
+                               Model model, @AuthenticationPrincipal OidcUser user) {
         model.addAttribute("products", this.productRestClient.findAllProducts(filter));
         model.addAttribute("filter", filter);
-        model.addAttribute("principalName", principal.getName());
+        model.addAttribute("principalName", user.getName());
         return "products/list";
     }
 
     @GetMapping("myProducts")
-    public String getSellerProducts(Model model, Principal principal) {
-        model.addAttribute("products", this.productRestClient.getSellerProducts(principal.getName()));
-        model.addAttribute("username", principal.getName());
+    public String getSellerProducts(Model model, @AuthenticationPrincipal OidcUser user) {
+        model.addAttribute("products", this.productRestClient.getSellerProducts(user.getSubject()));
+        model.addAttribute("username", user.getName());
         return "products/seller-products";
     }
 
     @GetMapping("{productId}")
-    public String getProductPage(Model model, @PathVariable("productId") int id){
-        model.addAttribute("product", this.productRestClient.findProduct(id).get());
+    public String getProductPage(Model model, @PathVariable("productId") int id,
+                                 @AuthenticationPrincipal OidcUser user){
+        Product product = this.productRestClient.findProduct(id).get();
+
+        if(product.getSellerSubject().equals(user.getSubject())){
+            model.addAttribute("product", product);
+            return "products/product";
+        }
         return "products/product";
     }
 
     @GetMapping("{productId}/edit")
-    public String getProductEditPage(Model model, @PathVariable("productId") int id ){
-        model.addAttribute("product", this.productRestClient.findProduct(id).get());
-        return "products/edit";
+    public String getProductEditPage(Model model, @PathVariable("productId") int id,
+                                     @AuthenticationPrincipal OidcUser user) throws AccessDeniedException {
+        Product product = this.productRestClient.findProduct(id).get();
+        if(product.getSellerSubject().equals(user.getSubject())){
+            model.addAttribute("product", product);
+            return "products/edit";
+        } else throw new AccessDeniedException("Access denied");
+
     }
 
     @PostMapping("{productId}/edit")
     public String editProduct(Model model, @PathVariable("productId") int id,
-                            UpdateProductPayload payload){
+                            UpdateProductPayload payload, @AuthenticationPrincipal OidcUser user) throws AccessDeniedException {
         try {
-            this.productRestClient.updateProduct(id, payload.title(), payload.details());
+            this.productRestClient.updateProduct(id, payload.title(), payload.details(), user.getSubject());
             model.addAttribute("product", this.productRestClient.findProduct(id).get());
             return "redirect:/online-market/products/%d/edit".formatted(id);
         }catch (BadRequestException exception){
@@ -69,9 +84,9 @@ public class ProductsController {
 
     @PostMapping("/create")
     public String createProduct(NewProductPayload payload,
-                                Model model,Principal principal){
+                                Model model,@AuthenticationPrincipal OidcUser user){
         try {
-            Product product = this.productRestClient.createProduct(payload.title(), payload.details(), principal.getName());
+            Product product = this.productRestClient.createProduct(payload.title(), payload.details(), user.getSubject());
             return "redirect:/online-market/products/%d".formatted(product.getId());
         } catch (BadRequestException exception){
             model.addAttribute("errors", exception.getErrors());

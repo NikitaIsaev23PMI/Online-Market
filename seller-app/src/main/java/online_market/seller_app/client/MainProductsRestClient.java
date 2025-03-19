@@ -5,11 +5,14 @@ import online_market.seller_app.entity.Product;
 import online_market.seller_app.payload.NewProductPayload;
 import online_market.seller_app.payload.UpdateProductPayload;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -34,12 +37,12 @@ public class MainProductsRestClient implements ProductRestClient{
     }
 
     @Override
-    public Product createProduct(String title, String details, String sellerName) {
+    public Product createProduct(String title, String details, String sellerSubject) {
         try {
             return this.restClient.post()
                     .uri("/products-service-api/products")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(new NewProductPayload(title, details, sellerName))
+                    .body(new NewProductPayload(title, details, sellerSubject))
                     .retrieve()
                     .body(Product.class);
         } catch (HttpClientErrorException.BadRequest exception){
@@ -49,17 +52,19 @@ public class MainProductsRestClient implements ProductRestClient{
     }
 
     @Override
-    public void updateProduct(int id, String title, String details) {
+    public void updateProduct(int id, String title, String details, String sellerSubject) {
         try {
             this.restClient.patch()
                     .uri("products-service-api/products/" + id)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(new UpdateProductPayload(title, details))
+                    .body(new UpdateProductPayload(title, details, sellerSubject))
                     .retrieve()
                     .toBodilessEntity();
         } catch (HttpClientErrorException.BadRequest exception){
             ProblemDetail problemDetail = exception.getResponseBodyAs(ProblemDetail.class);
             throw new BadRequestException((List<String>)problemDetail.getProperties().get("errors"));
+        } catch (HttpClientErrorException.Forbidden exception){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
     }
 
@@ -89,9 +94,9 @@ public class MainProductsRestClient implements ProductRestClient{
     }
 
     @Override
-    public List<Product> getSellerProducts(String sellerName) {
+    public List<Product> getSellerProducts(String sellerSubject) {
         return this.restClient.get()
-                .uri("/products-service-api/products/{username}", sellerName)
+                .uri("/products-service-api/products/{sub}", sellerSubject)
                 .retrieve()
                 .body(PRODUCTS_TYPE_REFERENCE);
     }
