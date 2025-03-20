@@ -25,9 +25,9 @@ public class ProductsController {
     @GetMapping("list")
     public String listProducts(@RequestParam(name = "filter", required = false) String filter,
                                Model model, @AuthenticationPrincipal OidcUser user) {
+        user.getAuthorities().stream().forEach(o -> System.out.println(o));
         model.addAttribute("products", this.productRestClient.findAllProducts(filter));
         model.addAttribute("filter", filter);
-        model.addAttribute("principalName", user.getName());
         return "products/list";
     }
 

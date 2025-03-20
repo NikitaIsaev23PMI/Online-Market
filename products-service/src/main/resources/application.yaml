@@ -15,4 +15,9 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8082/realms/online-market
+          issuer-uri: http://localhost:8082/realms/online-market-sellers
+keycloak:
+  realms:
+    uri:
+      buyers: http://localhost:8082/realms/online-market-buyers
+      sellers: http://localhost:8082/realms/online-market-sellers

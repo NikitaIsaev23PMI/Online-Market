@@ -2,6 +2,9 @@ package online_market.user_app.controller;
 
 import lombok.RequiredArgsConstructor;
 import online_market.user_app.client.ProductRestClient;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +20,8 @@ public class ProductsController {
     private final ProductRestClient productRestClient;
 
     @GetMapping()
-    public String getProductsPage(@RequestParam(name = "filter", required = false) String filter, Model model) {
+    public String getProductsPage(@RequestParam(name = "filter", required = false) String filter, Model model,
+                                  @AuthenticationPrincipal OidcUser principal) {
         model.addAttribute("products", this.productRestClient.getAllProduct(filter));
         return "products/list";
     }

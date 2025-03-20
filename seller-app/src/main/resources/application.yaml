@@ -9,15 +9,16 @@ spring:
         client:
           provider:
             keycloak:
-              issuer-uri: http://localhost:8082/realms/online-market
+              issuer-uri: http://localhost:8082/realms/online-market-sellers
               user-name-attribute: preferred_username
           registration:
             keycloak:
               provider: keycloak
-              client-id: online-market-app
+              client-id: sellers-app
               client-secret: Ja89I0aHVgz5rJ9JoSjneoQLxc9tNFBI
               scope:
                 - openid
                 - view_products
                 - edit_products
+                - microprofile-jwt
 
