@@ -18,4 +18,6 @@ public interface ProductsFromCartRepository extends MongoRepository<ProductFromC
 
     Optional<ProductFromCart> findProductFromCartByUserNameAndProductId(String userName, Integer productId);
 
+    Optional<ProductFromCart> findProductFromCartById(String id);
+
 }

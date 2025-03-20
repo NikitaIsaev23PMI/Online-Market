@@ -13,5 +13,7 @@ public interface ProductFromCartService {
 
     void deleteProductFromCart(Integer productId, String userName);
 
-    Optional<ProductFromCart> findProductFromCartByUserNameAndProductId(String userName, Integer productId);
+    ProductFromCart findProductFromCartByUserNameAndProductId(String userName, Integer productId);
+
+    ProductFromCart findProductFromCartById(String id);
 }

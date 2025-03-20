@@ -90,6 +90,8 @@ public class MainProductsRestClient implements ProductRestClient{
                     .toBodilessEntity();
         }catch (HttpClientErrorException.NotFound exception){
             throw new NoSuchElementException("Нельзя удалить товар с данным Id, так как его изначально не существовало");
+        } catch (HttpClientErrorException.Forbidden exception){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
     }
 

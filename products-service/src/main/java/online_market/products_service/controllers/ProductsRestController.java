@@ -10,6 +10,7 @@ import online_market.products_service.services.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -32,18 +33,26 @@ public class ProductsRestController {
     @GetMapping()
     public List<Product> getAllProducts(@RequestParam(name = "filter", required = false) String filter ,
                                         JwtAuthenticationToken token) {
-        token.getAuthorities().stream().forEach(a -> System.out.println(a.toString() + "   "));
         return this.productService.findAllProduct(filter);
     }
 
     @GetMapping("product/{productId}")
-    public Product findProduct(@PathVariable("productId") int productId){
-        return this.productService.findById(productId);
+    public ResponseEntity<?> findProduct(@PathVariable("productId") int productId,
+                                         UriComponentsBuilder uriBuilder){
+        try {
+            Product product = this.productService.findById(productId);
+            return ResponseEntity.created(uriBuilder
+                            .replacePath("products-service-api/products/{productId}")
+                            .build(Map.of("productId", product.getId())))
+                    .body(product);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("{sub}")
     public List<Product> findProductByUsername(@PathVariable("sub") String sellerSubject){
-        return this.productService.findProductsBySellerSubject(sellerSubject);
+            return this.productService.findProductsBySellerSubject(sellerSubject);
     }
 
     @PostMapping()
@@ -57,19 +66,19 @@ public class ProductsRestController {
                 throw new BindException(bindingResult);
             }
         } else {
-            Product product = this.productService.create(payload.title(), payload.details(), payload.sellerSubject());
-
-            return ResponseEntity.created(uriBuilder
-                            .replacePath("products-service-api/products/{productId}")
-                            .build(Map.of("productId", product.getId())))
-                    .body(product);
+                Product product = this.productService.create(payload.title(), payload.details(), payload.sellerSubject());
+                return ResponseEntity.created(uriBuilder
+                                .replacePath("products-service-api/products/{productId}")
+                                .build(Map.of("productId", product.getId())))
+                        .body(product);
         }
     }
 
     @PatchMapping("{productId}")
     public ResponseEntity<?> updateProduct(@Valid @RequestBody UpdateProductPayload payload,
                                                  @PathVariable("productId") int productId,
-                                           BindingResult bindingResult) throws BindException {
+                                           BindingResult bindingResult,
+                                           JwtAuthenticationToken jwt) throws BindException {
         if (bindingResult.hasErrors()) {
             if (bindingResult instanceof BindException exception) {
                 throw exception;
@@ -77,18 +86,29 @@ public class ProductsRestController {
                 throw new BindException(bindingResult);
             }
         } else {
-            if(this.productService.findById(productId).getSellerSubject().equals(payload.sellerSubject())) {
-                this.productService.updateProduct(productId, payload.title(), payload.details());
+            try {
+                this.productService.updateProduct(productId, payload.title(),
+                        payload.details(), jwt.getToken().getSubject());
                 return ResponseEntity.noContent().build();
-            } else {
+            } catch (AccessDeniedException e) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            } catch (NoSuchElementException e) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
         }
     }
 
     @DeleteMapping("{productId}")
-    public ResponseEntity<?> deleteProduct(@PathVariable("productId") int productId){
-        this.productService.deleteProduct(productId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteProduct(@PathVariable("productId") int productId,
+                                           JwtAuthenticationToken token) {
+        try {
+            this.productService.deleteProduct(productId,token.getToken().getSubject());
+            return ResponseEntity.noContent().build();
+        } catch (AccessDeniedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 }
+

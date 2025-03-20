@@ -13,11 +13,11 @@ public interface ProductService {
 
     Product create(String title,String details, String sellerSubject);
 
-    void updateProduct(int id, String title, String details);
+    void updateProduct(int id, String title, String details, String sellerSubject);
 
-    void deleteProduct(int id);
+    void deleteProduct(int id, String sellerSubject);
 
     List<Product> findProductsBySellerSubject(String sellerSubject);
 
-    Optional<Product> findProductBySellerSubject(String sellerSubject);
+    Product findProductBySellerSubject(String sellerSubject);
 }

@@ -3,6 +3,7 @@ package online_market.products_service.services;
 import lombok.RequiredArgsConstructor;
 import online_market.products_service.entity.Product;
 import online_market.products_service.repository.ProductRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public class MainProductService implements ProductService {
 
     @Override
     public Product findById(int id) {
-        return this.productRepository.findById(id).orElseThrow(NoSuchElementException::new);
+        return this.productRepository.findById(id).orElseThrow(() -> new NoSuchElementException("товар не найден"));
     }
 
     @Override
@@ -31,24 +32,28 @@ public class MainProductService implements ProductService {
     }
 
     @Override
-    public void updateProduct(int id, String title, String details) {
+    public void updateProduct(int id, String title, String details, String sellerSubject) {
         this.productRepository.findById(id).ifPresentOrElse(
                 product -> {
-                    product.setTitle(title);
-                    product.setDetails(details);
-                    productRepository.save(product);
+                    if (product.getSellerSubject().equals(sellerSubject)) {
+                        product.setTitle(title);
+                        product.setDetails(details);
+                        productRepository.save(product);
+                    } else throw new AccessDeniedException("Вы не являетесь владельцем товара, поэтому не можете его редпктировать");
                 }, () -> {
-                    throw new NoSuchElementException();
+                    throw new NoSuchElementException("Товар не найден");
                 }
         );
     }
 
     @Override
-    public void deleteProduct(int id) {
-        if(this.productRepository.existsById(id)){
-            this.productRepository.deleteById(id);
+    public void deleteProduct(int id, String sellerSubject){
+        if(this.productRepository.findById(id).isPresent()){
+            if(this.productRepository.findById(id).get().getSellerSubject().equals(sellerSubject)){
+                this.productRepository.deleteById(id);
+            } else throw new AccessDeniedException("Вы не можете удалить этот товар");
         } else {
-            throw new NoSuchElementException();
+            throw new NoSuchElementException("Товар не найден");
         }
     }
 
@@ -58,7 +63,10 @@ public class MainProductService implements ProductService {
     }
 
     @Override
-    public Optional<Product> findProductBySellerSubject(String sellerSubject) {
-        return this.productRepository.findProductBySellerSubject(sellerSubject);
+    @Deprecated
+    public Product findProductBySellerSubject(String sellerSubject) {
+        if (this.productRepository.findProductBySellerSubject(sellerSubject).isPresent()){
+            return this.productRepository.findProductBySellerSubject(sellerSubject).get();
+        } else throw new NoSuchElementException("товар не найден");
     }
 }

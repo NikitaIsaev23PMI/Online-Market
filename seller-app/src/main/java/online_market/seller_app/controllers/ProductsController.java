@@ -93,7 +93,7 @@ public class ProductsController {
     }
 
     @PostMapping("{productId}/delete")
-    public String deleteProduct(@PathVariable("productId") int id, Model model){
+    public String deleteProduct(@PathVariable("productId") int id, Model model, @AuthenticationPrincipal OidcUser user){
         try {
             this.productRestClient.deleteProduct(id);
             return "redirect:/online-market/products/list";
