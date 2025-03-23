@@ -10,6 +10,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("api/products-from-cart")
@@ -18,8 +19,8 @@ public class ProductsFromCartRestController {
 
     private final ProductFromCartService productFromCartService;
 
-    @GetMapping("{userName}")
-    public List<ProductFromCart> getAllProductsFromUserCart(@PathVariable("userName") String userName) {
+    @GetMapping("{username}")
+    public List<ProductFromCart> getAllProductsFromUserCart(@PathVariable("username") String userName) {
         return this.productFromCartService.findAllProductsFromUserCart(userName);
     }
 
@@ -30,13 +31,46 @@ public class ProductsFromCartRestController {
         try {
             ProductFromCart product = this.productFromCartService.addProductToCart(payload.productId(), payload.userName());
             return ResponseEntity.created(uriBuilder
-                            .replacePath("products-service-api/products/product/{productId}")
-                            .build(Map.of("productId", payload.productId())))
+                            .replacePath("api/products-from-cart/products/{productId}/user/{username}") //TODO переписать
+                            .build(Map.of("productId", payload.productId(),"username",payload.userName())))
                     .body(product);
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @DeleteMapping("products/{productId}/user/{username}")
+    public ResponseEntity<?> deleteProductFromUserCart(
+            @PathVariable("productId") Integer productId,
+            @PathVariable("username") String userName
+    ){
+        try {
+            this.productFromCartService.deleteProductFromCart(productId, userName);
+            return ResponseEntity.noContent().build();
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("products/{productId}/user/{username}")
+    public ResponseEntity<?> getProductFromUserCart(
+            @PathVariable("productId") Integer productId,
+            @PathVariable("username") String userName,
+            UriComponentsBuilder uriBuilder){
+        try {
+            ProductFromCart productFromCart = this.productFromCartService.findProductFromCartByUserNameAndProductId(userName,productId);
+            return ResponseEntity.created(uriBuilder
+                            .replacePath("api/products-from-cart/products/{productId}/user/{username}")
+                            .build(Map.of("productId", productId,"username",userName)))
+                    .body(productFromCart);
+        } catch (NoSuchElementException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
+
+
 
 
 }

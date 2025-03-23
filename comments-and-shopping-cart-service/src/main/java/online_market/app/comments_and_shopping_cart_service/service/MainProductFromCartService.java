@@ -34,15 +34,17 @@ public class MainProductFromCartService implements ProductFromCartService{
     public void deleteProductFromCart(Integer productId, String userName) {
         if(this.productsFromCartRepository.findProductFromCartByUserNameAndProductId(userName,productId).isPresent()){
             this.productsFromCartRepository.deleteByUserNameAndProductId(userName, productId);
-        } else throw new IllegalArgumentException("Товар не найден");
+        } else throw new NoSuchElementException("Товар не найден");
     }
 
     @Override
     public ProductFromCart findProductFromCartByUserNameAndProductId(String userName, Integer productId) {
         if (this.productsFromCartRepository.findProductFromCartByUserNameAndProductId(userName, productId).isPresent()){
             return this.productsFromCartRepository.findProductFromCartByUserNameAndProductId(userName, productId).get();
-        } else throw new IllegalArgumentException("Товар не найден");
+        } else throw new NoSuchElementException("Товар не найден");
     }
+
+
 
     @Override
     @Deprecated
