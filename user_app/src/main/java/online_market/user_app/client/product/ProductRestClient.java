@@ -1,4 +1,4 @@
-package online_market.user_app.client;
+package online_market.user_app.client.product;
 
 import online_market.user_app.entity.Product;
 

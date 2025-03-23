@@ -1,6 +1,7 @@
-package online_market.user_app.client;
+package online_market.user_app.client.product;
 
 import lombok.RequiredArgsConstructor;
+import online_market.user_app.client.exception.BadRequestException;
 import online_market.user_app.entity.Product;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ProblemDetail;

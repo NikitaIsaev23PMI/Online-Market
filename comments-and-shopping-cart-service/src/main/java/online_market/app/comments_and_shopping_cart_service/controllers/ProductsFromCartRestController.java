@@ -31,7 +31,7 @@ public class ProductsFromCartRestController {
         try {
             ProductFromCart product = this.productFromCartService.addProductToCart(payload.productId(), payload.userName());
             return ResponseEntity.created(uriBuilder
-                            .replacePath("api/products-from-cart/products/{productId}/user/{username}") //TODO переписать
+                            .replacePath("api/products-from-cart/products/{productId}/user/{username}")
                             .build(Map.of("productId", payload.productId(),"username",payload.userName())))
                     .body(product);
         } catch (IllegalStateException e) {
