@@ -3,6 +3,7 @@ package online_market.user_app.controller;
 import lombok.RequiredArgsConstructor;
 import online_market.user_app.client.product.ProductRestClient;
 import online_market.user_app.client.productFromCart.ProductFromUserCartClient;
+import online_market.user_app.client.productReview.ProductReviewRestClient;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,8 @@ public class ProductsController {
 
     private final ProductFromUserCartClient productFromUserCartClient;
 
+    private final ProductReviewRestClient productReviewRestClient;
+
     @GetMapping()
     public String getProductsPage(@RequestParam(name = "filter", required = false) String filter, Model model,
                                   @AuthenticationPrincipal OidcUser principal) {
@@ -33,4 +36,5 @@ public class ProductsController {
         model.addAttribute("product", this.productRestClient.getProduct(productId));
         return "products/product";
     }
+
 }

@@ -2,6 +2,7 @@ package online_market.user_app.config;
 
 import online_market.user_app.client.product.MainProductRestClient;
 import online_market.user_app.client.productFromCart.MainProductFromUserCartClient;
+import online_market.user_app.client.productReview.MainProductReviewRestClient;
 import online_market.user_app.security.OAuthClientRequestInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -38,6 +39,23 @@ public class ClientBeans {
             ClientRegistrationRepository clientRegistrationRepository,
             OAuth2AuthorizedClientRepository authorizedClientRepository){
         return new MainProductFromUserCartClient(RestClient
+                .builder()
+                .baseUrl(productsFromCartAndReviewApiUrl)
+                .requestInterceptor(
+                        new OAuthClientRequestInterceptor(
+                                new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository,
+                                        authorizedClientRepository),registrationId))
+                .build());
+    }
+
+    @Bean
+    MainProductReviewRestClient mainProductReviewRestClient(
+            @Value("${market.services.products-from-cart.uri://localhost:8084}")
+            String productsFromCartAndReviewApiUrl,
+            @Value("${market.services.products-from-cart.registrationId}") String registrationId,
+            ClientRegistrationRepository clientRegistrationRepository,
+            OAuth2AuthorizedClientRepository authorizedClientRepository){
+        return new MainProductReviewRestClient(RestClient
                 .builder()
                 .baseUrl(productsFromCartAndReviewApiUrl)
                 .requestInterceptor(
