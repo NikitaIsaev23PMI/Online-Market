@@ -20,10 +20,6 @@ public class ProductsController {
 
     private final ProductRestClient productRestClient;
 
-    private final ProductFromUserCartClient productFromUserCartClient;
-
-    private final ProductReviewRestClient productReviewRestClient;
-
     @GetMapping()
     public String getProductsPage(@RequestParam(name = "filter", required = false) String filter, Model model,
                                   @AuthenticationPrincipal OidcUser principal) {

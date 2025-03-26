@@ -64,7 +64,7 @@ public class ProductsFromCartRestController {
                             .build(Map.of("productId", productId,"username",userName)))
                     .body(productFromCart);
         } catch (NoSuchElementException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.notFound().build();
         }
     }
 

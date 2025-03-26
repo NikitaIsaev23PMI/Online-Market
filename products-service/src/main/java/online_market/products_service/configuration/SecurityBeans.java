@@ -38,6 +38,7 @@ public class SecurityBeans {
                 .build();
     }
 
+
     @Bean
     public JwtDecoder jwtDecoder() {
         NimbusJwtDecoder jwtDecoder1 = JwtDecoders.fromIssuerLocation(buyerRealmUrl);

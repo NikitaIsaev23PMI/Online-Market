@@ -2,7 +2,7 @@ package online_market.user_app.payload;
 
 public record NewProductReviewPayload(
 
-        String userName,
+        String username,
 
         Integer productId,
 

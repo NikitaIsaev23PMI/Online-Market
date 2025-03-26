@@ -34,12 +34,12 @@ public class MainProductFromUserCartClient implements ProductFromUserCartClient{
     }
 
     @Override
-    public ProductFromCart addProductFromUserCart(String userName, Integer productId) {
+    public ProductFromCart addProductFromUserCart(String username, Integer productId) {
         try {
             return this.restClient.post()
                     .uri("api/products-from-cart")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(new NewProductFromUserCartPayload(productId, userName))
+                    .body(new NewProductFromUserCartPayload(productId, username))
                     .retrieve()
                     .body(ProductFromCart.class);
         } catch (HttpClientErrorException.BadRequest exception){
@@ -49,10 +49,10 @@ public class MainProductFromUserCartClient implements ProductFromUserCartClient{
     }
 
     @Override
-    public void deleteProductFromUserCart(String userName, Integer productId) {
+    public void deleteProductFromUserCart(String username, Integer productId) {
         try {
             this.restClient.delete()
-                    .uri("api/products-from-cart/products/{productId}/user/{username}",productId,userName)
+                    .uri("api/products-from-cart/products/{productId}/user/{username}",productId,username)
                     .retrieve()
                     .toBodilessEntity();
         } catch (HttpClientErrorException.NotFound exception){
@@ -62,10 +62,10 @@ public class MainProductFromUserCartClient implements ProductFromUserCartClient{
     }
 
     @Override
-    public ProductFromCart getProductFromUserCart(String userName, Integer productId) {
+    public ProductFromCart getProductFromUserCart(String username, Integer productId) {
         try {
             return this.restClient.get()
-                    .uri("api/products-from-cart/products/{productId}/user/{username}")
+                    .uri("api/products-from-cart/products/{productId}/user/{username}",productId,username)
                     .retrieve()
                     .body(ProductFromCart.class);
         } catch (HttpClientErrorException.NotFound exception){

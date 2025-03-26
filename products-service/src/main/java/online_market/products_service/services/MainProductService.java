@@ -2,10 +2,14 @@ package online_market.products_service.services;
 
 import lombok.RequiredArgsConstructor;
 import online_market.products_service.entity.Product;
+import online_market.products_service.entity.ProductMedia;
+import online_market.products_service.repository.ProductMediaRepository;
 import online_market.products_service.repository.ProductRepository;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -15,6 +19,10 @@ import java.util.Optional;
 public class MainProductService implements ProductService {
 
     private final ProductRepository productRepository;
+
+    private final FileStorageService fileStorageService;
+
+    private final ProductMediaRepository productMediaRepository;
 
     @Override
     public List<Product> findAllProduct(String filter) {
@@ -28,7 +36,7 @@ public class MainProductService implements ProductService {
 
     @Override
     public Product create(String title, String details, String sellerSubject) {
-        return productRepository.save(new Product(null,title,details,sellerSubject));
+        return productRepository.save(new Product(null,title,details,sellerSubject,null));
     }
 
     @Override
@@ -69,4 +77,17 @@ public class MainProductService implements ProductService {
             return this.productRepository.findProductBySellerSubject(sellerSubject).get();
         } else throw new NoSuchElementException("товар не найден");
     }
+
+    public ProductMedia addProductMedia(MultipartFile media, int productId) throws IOException {
+        String filePath = this.fileStorageService.saveMedia(media);
+        String fileType = media.getContentType().startsWith("image") ? "image" : "video";
+        Product product = this.productRepository.findById(productId).orElseThrow(NoSuchElementException::new);
+        return productMediaRepository.save(new ProductMedia(null,filePath,fileType,product));
+    }
+
+    public List<ProductMedia> findProductMediaByProductId(int productId) {
+        return this.productRepository.findById(productId).orElseThrow(NoSuchElementException::new).getProductMedia();
+    }
+
+
 }

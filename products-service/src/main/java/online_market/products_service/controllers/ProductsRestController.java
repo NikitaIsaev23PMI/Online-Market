@@ -3,6 +3,7 @@ package online_market.products_service.controllers;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import online_market.products_service.entity.Product;
+import online_market.products_service.entity.ProductMedia;
 import online_market.products_service.payload.NewProductPayload;
 import online_market.products_service.payload.UpdateProductPayload;
 import online_market.products_service.repository.ProductRepository;
@@ -17,8 +18,10 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -108,6 +111,19 @@ public class ProductsRestController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    @PostMapping("/upload-media/{productId}")
+    public ResponseEntity<?> uploadMedia(@RequestParam("media") MultipartFile media,
+                                         @PathVariable("productId") Integer productId) throws IOException {
+        try {
+            ProductMedia productMedia = this.productService.addProductMedia(media, productId);
+            return ResponseEntity.ok().body(productMedia);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }

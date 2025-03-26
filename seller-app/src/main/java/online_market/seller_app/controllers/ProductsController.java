@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.AccessDeniedException;
 import java.util.NoSuchElementException;
@@ -40,11 +41,11 @@ public class ProductsController {
 
     @GetMapping("{productId}")
     public String getProductPage(Model model, @PathVariable("productId") int id,
-                                 @AuthenticationPrincipal OidcUser user){
+                                 @AuthenticationPrincipal OidcUser user) {
         Product product = this.productRestClient.findProduct(id).get();
-            model.addAttribute("product", product);
+        model.addAttribute("product", product);
 
-        if(product.getSellerSubject().equals(user.getSubject())){
+        if (product.getSellerSubject().equals(user.getSubject())) {
             return "products/my-product";
         }
         return "products/product";
@@ -54,7 +55,7 @@ public class ProductsController {
     public String getProductEditPage(Model model, @PathVariable("productId") int id,
                                      @AuthenticationPrincipal OidcUser user) throws AccessDeniedException {
         Product product = this.productRestClient.findProduct(id).get();
-        if(product.getSellerSubject().equals(user.getSubject())){
+        if (product.getSellerSubject().equals(user.getSubject())) {
             model.addAttribute("product", product);
             return "products/edit";
         } else throw new AccessDeniedException("Access denied");
@@ -63,12 +64,12 @@ public class ProductsController {
 
     @PostMapping("{productId}/edit")
     public String editProduct(Model model, @PathVariable("productId") int id,
-                            UpdateProductPayload payload, @AuthenticationPrincipal OidcUser user) throws AccessDeniedException {
+                              UpdateProductPayload payload, @AuthenticationPrincipal OidcUser user) throws AccessDeniedException {
         try {
             this.productRestClient.updateProduct(id, payload.title(), payload.details(), user.getSubject());
             model.addAttribute("product", this.productRestClient.findProduct(id).get());
             return "redirect:/online-market/products/%d/edit".formatted(id);
-        }catch (BadRequestException exception){
+        } catch (BadRequestException exception) {
             model.addAttribute("errors", exception.getErrors());
             model.addAttribute("product", this.productRestClient.findProduct(id).get());
             return "products/edit";
@@ -76,28 +77,28 @@ public class ProductsController {
     }
 
     @GetMapping("/create")
-    public String createProduct(){
+    public String createProduct() {
         return "products/newProduct";
     }
 
     @PostMapping("/create")
     public String createProduct(NewProductPayload payload,
-                                Model model,@AuthenticationPrincipal OidcUser user){
+                                Model model, @AuthenticationPrincipal OidcUser user) {
         try {
             Product product = this.productRestClient.createProduct(payload.title(), payload.details(), user.getSubject());
             return "redirect:/online-market/products/%d".formatted(product.getId());
-        } catch (BadRequestException exception){
+        } catch (BadRequestException exception) {
             model.addAttribute("errors", exception.getErrors());
             return "products/newProduct";
         }
     }
 
     @PostMapping("{productId}/delete")
-    public String deleteProduct(@PathVariable("productId") int id, Model model, @AuthenticationPrincipal OidcUser user){
+    public String deleteProduct(@PathVariable("productId") int id, Model model, @AuthenticationPrincipal OidcUser user) {
         try {
             this.productRestClient.deleteProduct(id);
             return "redirect:/online-market/products/list";
-        } catch (NoSuchElementException exception){
+        } catch (NoSuchElementException exception) {
             model.addAttribute("errors", exception.getMessage());
             return "products/edit";
         }

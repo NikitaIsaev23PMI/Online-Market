@@ -8,9 +8,9 @@ public interface ProductFromUserCartClient {
 
     List<ProductFromCart> getAllProductsFromUserCart(String username);
 
-    ProductFromCart addProductFromUserCart(String userName, Integer productId);
+    ProductFromCart addProductFromUserCart(String username, Integer productId);
 
-    void deleteProductFromUserCart(String userName, Integer productId);
+    void deleteProductFromUserCart(String username, Integer productId);
 
-    ProductFromCart getProductFromUserCart(String userName, Integer productId);
+    ProductFromCart getProductFromUserCart(String username, Integer productId);
 }

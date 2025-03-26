@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Entity
 @Table(schema = "products_schema", name = "t_product")
@@ -30,5 +32,8 @@ public class Product {
 
     @Column(name = "seller_subject")
     private String sellerSubject;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductMedia> productMedia;
 
 }

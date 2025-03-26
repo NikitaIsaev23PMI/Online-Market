@@ -2,6 +2,7 @@ package online_market.seller_app.client;
 
 import lombok.RequiredArgsConstructor;
 import online_market.seller_app.entity.Product;
+import online_market.seller_app.entity.ProductMedia;
 import online_market.seller_app.payload.NewProductPayload;
 import online_market.seller_app.payload.UpdateProductPayload;
 import org.springframework.core.ParameterizedTypeReference;
@@ -10,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.nio.file.AccessDeniedException;
