@@ -1,4 +1,4 @@
-package online_market.seller_app.client;
+package online_market.seller_app.client.exception;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,6 +10,7 @@ import java.util.List;
 public class BadRequestException extends RuntimeException {
 
     private final List<String> errors;
+
 
     public BadRequestException(List<String> errors) {
         this.errors = errors;

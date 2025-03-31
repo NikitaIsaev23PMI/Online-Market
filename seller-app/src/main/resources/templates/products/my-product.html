@@ -16,5 +16,11 @@
     <li><strong>Название</strong>: <span data-th-text="${product.title}"></span></li>
     <li><strong>Описание</strong>: <span data-th-text="${product.details}"></span></li>
 </ul>
+<div>
+    <h2>Фотографии товара:</h2>
+    <div data-th-each="media : ${product.getProductMedia()}">
+        <img th:src="@{${media.getMediaPath()}}" alt="Product Image">
+    </div>
+</div>
 </body>
 </html>

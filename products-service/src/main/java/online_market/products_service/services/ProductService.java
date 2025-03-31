@@ -23,8 +23,4 @@ public interface ProductService {
     List<Product> findProductsBySellerSubject(String sellerSubject);
 
     Product findProductBySellerSubject(String sellerSubject);
-
-    ProductMedia addProductMedia(MultipartFile media, int productId) throws IOException;
-
-    List<ProductMedia> findProductMediaByProductId(int productId);
 }

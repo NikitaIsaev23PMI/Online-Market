@@ -67,10 +67,4 @@ public class ProductsFromCartRestController {
             return ResponseEntity.notFound().build();
         }
     }
-
-
-
-
-
-
 }

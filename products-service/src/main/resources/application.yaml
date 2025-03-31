@@ -23,4 +23,4 @@ keycloak:
       sellers: http://localhost:8082/realms/online-market-sellers
 media:
   storage:
-    location: C:\Users\никита\Desktop\Online_Market_Pet_Project\products-service\uploads
+    location: C:\Users\никита\Desktop\Online_Market_Pet_Project\products-service\src\main\resources\static\uploads

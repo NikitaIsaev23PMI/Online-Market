@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Редактирование продукта</title>
 </head>
 <body>
 <form method="post" data-th-action="@{/online-market/products/{productId}/edit(productId=${product.id})}">
@@ -19,11 +19,29 @@
 <form method="post" data-th-action="@{/online-market/products/{productId}/delete(productId=${product.id})}">
     <button type="submit">Удалить</button>
 </form>
+<form method="post" enctype="multipart/form-data"
+      data-th-action="@{/online-market/products-media/upload/media/{productId}(productId=${product.id})}">
+    <label>
+        Загрузить медиа:<br>
+        <input type="file" name="media" accept="image/*,video/*" required>
+    </label><br>
+    <button type="submit">Загрузить</button>
+</form>
+<div>
+    <h2>Фотографии товара:</h2>
+    <div data-th-each="media : ${product.getProductMedia()}">
+        <img th:src="@{${media.getMediaPath()}}" alt="Product Image" width="150">
+        <form method="post" data-th-action="@{/online-market/products-media/delete/media/{productId}/{mediaId}(productId=${product.getId()}, mediaId=${media.getId()})}">
+            <button type="submit" onclick="return confirm('Удалить фото?')">Удалить</button>
+        </form>
+    </div>
+</div>
 <div data-th-if="${errors}">
-    <h2>Допушены ошибки</h2>
+    <h2>Допущены ошибки</h2>
     <ul>
         <li data-th-each="error: ${errors}" data-th-text="${error}"></li>
     </ul>
 </div>
+
 </body>
 </html>

@@ -12,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +19,7 @@ public class MainProductService implements ProductService {
 
     private final ProductRepository productRepository;
 
-    private final FileStorageService fileStorageService;
+    private final ProductMediaStorageService productMediaStorageService;
 
     private final ProductMediaRepository productMediaRepository;
 
@@ -77,17 +76,4 @@ public class MainProductService implements ProductService {
             return this.productRepository.findProductBySellerSubject(sellerSubject).get();
         } else throw new NoSuchElementException("товар не найден");
     }
-
-    public ProductMedia addProductMedia(MultipartFile media, int productId) throws IOException {
-        String filePath = this.fileStorageService.saveMedia(media);
-        String fileType = media.getContentType().startsWith("image") ? "image" : "video";
-        Product product = this.productRepository.findById(productId).orElseThrow(NoSuchElementException::new);
-        return productMediaRepository.save(new ProductMedia(null,filePath,fileType,product));
-    }
-
-    public List<ProductMedia> findProductMediaByProductId(int productId) {
-        return this.productRepository.findById(productId).orElseThrow(NoSuchElementException::new).getProductMedia();
-    }
-
-
 }

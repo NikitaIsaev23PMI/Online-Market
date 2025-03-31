@@ -1,11 +1,15 @@
 package online_market.products_service.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
+import org.springframework.data.repository.cdi.Eager;
 
 import java.util.List;
 
@@ -33,7 +37,7 @@ public class Product {
     @Column(name = "seller_subject")
     private String sellerSubject;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "product",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<ProductMedia> productMedia;
-
 }

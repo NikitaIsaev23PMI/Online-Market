@@ -1,6 +1,7 @@
 package online_market.seller_app.config;
 
 
+import online_market.seller_app.client.MainProductMediaRestClient;
 import online_market.seller_app.client.MainProductsRestClient;
 import online_market.seller_app.security.OAuthClientRequestInterceptor;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +27,21 @@ public class ClientBeans {
                         new OAuthClientRequestInterceptor(
                                 new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository,
                                         authorizedClientRepository),registrationId))
+                .build());
+    }
+
+    @Bean
+    public MainProductMediaRestClient mainProductMediaRestClient(
+            @Value("${market.services.products.uri:http://localhost:8081}") String productsServiceApiUri,
+            @Value("${market.services.products.registration-id}") String registrationId,
+            ClientRegistrationRepository clientRegistrationRepository,
+            OAuth2AuthorizedClientRepository authorizedClientRepository) {
+        return new MainProductMediaRestClient(RestClient.builder()
+                .baseUrl(productsServiceApiUri)
+                .requestInterceptor(
+                        new OAuthClientRequestInterceptor(
+                                new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository,
+                                        authorizedClientRepository), registrationId))
                 .build());
     }
 }

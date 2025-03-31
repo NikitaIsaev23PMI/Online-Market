@@ -30,6 +30,7 @@ public class SecurityBeans {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(jwt -> jwt.decoder(jwtDecoder())))
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                        .requestMatchers("products-service-api/products-media/{name-media}").permitAll()
                         .requestMatchers(HttpMethod.GET).hasAuthority("SCOPE_view_products")
                         .requestMatchers(HttpMethod.POST).hasAuthority("SCOPE_edit_products")
                         .requestMatchers(HttpMethod.PATCH).hasAuthority("SCOPE_edit_products")

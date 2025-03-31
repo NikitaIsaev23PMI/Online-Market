@@ -1,5 +1,6 @@
 package online_market.products_service.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,5 +25,6 @@ public class ProductMedia {
 
     @ManyToOne
     @JoinColumn(name = "c_product_id", nullable = false)
+    @JsonBackReference
     private Product product;
 }

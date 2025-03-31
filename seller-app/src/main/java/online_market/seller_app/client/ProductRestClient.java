@@ -20,6 +20,4 @@ public interface ProductRestClient {
     void deleteProduct(int id);
 
     List<Product> getSellerProducts(String sellerSubject);
-
-    ProductMedia addMedia(MultipartFile file, Integer productId);
 }

@@ -1,6 +1,7 @@
 package online_market.products_service.repository;
 
 import online_market.products_service.entity.Product;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,6 +13,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     List<Product> findAllByTitleContainsIgnoreCase(String filter);
 
+    @EntityGraph(attributePaths = {"productMedia"})
     Optional<Product> findById(int id);
 
     Product save(Product product);

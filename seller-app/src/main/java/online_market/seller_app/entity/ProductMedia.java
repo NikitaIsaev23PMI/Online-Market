@@ -14,6 +14,4 @@ public class ProductMedia {
     private String mediaPath;
 
     private String mediaType;
-
-    private Product product;
 }

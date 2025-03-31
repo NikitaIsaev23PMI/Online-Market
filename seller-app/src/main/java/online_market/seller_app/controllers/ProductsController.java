@@ -1,7 +1,7 @@
 package online_market.seller_app.controllers;
 
 import lombok.RequiredArgsConstructor;
-import online_market.seller_app.client.BadRequestException;
+import online_market.seller_app.client.exception.BadRequestException;
 import online_market.seller_app.client.ProductRestClient;
 import online_market.seller_app.entity.Product;
 import online_market.seller_app.payload.NewProductPayload;
@@ -11,7 +11,6 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.AccessDeniedException;
 import java.util.NoSuchElementException;
@@ -59,7 +58,6 @@ public class ProductsController {
             model.addAttribute("product", product);
             return "products/edit";
         } else throw new AccessDeniedException("Access denied");
-
     }
 
     @PostMapping("{productId}/edit")
@@ -86,7 +84,7 @@ public class ProductsController {
                                 Model model, @AuthenticationPrincipal OidcUser user) {
         try {
             Product product = this.productRestClient.createProduct(payload.title(), payload.details(), user.getSubject());
-            return "redirect:/online-market/products/%d".formatted(product.getId());
+            return "redirect:/online-market/products/%d/edit".formatted(product.getId());
         } catch (BadRequestException exception) {
             model.addAttribute("errors", exception.getErrors());
             return "products/newProduct";

@@ -1,6 +1,7 @@
 package online_market.seller_app.client;
 
 import lombok.RequiredArgsConstructor;
+import online_market.seller_app.client.exception.BadRequestException;
 import online_market.seller_app.entity.Product;
 import online_market.seller_app.entity.ProductMedia;
 import online_market.seller_app.payload.NewProductPayload;
@@ -11,10 +12,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -24,6 +23,10 @@ public class MainProductsRestClient implements ProductRestClient{
 
     private static final ParameterizedTypeReference<List<Product>> PRODUCTS_TYPE_REFERENCE =
 
+            new ParameterizedTypeReference<>() {
+            };
+
+    private static final ParameterizedTypeReference<List<ProductMedia>> PRODUCTS_MEDIA_TYPE_REFERENCE =
             new ParameterizedTypeReference<>() {
             };
 
