@@ -1,14 +1,118 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Детали товара</title>
+    <style>
+        .user-review {
+            background-color: #d0e8ff; /* Голубой фон для выделения */
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
+
+<h2>Информация о товаре</h2>
 <ul>
     <li><strong>ID</strong>: <span data-th-text="${product.id}"></span></li>
     <li><strong>Название</strong>: <span data-th-text="${product.title}"></span></li>
     <li><strong>Описание</strong>: <span data-th-text="${product.details}"></span></li>
 </ul>
+
+<h3>Оставить отзыв</h3>
+<form data-th-action="@{/online-market/buyer/products-review/upload-review}" method="post">
+    <input type="hidden" name="productId" data-th-value="${product.id}" />
+    <input type="hidden" name="username" data-th-value="${user.getPreferredUsername()}" />
+
+    <label for="review">Ваш отзыв:</label>
+    <textarea id="review" name="review" required></textarea>
+
+    <label for="rating">Оценка (1-5):</label>
+    <select id="rating" name="rating" required>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+    </select>
+
+    <button type="submit">Оставить отзыв</button>
+</form>
+
+<h3>Отзывы о товаре:</h3>
+<ul>
+    <li data-th-each="review : ${productReviews}"
+        data-th-classappend="${review.userName.equals(user.getPreferredUsername())} ? 'user-review' : ''"
+        data-th-attr="data-review-id=${review.id}">
+
+        <p><strong>Пользователь:</strong> <span data-th-text="${review.userName}"></span></p>
+        <p><strong>Оценка:</strong> <span data-th-text="${review.rating}"></span></p>
+
+        <!-- Отображение отзыва -->
+        <p class="review-text" data-th-text="${review.review}"></p>
+
+        <!-- Форма редактирования (изначально скрыта) -->
+        <form class="edit-form"
+              data-th-action="@{/online-market/buyer/products-review/edit-review}"
+              method="post" style="display: none;">
+            <input type="hidden" name="productId" data-th-value="${product.id}" />
+            <input type="hidden" name="username" data-th-value="${user.getPreferredUsername()}" />
+            <textarea name="review" class="edit-textarea" required></textarea>
+            <label for="rating">Оценка (1-5):</label>
+            <select name="rating" class="edit-rating" required>
+                <option value="1" data-th-selected="${review.rating == 1}">1</option>
+                <option value="2" data-th-selected="${review.rating == 2}">2</option>
+                <option value="3" data-th-selected="${review.rating == 3}">3</option>
+                <option value="4" data-th-selected="${review.rating == 4}">4</option>
+                <option value="5" data-th-selected="${review.rating == 5}">5</option>
+            </select>
+            <button type="submit">Сохранить</button>
+            <button type="button" onclick="cancelEdit(this)">Отмена</button>
+        </form>
+
+        <div data-th-if="${review.userName.equals(user.getPreferredUsername())}">
+            <button type="button" class="edit-btn" onclick="enableEdit(this)">Редактировать</button>
+
+            <form data-th-action="@{/online-market/buyer/products-review/delete-review/{productId}(productId=${product.id})}"
+                  method="post">
+                <button type="submit" style="color: red;">Удалить</button>
+            </form>
+        </div>
+    </li>
+</ul>
+
+<div data-th-if="${errors}" style="color: red;">
+    <p data-th-text="${errors}"></p>
+</div>
+
+<script>
+    function enableEdit(button) {
+        let listItem = button.closest('li');
+        let textReview = listItem.querySelector('.review-text');
+        let editForm = listItem.querySelector('.edit-form');
+        let textarea = editForm.querySelector('.edit-textarea');
+        let ratingSelect = editForm.querySelector('.edit-rating');
+
+        textarea.value = textReview.textContent; // Заполняем текстовое поле текущим отзывом
+
+        textReview.style.display = 'none';
+        editForm.style.display = 'block';
+        button.style.display = 'none';
+    }
+
+    function cancelEdit(button) {
+        let listItem = button.closest('li');
+        let textReview = listItem.querySelector('.review-text');
+        let editForm = listItem.querySelector('.edit-form');
+        let editButton = listItem.querySelector('.edit-btn');
+
+        textReview.style.display = 'block';
+        editForm.style.display = 'none';
+        editButton.style.display = 'inline-block';
+    }
+</script>
+
 </body>
 </html>

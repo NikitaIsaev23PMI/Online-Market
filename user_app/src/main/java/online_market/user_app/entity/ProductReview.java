@@ -11,7 +11,7 @@ public class ProductReview {
 
     private String Id;
 
-    private String username;
+    private String userName;
 
     private Integer productId;
 

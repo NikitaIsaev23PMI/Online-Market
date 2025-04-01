@@ -6,7 +6,7 @@ public record NewProductReviewPayload(
 
         Integer productId,
 
-        String Review,
+        String review,
 
         int rating
 ) {

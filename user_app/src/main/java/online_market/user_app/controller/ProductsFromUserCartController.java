@@ -20,17 +20,22 @@ public class ProductsFromUserCartController {
 
     @GetMapping()
     public String getUserProductsCartPage(@AuthenticationPrincipal OidcUser principal, Model model) {
-        model.addAttribute("products", this.productFromUserCartClient.getAllProductsFromUserCart(principal.getPreferredUsername()));
+        model.addAttribute("products",
+                this.productFromUserCartClient.getAllProductsFromUserCart(principal.getPreferredUsername()));
         return "users/cart";
     }
 
-    @PostMapping("add/{productId}") //username будет браться из @AuthenticationPrincipal
-    public void addProductInCart(@PathVariable Integer productId, @AuthenticationPrincipal OidcUser principal) {
-        this.productFromUserCartClient.addProductFromUserCart(principal.getPreferredUsername(), productId);
+    @PostMapping("add/{productId}")
+    public void addProductInCart(@PathVariable Integer productId,
+                                 @AuthenticationPrincipal OidcUser principal) {
+        this.productFromUserCartClient.
+                addProductFromUserCart(principal.getPreferredUsername(), productId);
     }
 
     @PostMapping("delete/{productId}")
-    public void deleteProductFromCart(@PathVariable Integer productId, @AuthenticationPrincipal OidcUser principal) {
-        this.productFromUserCartClient.deleteProductFromUserCart(principal.getPreferredUsername(), productId);
+    public void deleteProductFromCart(@PathVariable Integer productId,
+                                      @AuthenticationPrincipal OidcUser principal) {
+        this.productFromUserCartClient.
+                deleteProductFromUserCart(principal.getPreferredUsername(), productId);
     }
 }

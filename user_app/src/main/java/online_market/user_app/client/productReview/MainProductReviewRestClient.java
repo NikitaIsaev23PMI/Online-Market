@@ -7,10 +7,13 @@ import online_market.user_app.entity.ProductReview;
 import online_market.user_app.payload.NewProductReviewPayload;
 import online_market.user_app.payload.UpdateProductReviewPayload;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientResponseException;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -27,15 +30,10 @@ public class MainProductReviewRestClient implements ProductReviewRestClient{
 
     @Override
     public ProductReview getProductReview(Integer productId, String username) {
-        try {
             return this.restClient.get()
                     .uri("api/products-review/product/{productId}/user/{username}", productId, username)
                     .retrieve()
                     .body(ProductReview.class);
-        } catch (HttpClientErrorException.NotFound exception) {
-            ProblemDetail problemDetail = exception.getResponseBodyAs(ProblemDetail.class);
-            throw new NoSuchElementException((String)problemDetail.getProperties().get("errors"));
-        }
     }
 
     @Override
@@ -55,6 +53,7 @@ public class MainProductReviewRestClient implements ProductReviewRestClient{
 
     @Override
     public void editProductReview(String username, Integer productId, String review, int rating) {
+        System.out.println(username + " " + productId + " " + review + " " + rating);
         try {
             this.restClient.patch()
                     .uri("api/products-review")
@@ -62,6 +61,9 @@ public class MainProductReviewRestClient implements ProductReviewRestClient{
                     .body(new UpdateProductReviewPayload(username,productId,review,rating))
                     .retrieve()
                     .toBodilessEntity();
+        }catch (HttpClientErrorException.BadRequest exception) {
+            ProblemDetail problemDetail = exception.getResponseBodyAs(ProblemDetail.class);
+            throw new BadRequestException((List<String>)problemDetail.getProperties().get("errors"));
         } catch (HttpClientErrorException.NotFound exception) {
             ProblemDetail problemDetail = exception.getResponseBodyAs(ProblemDetail.class);
             throw new NoSuchElementException((String)problemDetail.getProperties().get("errors"));
@@ -85,6 +87,14 @@ public class MainProductReviewRestClient implements ProductReviewRestClient{
     public List<ProductReview> getAllReviewsOfProduct(Integer productId) {
         return this.restClient.get()
                 .uri("api/products-review/{productId}",productId)
+                .retrieve()
+                .body(PRODUCTS_TYPE_REFERENCE);
+    }
+
+    @Override
+    public List<ProductReview> getAllReviews() {
+        return this.restClient.get()
+                .uri("api/products-review/all-review")
                 .retrieve()
                 .body(PRODUCTS_TYPE_REFERENCE);
     }

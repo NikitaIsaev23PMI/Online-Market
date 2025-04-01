@@ -1,11 +1,14 @@
 package online_market.app.comments_and_shopping_cart_service.payload;
 
+import jakarta.validation.constraints.Size;
+
 public record UpdateProductReviewPayload(
-        String userName,
+        String username,
 
         Integer productId,
 
-        String Review,
+        @Size(max = 1000, message = "слишком большой отзыв, максимум 1000 символов")
+        String review,
 
         int rating
 ) {

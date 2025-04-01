@@ -20,16 +20,25 @@ public class ProductsController {
 
     private final ProductRestClient productRestClient;
 
+    private final ProductReviewRestClient productReviewRestClient;
+
     @GetMapping()
-    public String getProductsPage(@RequestParam(name = "filter", required = false) String filter, Model model,
-                                  @AuthenticationPrincipal OidcUser principal) {
+    public String getProductsPage(@RequestParam(name = "filter", required = false) String filter,
+                                  Model model) {
         model.addAttribute("products", this.productRestClient.getAllProduct(filter));
+//        model.addAttribute("productsReviews", this.productReviewRestClient.getAllReviews());
         return "products/list";
     }
 
     @GetMapping("{productId}")
-    public String getProductPage(@PathVariable("productId") int productId, Model model) {
+    public String getProductPage(@PathVariable("productId") int productId, Model model,
+                                 @AuthenticationPrincipal OidcUser principal) {
         model.addAttribute("product", this.productRestClient.getProduct(productId));
+        model.addAttribute("productReviews",
+                this.productReviewRestClient.getAllReviewsOfProduct(productId));
+        model.addAttribute("user", principal);
+   //     model.addAttribute("MyProductReview",
+   //             this.productReviewRestClient.getProductReview(productId,principal.getPreferredUsername()));
         return "products/product";
     }
 

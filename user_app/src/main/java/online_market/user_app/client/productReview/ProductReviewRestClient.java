@@ -18,4 +18,6 @@ public interface ProductReviewRestClient {
     void deleteProductReview(Integer productId, String username);
 
     List<ProductReview> getAllReviewsOfProduct(Integer productId);
+
+    List<ProductReview> getAllReviews();
 }

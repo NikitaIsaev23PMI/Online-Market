@@ -16,13 +16,13 @@ public class MainProductReviewService implements ProductReviewService {
     public final ProductsReviewRepository productsReviewRepository;
 
     @Override
-    public ProductsReview addProductReview(String userName, Integer productId,
-                                           String Review, int rating) {
-        if(this.productsReviewRepository.getProductByUserNameAndProductId(userName, productId).isPresent()){
+    public ProductsReview addProductReview(String username, Integer productId,
+                                           String review, int rating) {
+        if(this.productsReviewRepository.getProductByUserNameAndProductId(username, productId).isPresent()){
             throw new IllegalStateException("Пользователь может оставить только один отзыв на товар");
         }
             return this.productsReviewRepository
-                    .save(new ProductsReview(null, userName, productId, Review, rating));
+                    .save(new ProductsReview(null, username, productId, review, rating));
     }
 
     @Override
@@ -31,6 +31,7 @@ public class MainProductReviewService implements ProductReviewService {
                 .ifPresentOrElse(productReview -> {
                     productReview.setReview(Review);
                     productReview.setRating(rating);
+                    productsReviewRepository.save(productReview);
                 }, () -> new NoSuchElementException("Отзыв на товар не найден"));
     }
 
@@ -43,15 +44,16 @@ public class MainProductReviewService implements ProductReviewService {
 
     @Override
     public ProductsReview getProductReview(String userName, Integer productId) {
-        if(this.productsReviewRepository.getProductByUserNameAndProductId(userName, productId).isPresent()){
             return this.productsReviewRepository.getProductByUserNameAndProductId(userName, productId).get();
-        } else {
-            throw new NoSuchElementException("Отзыв на товар не найден");
-        }
     }
 
     @Override
     public List<ProductsReview> getAllReviewsByProductId(Integer productId) {
         return this.productsReviewRepository.findAllByProductId(productId);
+    }
+
+    @Override
+    public List<ProductsReview> getAllReviews() {
+        return this.productsReviewRepository.findAll();
     }
 }

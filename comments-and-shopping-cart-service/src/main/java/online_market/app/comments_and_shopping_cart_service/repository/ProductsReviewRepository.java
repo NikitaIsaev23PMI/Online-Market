@@ -12,7 +12,5 @@ public interface ProductsReviewRepository extends MongoRepository<ProductsReview
 
     Optional<ProductsReview> getProductByUserNameAndProductId(String userName, Integer productId);
 
-    ProductsReview save(ProductsReview productsReview);
-
     List<ProductsReview> findAllByProductId(Integer productId);
 }

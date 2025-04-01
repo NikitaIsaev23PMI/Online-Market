@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ProductReviewService {
 
-    ProductsReview addProductReview(String userName, Integer productId, String Review, int rating);
+    ProductsReview addProductReview(String username, Integer productId, String Review, int rating);
 
     void editProductReview(String userName, Integer productId, String Review, int rating);
 
@@ -16,4 +16,6 @@ public interface ProductReviewService {
     ProductsReview getProductReview(String userName, Integer productId);
 
     List<ProductsReview> getAllReviewsByProductId(Integer productId);
+
+    List<ProductsReview> getAllReviews();
 }
