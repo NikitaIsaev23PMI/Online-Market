@@ -53,7 +53,6 @@ public class MainProductReviewRestClient implements ProductReviewRestClient{
 
     @Override
     public void editProductReview(String username, Integer productId, String review, int rating) {
-        System.out.println(username + " " + productId + " " + review + " " + rating);
         try {
             this.restClient.patch()
                     .uri("api/products-review")

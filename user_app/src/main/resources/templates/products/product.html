@@ -4,12 +4,83 @@
     <meta charset="UTF-8">
     <title>Детали товара</title>
     <style>
+        .product-image-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .product-image img {
+            width: 250px; /* Ширина изображения */
+            height: 200px; /* Высота изображения */
+            object-fit: cover; /* Чтобы изображение обрезалось и не искажалось */
+            border-radius: 8px; /* Мягкие углы */
+        }
+        .product-image:hover {
+            transform: scale(1.05);
+        }
+
+        .product-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px; /* Чтобы углы были мягкими */
+        }
+
         .user-review {
-            background-color: #d0e8ff; /* Голубой фон для выделения */
+            background-color: #d0e8ff;
             padding: 10px;
             border-radius: 8px;
             margin-bottom: 10px;
         }
+
+        .cart-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .cart-buttons button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .cart-buttons button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Отзывы */
+        .review-text {
+            font-style: italic;
+        }
+
+        .edit-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .edit-btn:hover {
+            background-color: #218838;
+        }
+
+        .edit-form {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .edit-form textarea,
+        .edit-form select {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
     </style>
 </head>
 <body>
@@ -20,6 +91,28 @@
     <li><strong>Название</strong>: <span data-th-text="${product.title}"></span></li>
     <li><strong>Описание</strong>: <span data-th-text="${product.details}"></span></li>
 </ul>
+
+<div class="product-image-container">
+    <div data-th-each="media : ${product.productMedia}">
+        <div class="product-image">
+            <img data-th-src="${media.mediaPath}" alt="Изображение товара">
+        </div>
+    </div>
+</div>
+
+<div class="cart-buttons">
+    <form data-th-if="${IsInCart}" data-th-action="@{/online-market/buyer/products-from-cart/delete/{productId}(productId=${product.id})}" method="post">
+        <button type="submit" style="background-color: red;">Удалить из корзины</button>
+    </form>
+    <form data-th-if="${!IsInCart}" data-th-action="@{/online-market/buyer/products-from-cart/add/{productId}(productId=${product.id})}" method="post">
+        <button type="submit">Добавить в корзину</button>
+    </form>
+
+    <!-- Кнопка перехода в корзину -->
+    <a href="/online-market/buyer/products-from-cart">
+        <button>Перейти в корзину</button>
+    </a>
+</div>
 
 <h3>Оставить отзыв</h3>
 <form data-th-action="@{/online-market/buyer/products-review/upload-review}" method="post">
@@ -43,20 +136,12 @@
 
 <h3>Отзывы о товаре:</h3>
 <ul>
-    <li data-th-each="review : ${productReviews}"
-        data-th-classappend="${review.userName.equals(user.getPreferredUsername())} ? 'user-review' : ''"
-        data-th-attr="data-review-id=${review.id}">
-
+    <li data-th-each="review : ${productReviews}" data-th-classappend="${review.userName.equals(user.getPreferredUsername())} ? 'user-review' : ''" data-th-attr="data-review-id=${review.id}">
         <p><strong>Пользователь:</strong> <span data-th-text="${review.userName}"></span></p>
         <p><strong>Оценка:</strong> <span data-th-text="${review.rating}"></span></p>
-
-        <!-- Отображение отзыва -->
         <p class="review-text" data-th-text="${review.review}"></p>
 
-        <!-- Форма редактирования (изначально скрыта) -->
-        <form class="edit-form"
-              data-th-action="@{/online-market/buyer/products-review/edit-review}"
-              method="post" style="display: none;">
+        <form class="edit-form" data-th-action="@{/online-market/buyer/products-review/edit-review}" method="post" style="display: none;">
             <input type="hidden" name="productId" data-th-value="${product.id}" />
             <input type="hidden" name="username" data-th-value="${user.getPreferredUsername()}" />
             <textarea name="review" class="edit-textarea" required></textarea>
@@ -75,8 +160,7 @@
         <div data-th-if="${review.userName.equals(user.getPreferredUsername())}">
             <button type="button" class="edit-btn" onclick="enableEdit(this)">Редактировать</button>
 
-            <form data-th-action="@{/online-market/buyer/products-review/delete-review/{productId}(productId=${product.id})}"
-                  method="post">
+            <form data-th-action="@{/online-market/buyer/products-review/delete-review/{productId}(productId=${product.id})}" method="post">
                 <button type="submit" style="color: red;">Удалить</button>
             </form>
         </div>
@@ -93,9 +177,8 @@
         let textReview = listItem.querySelector('.review-text');
         let editForm = listItem.querySelector('.edit-form');
         let textarea = editForm.querySelector('.edit-textarea');
-        let ratingSelect = editForm.querySelector('.edit-rating');
 
-        textarea.value = textReview.textContent; // Заполняем текстовое поле текущим отзывом
+        textarea.value = textReview.textContent;
 
         textReview.style.display = 'none';
         editForm.style.display = 'block';

@@ -64,6 +64,7 @@ public class MainProductFromUserCartClient implements ProductFromUserCartClient{
     @Override
     public ProductFromCart getProductFromUserCart(String username, Integer productId) {
         try {
+            System.out.println(username + " " + productId);
             return this.restClient.get()
                     .uri("api/products-from-cart/products/{productId}/user/{username}",productId,username)
                     .retrieve()
@@ -71,6 +72,19 @@ public class MainProductFromUserCartClient implements ProductFromUserCartClient{
         } catch (HttpClientErrorException.NotFound exception){
             ProblemDetail problemDetail = exception.getResponseBodyAs(ProblemDetail.class);
             throw new NoSuchElementException((String)problemDetail.getProperties().get("errors"));
+        }
+    }
+
+    @Override
+    public boolean productIsInUserCart(String username, Integer productId) {
+        try {
+            this.restClient.get()
+                    .uri("api/products-from-cart/products/{productId}/user/{username}",productId,username)
+                    .retrieve()
+                    .body(ProductFromCart.class);
+            return true;
+        } catch (HttpClientErrorException.NotFound exception){
+            return false;
         }
     }
 

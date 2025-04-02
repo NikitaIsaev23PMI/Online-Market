@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import online_market.user_app.client.product.ProductRestClient;
 import online_market.user_app.client.productFromCart.ProductFromUserCartClient;
 import online_market.user_app.client.productReview.ProductReviewRestClient;
+import online_market.user_app.entity.Product;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -22,11 +25,14 @@ public class ProductsController {
 
     private final ProductReviewRestClient productReviewRestClient;
 
+    private final ProductFromUserCartClient productFromUserCartClient;
+
     @GetMapping()
     public String getProductsPage(@RequestParam(name = "filter", required = false) String filter,
                                   Model model) {
-        model.addAttribute("products", this.productRestClient.getAllProduct(filter));
-//        model.addAttribute("productsReviews", this.productReviewRestClient.getAllReviews());
+        List<Product> products = this.productRestClient.getAllProduct(filter);
+        model.addAttribute("products", products);
+//      model.addAttribute("mediaList", this.productMediaRestClient.getOneMediaOfProduct());
         return "products/list";
     }
 
@@ -37,6 +43,8 @@ public class ProductsController {
         model.addAttribute("productReviews",
                 this.productReviewRestClient.getAllReviewsOfProduct(productId));
         model.addAttribute("user", principal);
+        model.addAttribute("IsInCart",
+                this.productFromUserCartClient.productIsInUserCart(principal.getPreferredUsername(),productId));
    //     model.addAttribute("MyProductReview",
    //             this.productReviewRestClient.getProductReview(productId,principal.getPreferredUsername()));
         return "products/product";

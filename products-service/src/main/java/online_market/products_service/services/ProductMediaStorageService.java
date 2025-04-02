@@ -17,4 +17,5 @@ public interface ProductMediaStorageService {
     void deleteProductMedia(Integer mediaId) throws IOException;
 
     Resource getMedia(String mediaName) throws IOException;
+
 }

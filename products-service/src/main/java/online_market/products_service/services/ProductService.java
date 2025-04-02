@@ -23,4 +23,6 @@ public interface ProductService {
     List<Product> findProductsBySellerSubject(String sellerSubject);
 
     Product findProductBySellerSubject(String sellerSubject);
+
+    List<Product> findProductsByListIds(List<Integer> listOfId);
 }

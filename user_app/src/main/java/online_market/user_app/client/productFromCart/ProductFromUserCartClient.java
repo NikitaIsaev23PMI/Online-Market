@@ -13,4 +13,6 @@ public interface ProductFromUserCartClient {
     void deleteProductFromUserCart(String username, Integer productId);
 
     ProductFromCart getProductFromUserCart(String username, Integer productId);
+
+    boolean productIsInUserCart(String username, Integer productId);
 }

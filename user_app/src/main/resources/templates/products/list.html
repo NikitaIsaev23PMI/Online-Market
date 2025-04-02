@@ -2,11 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Список товаров</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        img {
+            max-width: 50px;
+            max-height: 50px;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        .product-container {
+            display: flex;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
 <form method="get" data-th-action="@{/online-market/buyer/products}">
-    <label>Фильтр:<input type="text" name="filter" data-th-value="${filter}">
+    <label>Фильтр: <input type="text" name="filter" data-th-value="${filter}">
         <button type="submit">Поиск</button>
     </label>
 </form>
@@ -19,10 +40,14 @@
     </thead>
     <tbody>
     <tr data-th-each="product : ${products}">
-        <td data-th-text="${product.title}"></td>
         <td>
-            <a data-th-href="@{/online-market/buyer/products/{productId}(productId=${product.id})}"
-               data-th-text="${product.title}"></a>
+            <div class="product-container">
+                <a data-th-href="@{/online-market/buyer/products/{productId}(productId=${product.id})}"
+                   data-th-text="${product.title}"></a>
+                <th:block th:if="${product.getProductMedia() != null and not #lists.isEmpty(product.getProductMedia()) and product.getProductMedia().getFirst() != null}">
+                    <img th:src="@{${product.getProductMedia().getFirst().getMediaPath()}}" alt="Product Image">
+                </th:block>
+            </div>
         </td>
     </tr>
     </tbody>

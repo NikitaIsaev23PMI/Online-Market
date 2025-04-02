@@ -1,10 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Корзина</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            text-align: center;
+        }
+        .cart-container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #d0e8ff;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .product {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #add8e6;
+        }
+        .product:last-child {
+            border-bottom: none;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .btn-remove {
+            background-color: red;
+            color: white;
+        }
+        .btn-order {
+            background-color: green;
+            color: white;
+            margin-top: 20px;
+            display: block;
+            width: 100%;
+        }
+        .empty-cart {
+            color: gray;
+            font-style: italic;
+        }
+    </style>
 </head>
 <body>
-
+<div class="cart-container">
+    <h2>Ваша корзина</h2>
+    <div data-th-if="${#lists.isEmpty(products)}" class="empty-cart">
+        Корзина пуста
+    </div>
+    <div data-th-each="product : ${products}" class="product">
+        <span data-th-text="${product.title}"></span>
+        <form data-th-action="@{/online-market/buyer/products-from-cart/delete/{productId}(productId=${product.id})}"
+              method="post">
+            <button type="submit" class="btn btn-remove">Удалить</button>
+        </form>
+    </div>
+    <a href="/online-market" class="btn btn-order">Оформить заказ</a>
+</div>
 </body>
 </html>

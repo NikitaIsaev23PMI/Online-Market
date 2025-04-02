@@ -24,15 +24,15 @@ public class ProductsFromCartRestController {
         return this.productFromCartService.findAllProductsFromUserCart(userName);
     }
 
-
     @PostMapping
     public ResponseEntity<?> addProductToUserCart(@RequestBody NewProductFromCartPayload payload,
                                                   UriComponentsBuilder uriBuilder) {
         try {
-            ProductFromCart product = this.productFromCartService.addProductToCart(payload.productId(), payload.userName());
+            System.out.println(payload.productId() +"   "+ payload.username());
+            ProductFromCart product = this.productFromCartService.addProductToCart(payload.productId(), payload.username());
             return ResponseEntity.created(uriBuilder
                             .replacePath("api/products-from-cart/products/{productId}/user/{username}")
-                            .build(Map.of("productId", payload.productId(),"username",payload.userName())))
+                            .build(Map.of("productId", payload.productId(),"username",payload.username())))
                     .body(product);
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

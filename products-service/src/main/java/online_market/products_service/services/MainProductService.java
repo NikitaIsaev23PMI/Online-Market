@@ -76,4 +76,9 @@ public class MainProductService implements ProductService {
             return this.productRepository.findProductBySellerSubject(sellerSubject).get();
         } else throw new NoSuchElementException("товар не найден");
     }
+
+    @Override
+    public List<Product> findProductsByListIds(List<Integer> listOfId) {
+        return this.productRepository.findByIdIn(listOfId);
+    }
 }

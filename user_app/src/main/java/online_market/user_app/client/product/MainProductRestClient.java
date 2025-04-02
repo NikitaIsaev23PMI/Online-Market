@@ -40,4 +40,13 @@ public class MainProductRestClient implements ProductRestClient {
             throw new BadRequestException((List<String>)problemDetail.getProperties().get("errors"));
         }
     }
+
+    @Override
+    public List<Product> findProductsByListOfId(List<Integer> productIds) {
+        return this.restClient.post()
+                .uri("products-service-api/products/products-by-list-id")
+                .body(productIds)
+                .retrieve()
+                .body(PRODUCTS_TYPE_REFERENCE);
+    }
 }
