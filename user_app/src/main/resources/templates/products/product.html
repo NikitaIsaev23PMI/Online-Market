@@ -11,20 +11,16 @@
             flex-wrap: wrap;
             margin-bottom: 20px;
         }
-        .product-image img {
-            width: 250px; /* Ширина изображения */
-            height: 200px; /* Высота изображения */
-            object-fit: cover; /* Чтобы изображение обрезалось и не искажалось */
-            border-radius: 8px; /* Мягкие углы */
-        }
-        .product-image:hover {
-            transform: scale(1.05);
-        }
 
         .product-image img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px; /* Чтобы углы были мягкими */
+            width: 250px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .product-image:hover {
+            transform: scale(1.05);
         }
 
         .user-review {
@@ -53,7 +49,6 @@
             background-color: #0056b3;
         }
 
-        /* Отзывы */
         .review-text {
             font-style: italic;
         }
@@ -81,6 +76,80 @@
             margin-bottom: 10px;
         }
 
+        #error-popup {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #ff4d4d;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            font-size: 16px;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 1s ease;
+            display: none;
+        }
+
+        #error-popup .close-btn {
+            margin-left: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+        }
+
+        #error-popup .close-btn:hover {
+            color: #eee;
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 5px;
+            font-size: 30px;
+            cursor: pointer;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        .star {
+            color: #007bff;
+            transition: color 0.2s;
+        }
+
+        .star.filled {
+            color: gold;
+        }
+
+        .rating-label {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        textarea {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            resize: vertical;
+        }
+
+        button[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -90,6 +159,7 @@
     <li><strong>ID</strong>: <span data-th-text="${product.id}"></span></li>
     <li><strong>Название</strong>: <span data-th-text="${product.title}"></span></li>
     <li><strong>Описание</strong>: <span data-th-text="${product.details}"></span></li>
+    <li><strong>Цена</strong>: <span data-th-text="${product.price} + ' ₽'"></span></li>
 </ul>
 
 <div class="product-image-container">
@@ -107,8 +177,6 @@
     <form data-th-if="${!IsInCart}" data-th-action="@{/online-market/buyer/products-from-cart/add/{productId}(productId=${product.id})}" method="post">
         <button type="submit">Добавить в корзину</button>
     </form>
-
-    <!-- Кнопка перехода в корзину -->
     <a href="/online-market/buyer/products-from-cart">
         <button>Перейти в корзину</button>
     </a>
@@ -122,14 +190,15 @@
     <label for="review">Ваш отзыв:</label>
     <textarea id="review" name="review" required></textarea>
 
-    <label for="rating">Оценка (1-5):</label>
-    <select id="rating" name="rating" required>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-    </select>
+    <div class="rating-label">Оценка:</div>
+    <div class="star-rating" id="starRating">
+        <span class="star" data-value="1">&#9734;</span>
+        <span class="star" data-value="2">&#9734;</span>
+        <span class="star" data-value="3">&#9734;</span>
+        <span class="star" data-value="4">&#9734;</span>
+        <span class="star" data-value="5">&#9734;</span>
+    </div>
+    <input type="hidden" name="rating" id="rating" value="0" required>
 
     <button type="submit">Оставить отзыв</button>
 </form>
@@ -141,7 +210,7 @@
         <p><strong>Оценка:</strong> <span data-th-text="${review.rating}"></span></p>
         <p class="review-text" data-th-text="${review.review}"></p>
 
-        <form class="edit-form" data-th-action="@{/online-market/buyer/products-review/edit-review}" method="post" style="display: none;">
+        <form class="edit-form" data-th-action="@{/online-market/buyer/products-review/edit-review}" method="post">
             <input type="hidden" name="productId" data-th-value="${product.id}" />
             <input type="hidden" name="username" data-th-value="${user.getPreferredUsername()}" />
             <textarea name="review" class="edit-textarea" required></textarea>
@@ -167,8 +236,9 @@
     </li>
 </ul>
 
-<div data-th-if="${errors}" style="color: red;">
-    <p data-th-text="${errors}"></p>
+<div id="error-popup" data-th-if="${errors}">
+    <span data-th-text="${errors}"></span>
+    <button class="close-btn" onclick="closeErrorPopup()">×</button>
 </div>
 
 <script>
@@ -194,6 +264,62 @@
         textReview.style.display = 'block';
         editForm.style.display = 'none';
         editButton.style.display = 'inline-block';
+    }
+
+    function closeErrorPopup() {
+        const errorPopup = document.getElementById("error-popup");
+        errorPopup.style.opacity = "0";
+        setTimeout(() => {
+            errorPopup.style.display = "none";
+        }, 1000);
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+        const errorPopup = document.getElementById("error-popup");
+        if (errorPopup && errorPopup.textContent.trim() !== "") {
+            errorPopup.style.display = "block";
+
+            setTimeout(() => {
+                errorPopup.style.opacity = "0";
+            }, 4000);
+
+            setTimeout(() => {
+                errorPopup.style.display = "none";
+            }, 5000);
+        }
+    });
+
+    // Звездочный рейтинг
+    const stars = document.querySelectorAll('.star');
+    const ratingInput = document.getElementById('rating');
+    let currentRating = 0;
+
+    stars.forEach(star => {
+        star.addEventListener('mouseenter', () => {
+            const value = parseInt(star.dataset.value);
+            highlightStars(value);
+        });
+
+        star.addEventListener('mouseleave', () => {
+            highlightStars(currentRating);
+        });
+
+        star.addEventListener('click', () => {
+            currentRating = parseInt(star.dataset.value);
+            ratingInput.value = currentRating;
+            highlightStars(currentRating);
+        });
+    });
+
+    function highlightStars(rating) {
+        stars.forEach(star => {
+            const starValue = parseInt(star.dataset.value);
+            if (starValue <= rating) {
+                star.classList.add('filled');
+            } else {
+                star.classList.remove('filled');
+            }
+        });
     }
 </script>
 

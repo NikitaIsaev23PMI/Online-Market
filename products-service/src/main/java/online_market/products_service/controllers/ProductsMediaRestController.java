@@ -2,11 +2,10 @@ package online_market.products_service.controllers;
 
 import lombok.RequiredArgsConstructor;
 import online_market.products_service.entity.ProductMedia;
-import online_market.products_service.services.ProductMediaStorageService;
+import online_market.products_service.services.productMedia.ProductMediaStorageService;
 import org.apache.coyote.BadRequestException;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 

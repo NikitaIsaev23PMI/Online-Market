@@ -1,5 +1,6 @@
 package online_market.user_app.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import online_market.user_app.client.product.ProductRestClient;
 import online_market.user_app.client.productFromCart.ProductFromUserCartClient;
@@ -48,10 +49,10 @@ public class ProductsFromUserCartController {
 
     @PostMapping("delete/{productId}")
     public String deleteProductFromCart(@PathVariable Integer productId,
-                                      @AuthenticationPrincipal OidcUser principal) {
+                                      @AuthenticationPrincipal OidcUser principal,
+                                        HttpServletRequest request) {
         this.productFromUserCartClient.
                 deleteProductFromUserCart(principal.getPreferredUsername(), productId);
-
-        return "redirect:/online-market/buyer/products/%d".formatted(productId);
+        return "redirect:" + request.getHeader("Referer");
     }
 }

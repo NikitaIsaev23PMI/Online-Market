@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 import org.springframework.data.repository.cdi.Eager;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -40,4 +42,10 @@ public class Product {
     @OneToMany(mappedBy = "product",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<ProductMedia> productMedia;
+
+    @Column(name = "c_price", precision = 10, scale = 2)
+    private BigDecimal price;
+
+    @OneToOne(mappedBy = "product")
+    private Discount discount;
 }

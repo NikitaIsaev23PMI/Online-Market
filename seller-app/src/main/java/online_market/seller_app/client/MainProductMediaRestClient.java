@@ -39,7 +39,6 @@ public class MainProductMediaRestClient implements ProductMediaRestClient {
                     .retrieve()
                     .body(ProductMedia.class);
         } catch (HttpClientErrorException.BadRequest exception){
-            System.out.println(exception.getResponseBodyAsString());
             ProblemDetail problemDetail = exception.getResponseBodyAs(ProblemDetail.class);
             String errorMessage = (String)problemDetail.getProperties().get("errors");
             throw new MediaUploadException(errorMessage);

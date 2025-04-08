@@ -1,45 +1,88 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Редактирование продукта</title>
 </head>
 <body>
-<form method="post" data-th-action="@{/online-market/products/{productId}/edit(productId=${product.id})}">
+
+<!-- Форма редактирования продукта -->
+<form method="post" th:action="@{/online-market/products/{productId}/edit(productId=${product.id})}">
     <label>
         Название:<br>
-        <input type="text" name="title" data-th-value="${product?.title}">
+        <input type="text" name="title" th:value="${product?.title}">
     </label><br>
     <label>
         Описание:<br>
-        <textarea name="details" data-th-text="${product?.details}"></textarea>
+        <textarea name="details" th:text="${product?.details}"></textarea>
+    </label><br>
+    <label>
+        Цена:<br>
+        <input type="number" name="price" step="0.01" th:value="${product?.price}" required>
     </label><br>
     <button type="submit">Изменить</button>
 </form>
-<form method="post" data-th-action="@{/online-market/products/{productId}/delete(productId=${product.id})}">
+
+<!-- Форма удаления продукта -->
+<form method="post" th:action="@{/online-market/products/{productId}/delete(productId=${product.id})}">
     <button type="submit">Удалить</button>
 </form>
+
+<!-- Загрузка медиафайлов -->
 <form method="post" enctype="multipart/form-data"
-      data-th-action="@{/online-market/products-media/upload/media/{productId}(productId=${product.id})}">
+      th:action="@{/online-market/products-media/upload/media/{productId}(productId=${product.id})}">
     <label>
         Загрузить медиа:<br>
         <input type="file" name="media" accept="image/*,video/*" required>
     </label><br>
     <button type="submit">Загрузить</button>
 </form>
+
+<!-- ✅ БЛОК: Добавление скидки -->
+<div>
+    <h2>Добавить скидку:</h2>
+    <form method="post" th:action="@{/online-market/products/discount/{productId}(productId=${product.id})}">
+        <label>
+            Скидка (% от 1 до 100):<br>
+            <input type="number" step="1" min="1" max="100" name="amount" required>
+        </label><br>
+        <label>
+            Дата окончания скидки:<br>
+            <input type="datetime-local" name="endDiscount" required>
+        </label><br>
+        <button type="submit">Применить скидку</button>
+    </form>
+</div>
+
+<!-- ❌ БЛОК: Удаление скидки -->
+<div th:if="${product.discount != null}">
+    <h3>Текущая скидка:
+        <span th:text="${product.discount.amount + '%'}"></span><br>
+        Действует до:
+        <span th:text="${#temporals.format(product.discount.endDate, 'dd.MM.yyyy HH:mm')}"></span>
+    </h3>
+    <form method="post" th:action="@{/online-market/discount/products/delete/{productId}(productId=${product.id})}">
+        <button type="submit" onclick="return confirm('Удалить скидку?')">Удалить скидку</button>
+    </form>
+</div>
+
+<!-- 📷 Медиа -->
 <div>
     <h2>Фотографии товара:</h2>
-    <div data-th-each="media : ${product.getProductMedia()}">
+    <div th:each="media : ${product.getProductMedia()}">
         <img th:src="@{${media.getMediaPath()}}" alt="Product Image" width="150">
-        <form method="post" data-th-action="@{/online-market/products-media/delete/media/{productId}/{mediaId}(productId=${product.getId()}, mediaId=${media.getId()})}">
+        <form method="post"
+              th:action="@{/online-market/products-media/delete/media/{productId}/{mediaId}(productId=${product.getId()}, mediaId=${media.getId()})}">
             <button type="submit" onclick="return confirm('Удалить фото?')">Удалить</button>
         </form>
     </div>
 </div>
-<div data-th-if="${errors}">
+
+<!-- Ошибки -->
+<div th:if="${errors}">
     <h2>Допущены ошибки</h2>
     <ul>
-        <li data-th-each="error: ${errors}" data-th-text="${error}"></li>
+        <li th:each="error: ${errors}" th:text="${error}"></li>
     </ul>
 </div>
 

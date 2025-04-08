@@ -1,0 +1,1 @@
+ALTER table products_schema.t_product add column c_price NUMERIC(10,2) NOT NULL

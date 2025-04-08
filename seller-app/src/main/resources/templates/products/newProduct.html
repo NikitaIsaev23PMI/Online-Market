@@ -14,6 +14,10 @@
         Описание:<br>
         <textarea name="details" data-th-text="${payload?.details()}"></textarea>
     </label><br>
+    <label>
+        Цена:
+        <input type="number" name="price" step="0.01" th:value="${payload?.price}" required>
+    </label><br>
     <button type="submit">Создать</button>
 </form>
 <div data-th-if="${errors}">

@@ -1,4 +1,4 @@
-package online_market.products_service.services;
+package online_market.products_service.services.productMedia;
 
 import lombok.RequiredArgsConstructor;
 import online_market.products_service.entity.Product;

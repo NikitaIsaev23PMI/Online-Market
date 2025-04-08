@@ -5,48 +5,86 @@
     <title>Корзина</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f8ff;
-            text-align: center;
+            font-family: 'Arial', sans-serif;
+            background-color: #e6f7ff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
         .cart-container {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
+            width: 100%;
+            max-width: 800px;
             background-color: #d0e8ff;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #1e90ff;
         }
         .product {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #add8e6;
+            padding: 12px;
+            background-color: #f0f8ff;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .product:last-child {
-            border-bottom: none;
+            margin-bottom: 0;
+        }
+        .product img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .product span {
+            flex-grow: 1;
+            padding-left: 12px;
+            font-size: 16px;
+            color: #333;
         }
         .btn {
             padding: 8px 16px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
+            font-size: 14px;
         }
         .btn-remove {
-            background-color: red;
+            background-color: #ff4d4d;
             color: white;
         }
+        .btn-remove:hover {
+            background-color: #ff3333;
+        }
         .btn-order {
-            background-color: green;
+            background-color: #4CAF50;
             color: white;
             margin-top: 20px;
             display: block;
             width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 18px;
+        }
+        .btn-order:hover {
+            background-color: #45a049;
         }
         .empty-cart {
-            color: gray;
+            color: #666;
             font-style: italic;
+            padding: 20px;
         }
     </style>
 </head>
@@ -57,9 +95,11 @@
         Корзина пуста
     </div>
     <div data-th-each="product : ${products}" class="product">
+        <th:block th:if="${product.getProductMedia() != null and not #lists.isEmpty(product.getProductMedia()) and product.getProductMedia().getFirst() != null}">
+            <img th:src="@{${product.getProductMedia().getFirst().getMediaPath()}}" alt="Product Image">
+        </th:block>
         <span data-th-text="${product.title}"></span>
-        <form data-th-action="@{/online-market/buyer/products-from-cart/delete/{productId}(productId=${product.id})}"
-              method="post">
+        <form data-th-action="@{/online-market/buyer/products-from-cart/delete/{productId}(productId=${product.id})}" method="post">
             <button type="submit" class="btn btn-remove">Удалить</button>
         </form>
     </div>

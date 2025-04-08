@@ -43,6 +43,7 @@ public class MainProductRestClient implements ProductRestClient {
 
     @Override
     public List<Product> findProductsByListOfId(List<Integer> productIds) {
+        System.out.println("Вошел в findProductsByListOfId");
         return this.restClient.post()
                 .uri("products-service-api/products/products-by-list-id")
                 .body(productIds)

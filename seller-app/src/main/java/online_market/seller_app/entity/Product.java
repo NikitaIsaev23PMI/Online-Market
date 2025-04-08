@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @AllArgsConstructor
@@ -19,5 +20,9 @@ public class Product {
 
     private String sellerSubject;
 
+    private BigDecimal price;
+
     private List<ProductMedia> productMedia;
+
+    private Discount discount;
 }

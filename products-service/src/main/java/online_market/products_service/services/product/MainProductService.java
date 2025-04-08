@@ -1,15 +1,15 @@
-package online_market.products_service.services;
+package online_market.products_service.services.product;
 
 import lombok.RequiredArgsConstructor;
 import online_market.products_service.entity.Product;
-import online_market.products_service.entity.ProductMedia;
 import online_market.products_service.repository.ProductMediaRepository;
 import online_market.products_service.repository.ProductRepository;
+import online_market.products_service.services.productMedia.ProductMediaStorageService;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -34,17 +34,18 @@ public class MainProductService implements ProductService {
     }
 
     @Override
-    public Product create(String title, String details, String sellerSubject) {
-        return productRepository.save(new Product(null,title,details,sellerSubject,null));
+    public Product create(String title, String details, String sellerSubject, BigDecimal price) {
+        return productRepository.save(new Product(null,title,details,sellerSubject,null, price, null));
     }
 
     @Override
-    public void updateProduct(int id, String title, String details, String sellerSubject) {
+    public void updateProduct(int id, String title, String details, String sellerSubject, BigDecimal price) {
         this.productRepository.findById(id).ifPresentOrElse(
                 product -> {
                     if (product.getSellerSubject().equals(sellerSubject)) {
                         product.setTitle(title);
                         product.setDetails(details);
+                        product.setPrice(price);
                         productRepository.save(product);
                     } else throw new AccessDeniedException("Вы не являетесь владельцем товара, поэтому не можете его редпктировать");
                 }, () -> {
@@ -81,4 +82,6 @@ public class MainProductService implements ProductService {
     public List<Product> findProductsByListIds(List<Integer> listOfId) {
         return this.productRepository.findByIdIn(listOfId);
     }
+
+
 }

@@ -1,5 +1,6 @@
 package online_market.seller_app.controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import online_market.seller_app.client.exception.BadRequestException;
 import online_market.seller_app.client.ProductRestClient;
@@ -11,8 +12,11 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
 import java.nio.file.AccessDeniedException;
+import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
 @Controller
@@ -64,7 +68,7 @@ public class ProductsController {
     public String editProduct(Model model, @PathVariable("productId") int id,
                               UpdateProductPayload payload, @AuthenticationPrincipal OidcUser user) throws AccessDeniedException {
         try {
-            this.productRestClient.updateProduct(id, payload.title(), payload.details(), user.getSubject());
+            this.productRestClient.updateProduct(id, payload.title(), payload.details(), user.getSubject(), payload.price());
             model.addAttribute("product", this.productRestClient.findProduct(id).get());
             return "redirect:/online-market/products/%d/edit".formatted(id);
         } catch (BadRequestException exception) {
@@ -83,7 +87,8 @@ public class ProductsController {
     public String createProduct(NewProductPayload payload,
                                 Model model, @AuthenticationPrincipal OidcUser user) {
         try {
-            Product product = this.productRestClient.createProduct(payload.title(), payload.details(), user.getSubject());
+            Product product = this.productRestClient.createProduct(payload.title(), payload.details(),
+                    user.getSubject(), payload.price());
             return "redirect:/online-market/products/%d/edit".formatted(product.getId());
         } catch (BadRequestException exception) {
             model.addAttribute("errors", exception.getErrors());

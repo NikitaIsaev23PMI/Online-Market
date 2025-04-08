@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -19,4 +20,6 @@ public class Product {
     private String details;
 
     private List<ProductMedia> productMedia;
+
+    private BigDecimal price;
 }

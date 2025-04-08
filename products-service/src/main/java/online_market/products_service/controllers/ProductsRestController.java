@@ -3,25 +3,19 @@ package online_market.products_service.controllers;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import online_market.products_service.entity.Product;
-import online_market.products_service.entity.ProductMedia;
+import online_market.products_service.payload.NewDiscountPayload;
 import online_market.products_service.payload.NewProductPayload;
 import online_market.products_service.payload.UpdateProductPayload;
-import online_market.products_service.repository.ProductRepository;
-import online_market.products_service.services.ProductService;
+import online_market.products_service.services.product.ProductService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -69,7 +63,7 @@ public class ProductsRestController {
                 throw new BindException(bindingResult);
             }
         } else {
-                Product product = this.productService.create(payload.title(), payload.details(), payload.sellerSubject());
+                Product product = this.productService.create(payload.title(), payload.details(), payload.sellerSubject(), payload.price());
                 return ResponseEntity.created(uriBuilder
                                 .replacePath("products-service-api/products/{productId}")
                                 .build(Map.of("productId", product.getId())))
@@ -91,7 +85,7 @@ public class ProductsRestController {
         } else {
             try {
                 this.productService.updateProduct(productId, payload.title(),
-                        payload.details(), jwt.getToken().getSubject());
+                        payload.details(), jwt.getToken().getSubject(), payload.price());
                 return ResponseEntity.noContent().build();
             } catch (AccessDeniedException e) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -112,6 +106,11 @@ public class ProductsRestController {
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+    }
+
+    @PostMapping("products-by-list-id")
+    public List<Product> findProductsByListId(@RequestBody List<Integer> listOfId){
+        return this.productService.findProductsByListIds(listOfId);
     }
 }
 

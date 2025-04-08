@@ -28,7 +28,6 @@ public class ProductsFromCartRestController {
     public ResponseEntity<?> addProductToUserCart(@RequestBody NewProductFromCartPayload payload,
                                                   UriComponentsBuilder uriBuilder) {
         try {
-            System.out.println(payload.productId() +"   "+ payload.username());
             ProductFromCart product = this.productFromCartService.addProductToCart(payload.productId(), payload.username());
             return ResponseEntity.created(uriBuilder
                             .replacePath("api/products-from-cart/products/{productId}/user/{username}")
