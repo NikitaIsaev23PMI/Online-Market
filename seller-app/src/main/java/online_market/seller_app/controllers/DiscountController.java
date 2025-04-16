@@ -36,7 +36,7 @@ public class DiscountController {
         }
     }
 
-    @PostMapping("delete/{prdouctId}")
+    @PostMapping("delete/{productId}")
     public String deleteDiscount(@PathVariable("productId") Integer productId,
                                  RedirectAttributes redirectAttributes, HttpServletRequest request) {
         try {

@@ -1,30 +1,231 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Создание товара</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f0f4f8;
+            color: #1f2937;
+            margin: 0;
+            padding: 2rem;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+            padding: 2.5rem 3rem;
+        }
+
+        h1 {
+            color: #1e3a8a;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 1rem;
+            background-color: #f8fafc;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 0.75rem;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 1rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        button:hover {
+            background: #2563eb;
+        }
+
+        .error-block {
+            margin-top: 2rem;
+            background: #fee2e2;
+            border: 2px solid #f87171;
+            border-radius: 1.5rem;
+            padding: 1rem 1.5rem;
+        }
+
+        .error-block h2 {
+            color: #b91c1c;
+            margin-bottom: 0.5rem;
+        }
+
+        .error-block ul {
+            list-style: disc;
+            padding-left: 1.5rem;
+            color: #991b1b;
+        }
+
+        /* Стили для категорий */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .category-card {
+            cursor: pointer;
+            border-radius: 1rem;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+            border: 2px solid transparent;
+        }
+
+        .category-card.selected {
+            border-color: #3b82f6;
+            background: #dbeafe;
+        }
+
+        .category-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+
+        .category-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .category-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        #selectedCategory {
+            display: none;
+        }
+
+        .error-message {
+            color: #dc2626;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+    </style>
 </head>
 <body>
-<form method="post" data-th-action="@{/online-market/products/create}">
-    <label>
-        Название:<br>
-        <input type="text" name="title" data-th-value="${payload?.title}">
-    </label><br>
-    <label>
-        Описание:<br>
-        <textarea name="details" data-th-text="${payload?.details()}"></textarea>
-    </label><br>
-    <label>
-        Цена:
-        <input type="number" name="price" step="0.01" th:value="${payload?.price}" required>
-    </label><br>
-    <button type="submit">Создать</button>
-</form>
-<div data-th-if="${errors}">
-    <h2>Допушены ошибки</h2>
-    <ul>
-        <li data-th-each="error: ${errors}" data-th-text="${error}"></li>
-    </ul>
+
+<div class="form-container">
+    <h1>Создание нового товара</h1>
+    <form method="post" data-th-action="@{/online-market/products/create}" onsubmit="return validateForm()">
+        <label>
+            Название:
+            <input type="text" name="title" data-th-value="${payload?.title}" placeholder="Введите название товара" required>
+        </label>
+
+        <label>
+            Описание:
+            <textarea name="details" placeholder="Добавьте описание товара"
+                      data-th-text="${payload?.details}" required></textarea>
+        </label>
+
+        <label>
+            Цена:
+            <input type="number" name="price" step="0.01" required
+                   placeholder="0.00" th:value="${payload?.price}">
+        </label>
+
+        <!-- Блок выбора категории -->
+        <label>
+            Категория:
+            <input type="hidden" name="category" id="selectedCategory" required>
+            <div class="categories-grid">
+                <div th:each="cat : ${categories}"
+                     class="category-card"
+                     th:data-category="${cat.name()}"
+                     onclick="selectCategory(this)">
+                    <img th:src="@{${cat.imagePath}}"
+                         alt="Category image"
+                         class="category-image">
+                    <p class="category-name" th:text="${cat.displayName}"></p>
+                </div>
+            </div>
+            <div class="error-message" id="categoryError">Пожалуйста, выберите категорию</div>
+        </label>
+
+        <button type="submit">Создать</button>
+    </form>
+
+    <div class="error-block" data-th-if="${errors}">
+        <h2>Допущены ошибки:</h2>
+        <ul>
+            <li data-th-each="error : ${errors}" data-th-text="${error}"></li>
+        </ul>
+    </div>
 </div>
+
+<script>
+    function selectCategory(card) {
+        // Снимаем выделение со всех карточек
+        document.querySelectorAll('.category-card').forEach(c => {
+            c.classList.remove('selected');
+        });
+
+        // Добавляем выделение выбранной
+        card.classList.add('selected');
+
+        // Обновляем скрытое поле
+        document.getElementById('selectedCategory').value = card.dataset.category;
+        document.getElementById('categoryError').style.display = 'none';
+    }
+
+    function validateForm() {
+        const selectedCategory = document.getElementById('selectedCategory').value;
+        if (!selectedCategory) {
+            document.getElementById('categoryError').style.display = 'block';
+            return false;
+        }
+        return true;
+    }
+</script>
+
 </body>
 </html>

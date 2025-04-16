@@ -11,11 +11,11 @@ import java.util.Optional;
 
 public interface ProductRestClient {
 
-    List<Product> findAllProducts(String filter);
+    List<Product> findAllProducts(String filter, String category);
 
-    Product createProduct(String title, String details, String sellerSubject, BigDecimal price);
+    Product createProduct(String title, String details, String sellerSubject, BigDecimal price, String category);
 
-    void updateProduct(int id, String title, String details, String sellerSubject, BigDecimal price);
+    void updateProduct(int id, String title, String details, String sellerSubject, BigDecimal price, String category);
 
     Optional<Product> findProduct(int id);
 

@@ -38,20 +38,22 @@ public class MainProductsRestClient implements ProductRestClient{
 
 
     @Override
-    public List<Product> findAllProducts(String filter) {
+    public List<Product> findAllProducts(String filter, String category) {
         return this.restClient.get()
-                .uri("/products-service-api/products?filter={filter}",filter)
+                .uri("/products-service-api/products?filter={filter}&category={category}",filter, category)
                 .retrieve()
                 .body(PRODUCTS_TYPE_REFERENCE);
     }
 
     @Override
-    public Product createProduct(String title, String details, String sellerSubject, BigDecimal price) {
+    public Product createProduct(String title, String details,
+                                 String sellerSubject, BigDecimal price,
+                                 String category) {
         try {
             return this.restClient.post()
                     .uri("/products-service-api/products")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(new NewProductPayload(title, details, sellerSubject, price))
+                    .body(new NewProductPayload(title, details, sellerSubject, price, category))
                     .retrieve()
                     .body(Product.class);
         } catch (HttpClientErrorException.BadRequest exception){
@@ -61,12 +63,14 @@ public class MainProductsRestClient implements ProductRestClient{
     }
 
     @Override
-    public void updateProduct(int id, String title, String details, String sellerSubject, BigDecimal price) {
+    public void updateProduct(int id, String title, String details,
+                              String sellerSubject, BigDecimal price,
+                              String category) {
         try {
             this.restClient.patch()
                     .uri("products-service-api/products/" + id)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(new UpdateProductPayload(title, details, sellerSubject,price))
+                    .body(new UpdateProductPayload(title, details, sellerSubject,price,category))
                     .retrieve()
                     .toBodilessEntity();
         } catch (HttpClientErrorException.BadRequest exception){

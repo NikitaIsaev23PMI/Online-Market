@@ -1,5 +1,6 @@
 package online_market.user_app.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import online_market.user_app.client.exception.BadRequestException;
 import online_market.user_app.client.productReview.ProductReviewRestClient;
@@ -15,6 +16,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.NoSuchElementException;
 
 @Controller
@@ -26,11 +28,10 @@ public class ProductsReviewController {
 
     @PostMapping("/upload-review")
     public String uploadReview(NewProductReviewPayload payload,
-                               RedirectAttributes redirectAttributes) {
+                               RedirectAttributes redirectAttributes) throws IOException {
         try {
-            System.out.println(payload.toString());
             this.productReviewRestClient.addProductReview(payload.username(), payload.productId(),
-                    payload.review(), payload.rating());
+                    payload.review(), payload.rating(), payload.medias());
             return "redirect:/online-market/buyer/products/%d".formatted(payload.productId());
         } catch (BadRequestException exception){
             redirectAttributes.addFlashAttribute("errors", exception.getErrors());;
@@ -61,6 +62,27 @@ public class ProductsReviewController {
         } catch (NoSuchElementException exception){
             redirectAttributes.addFlashAttribute("errors", exception.getMessage());
             return "redirect:/online-market/buyer/products/%d".formatted(payload.productId());
+        }
+    }
+
+    @PostMapping("/{reviewId}/{media-name}")
+    public String deleteMedia(HttpServletRequest request,
+                              @PathVariable("reviewId") String reviewId,
+                              @PathVariable("media-name") String mediaName){
+        this.productReviewRestClient.deleteMedia(reviewId,mediaName);
+        return "redirect:" + request.getHeader("Referer");
+    }
+
+    @PostMapping("/add-media/{reviewId}")
+    public String addMediaForReview(@PathVariable("reviewId") String reviewId,
+                                    HttpServletRequest request,
+                                    MultipartFile media, RedirectAttributes redirectAttributes) {
+        try {
+            this.productReviewRestClient.addMedia(media, reviewId);
+            return "redirect:" + request.getHeader("Referer");
+        } catch (NoSuchElementException exception){
+            redirectAttributes.addFlashAttribute("errors", exception.getMessage());
+            return "redirect:" + request.getHeader("Referer");
         }
     }
 }

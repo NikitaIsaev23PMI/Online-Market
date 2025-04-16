@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import online_market.products_service.entity.ProductMedia;
 import online_market.products_service.services.productMedia.ProductMediaStorageService;
 import org.apache.coyote.BadRequestException;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -63,14 +64,18 @@ public class ProductsMediaRestController {
     }
 
 
-    @GetMapping("{name-media}")
+    @GetMapping(value = "{name-media}")
     public ResponseEntity<?> findMediaByName(@PathVariable("name-media") String mediaName) throws IOException {
         Resource media = this.productMediaStorageService.getMedia(mediaName);
         String contentType = Files.probeContentType(Paths.get(media.getFile().getAbsolutePath()));
+        InputStreamResource resource = new InputStreamResource(media.getInputStream());
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + mediaName + "\"")
-                .body(media);
+                .body(resource);
     }
+
+
+
+
 }

@@ -25,4 +25,6 @@ public class Product {
     private List<ProductMedia> productMedia;
 
     private Discount discount;
+
+    private String category;
 }

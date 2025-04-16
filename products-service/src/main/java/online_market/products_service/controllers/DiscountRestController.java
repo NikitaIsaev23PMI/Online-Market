@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import online_market.products_service.entity.Product;
 import online_market.products_service.payload.NewDiscountPayload;
 import online_market.products_service.services.discount.DiscountService;
+import org.hibernate.NonUniqueObjectException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;

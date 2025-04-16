@@ -21,9 +21,9 @@ public class MainProductRestClient implements ProductRestClient {
     private final RestClient restClient;
 
     @Override
-    public List<Product> getAllProduct(String filter) {
+    public List<Product> getAllProduct(String filter, String category) {
         return this.restClient.get()
-                .uri("products-service-api/products?filter={filter}",filter)
+                .uri("products-service-api/products?filter={filter}&category={category}",filter, category)
                 .retrieve()
                 .body(PRODUCTS_TYPE_REFERENCE);
     }
@@ -43,7 +43,6 @@ public class MainProductRestClient implements ProductRestClient {
 
     @Override
     public List<Product> findProductsByListOfId(List<Integer> productIds) {
-        System.out.println("Вошел в findProductsByListOfId");
         return this.restClient.post()
                 .uri("products-service-api/products/products-by-list-id")
                 .body(productIds)

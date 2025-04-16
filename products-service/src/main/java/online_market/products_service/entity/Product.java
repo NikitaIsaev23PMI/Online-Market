@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.Type;
 import org.springframework.data.repository.cdi.Eager;
 
@@ -47,5 +48,9 @@ public class Product {
     private BigDecimal price;
 
     @OneToOne(mappedBy = "product")
+    @JsonManagedReference
     private Discount discount;
+
+    @Column(name = "c_category")
+    private String category;
 }

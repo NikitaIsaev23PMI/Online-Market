@@ -1,56 +1,226 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Список товаров</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f1f5f9;
+            color: #1f2937;
+            margin: 0;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: white;
+            border-radius: 2rem;
+            padding: 2.5rem 3rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1e3a8a;
+            margin-bottom: 2rem;
+        }
+
+        .search-section {
+            margin-bottom: 2rem;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 0.6rem 1rem;
+            border-radius: 1rem;
+            border: 1.5px solid #cbd5e1;
+            background: #f8fafc;
+            transition: border 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: #3b82f6;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+
+        button {
+            padding: 0.6rem 1.2rem;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #2563eb;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .category-card {
+            cursor: pointer;
+            border-radius: 1rem;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+            border: 2px solid transparent;
+        }
+
+        .category-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            border-color: #3b82f6;
+        }
+
+        .category-card.active {
+            border-color: #3b82f6;
+            background: #dbeafe;
+        }
+
+        .category-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .category-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        #selectedCategory {
+            display: none;
+        }
+
+        .button-link {
+            display: inline-block;
+            margin: 1rem 0;
+            padding: 0.6rem 1.2rem;
+            background: #2563eb;
+            color: white;
+            border-radius: 1rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .button-link:hover {
+            background: #1e40af;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 1.5rem;
         }
+
+        thead {
+            background: #dbeafe;
+        }
+
         th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
+            padding: 1rem;
             text-align: left;
+            border-bottom: 1px solid #e5e7eb;
         }
-        img {
-            max-width: 50px;
-            max-height: 50px;
-            border-radius: 5px;
-            margin-right: 10px;
+
+        tbody tr:hover {
+            background: #f0f9ff;
         }
-        .product-container {
-            display: flex;
-            align-items: center;
+
+        .product-image {
+            max-width: 100px;
+            border-radius: 0.75rem;
+            margin-top: 0.5rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
         }
     </style>
 </head>
 <body>
-<form method="get" data-th-action="@{/online-market/buyer/products}">
-    <label>Фильтр: <input type="text" name="filter" data-th-value="${filter}">
-        <button type="submit">Поиск</button>
-    </label>
-</form>
-<table>
-    <thead>
-    <tr>
-        <th>#</th>
-        <th>Товар</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr data-th-each="product : ${products}">
-        <td>
-            <div class="product-container">
-                <a data-th-href="@{/online-market/buyer/products/{productId}(productId=${product.id})}"
-                   data-th-text="${product.title}"></a>
-                <th:block th:if="${product.getProductMedia() != null and not #lists.isEmpty(product.getProductMedia()) and product.getProductMedia().getFirst() != null}">
-                    <img th:src="@{${product.getProductMedia().getFirst().getMediaPath()}}" alt="Product Image">
-                </th:block>
+
+<div class="container">
+    <h1>Список товаров</h1>
+
+    <div class="search-section">
+        <form method="get" class="search-form" data-th-action="@{/online-market/buyer/products}">
+            <input type="text" name="filter" placeholder="Поиск по названию..." data-th-value="${filter}">
+            <input type="hidden" name="category" id="selectedCategory" th:value="${filterCategory}">
+            <button type="submit">Поиск</button>
+        </form>
+
+        <div class="categories-grid">
+            <div th:each="cat : ${categories}"
+                 class="category-card"
+                 th:data-category="${cat.name()}"
+                 th:classappend="${cat.name() == filterCategory} ? 'active' : ''"
+                 onclick="selectCategory(this)">
+                <img th:src="@{${cat.imagePath}}"
+                     alt="Category image"
+                     class="category-image">
+                <p class="category-name" th:text="${cat.displayName}"></p>
             </div>
-        </td>
-    </tr>
-    </tbody>
-</table>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Товар</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr data-th-each="product : ${products}">
+            <td data-th-text="${product.id}">1</td>
+            <td>
+                <a data-th-href="@{/online-market/buyer/products/{productId}(productId=${product.id})}"
+                   data-th-text="${product.title}">Название товара</a>
+                <th:block th:if="${product.getProductMedia() != null and not #lists.isEmpty(product.getProductMedia()) and product.getProductMedia().getFirst() != null}">
+                    <img class="product-image"
+                         th:src="@{${product.getProductMedia().getFirst().getMediaPath()}}"
+                         alt="Product Image">
+                </th:block>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function selectCategory(card) {
+        document.querySelectorAll('.category-card').forEach(c => {
+            c.classList.remove('active');
+        });
+
+        card.classList.add('active');
+
+        const category = card.getAttribute('data-category');
+        document.getElementById('selectedCategory').value = category;
+    }
+</script>
+
 </body>
 </html>

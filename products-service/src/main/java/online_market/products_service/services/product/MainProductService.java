@@ -2,6 +2,7 @@ package online_market.products_service.services.product;
 
 import lombok.RequiredArgsConstructor;
 import online_market.products_service.entity.Product;
+import online_market.products_service.repository.DiscountRepository;
 import online_market.products_service.repository.ProductMediaRepository;
 import online_market.products_service.repository.ProductRepository;
 import online_market.products_service.services.productMedia.ProductMediaStorageService;
@@ -19,33 +20,42 @@ public class MainProductService implements ProductService {
 
     private final ProductRepository productRepository;
 
-    private final ProductMediaStorageService productMediaStorageService;
-
-    private final ProductMediaRepository productMediaRepository;
+    private final DiscountRepository discountRepository;
 
     @Override
-    public List<Product> findAllProduct(String filter) {
-        return productRepository.findAllByTitleContainsIgnoreCase(filter);
+    public List<Product> findAllProduct(String filter, String category) {
+        return productRepository.findAllByTitleContainsAndCategoryIs(filter, category);
     }
 
     @Override
     public Product findById(int id) {
-        return this.productRepository.findById(id).orElseThrow(() -> new NoSuchElementException("товар не найден"));
+        Product product = this.productRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("товар не найден"));
+        if(product.getDiscount() != null){
+            if(product.getDiscount().getEndDate().isBefore(LocalDateTime.now())) {
+                this.discountRepository.deleteDiscountByProductId(id);
+                product.setDiscount(null);
+            }
+        }
+        return product;
     }
 
     @Override
-    public Product create(String title, String details, String sellerSubject, BigDecimal price) {
-        return productRepository.save(new Product(null,title,details,sellerSubject,null, price, null));
+    public Product create(String title, String details, String sellerSubject, BigDecimal price, String category) {
+        return productRepository.save(new Product(null,title,details,sellerSubject,null, price, null, category));
     }
 
     @Override
-    public void updateProduct(int id, String title, String details, String sellerSubject, BigDecimal price) {
+    public void updateProduct(int id, String title, String details,
+                              String sellerSubject, BigDecimal price,
+                              String category) {
         this.productRepository.findById(id).ifPresentOrElse(
                 product -> {
                     if (product.getSellerSubject().equals(sellerSubject)) {
                         product.setTitle(title);
                         product.setDetails(details);
                         product.setPrice(price);
+                        product.setCategory(category);
                         productRepository.save(product);
                     } else throw new AccessDeniedException("Вы не являетесь владельцем товара, поэтому не можете его редпктировать");
                 }, () -> {

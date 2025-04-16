@@ -4,7 +4,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import online_market.seller_app.client.exception.BadRequestException;
 import online_market.seller_app.client.ProductRestClient;
+import online_market.seller_app.client.productReview.ProductReviewRestClient;
 import online_market.seller_app.entity.Product;
+import online_market.seller_app.enums.Category;
 import online_market.seller_app.payload.NewProductPayload;
 import online_market.seller_app.payload.UpdateProductPayload;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.math.BigDecimal;
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 @Controller
@@ -26,12 +29,16 @@ public class ProductsController {
 
     private final ProductRestClient productRestClient;
 
+    private final ProductReviewRestClient productReviewRestClient;
+
     @GetMapping("list")
     public String listProducts(@RequestParam(name = "filter", required = false) String filter,
+                               @RequestParam(name = "category", required = false) String category,
                                Model model, @AuthenticationPrincipal OidcUser user) {
-        user.getAuthorities().stream().forEach(o -> System.out.println(o));
-        model.addAttribute("products", this.productRestClient.findAllProducts(filter));
+        model.addAttribute("products", this.productRestClient.findAllProducts(filter, category));
         model.addAttribute("filter", filter);
+        model.addAttribute("filterCategory", category);
+        model.addAttribute("categories", Arrays.stream(Category.values()).toList());
         return "products/list";
     }
 
@@ -47,7 +54,8 @@ public class ProductsController {
                                  @AuthenticationPrincipal OidcUser user) {
         Product product = this.productRestClient.findProduct(id).get();
         model.addAttribute("product", product);
-
+        model.addAttribute("comments", this.productReviewRestClient.getAllReviewsOfProduct(product.getId()));
+        model.addAttribute("averageRating", this.productReviewRestClient.getAverageRatingOfProduct(product.getId()));
         if (product.getSellerSubject().equals(user.getSubject())) {
             return "products/my-product";
         }
@@ -60,15 +68,17 @@ public class ProductsController {
         Product product = this.productRestClient.findProduct(id).get();
         if (product.getSellerSubject().equals(user.getSubject())) {
             model.addAttribute("product", product);
+            model.addAttribute("categories", Arrays.stream(Category.values()).toList());
             return "products/edit";
         } else throw new AccessDeniedException("Access denied");
     }
 
     @PostMapping("{productId}/edit")
     public String editProduct(Model model, @PathVariable("productId") int id,
-                              UpdateProductPayload payload, @AuthenticationPrincipal OidcUser user) throws AccessDeniedException {
+                              UpdateProductPayload payload, @AuthenticationPrincipal OidcUser user){
         try {
-            this.productRestClient.updateProduct(id, payload.title(), payload.details(), user.getSubject(), payload.price());
+            this.productRestClient.updateProduct(id, payload.title(), payload.details(),
+                    user.getSubject(), payload.price(), payload.category());
             model.addAttribute("product", this.productRestClient.findProduct(id).get());
             return "redirect:/online-market/products/%d/edit".formatted(id);
         } catch (BadRequestException exception) {
@@ -79,7 +89,8 @@ public class ProductsController {
     }
 
     @GetMapping("/create")
-    public String createProduct() {
+    public String createProduct(Model model) {
+        model.addAttribute("categories", Arrays.stream(Category.values()).toList());
         return "products/newProduct";
     }
 
@@ -88,7 +99,7 @@ public class ProductsController {
                                 Model model, @AuthenticationPrincipal OidcUser user) {
         try {
             Product product = this.productRestClient.createProduct(payload.title(), payload.details(),
-                    user.getSubject(), payload.price());
+                    user.getSubject(), payload.price(), payload.category());
             return "redirect:/online-market/products/%d/edit".formatted(product.getId());
         } catch (BadRequestException exception) {
             model.addAttribute("errors", exception.getErrors());

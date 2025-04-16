@@ -3,6 +3,7 @@ market:
     products:
       uri: http://localhost:8081
       registration-id: keycloak
+    review-api: http://localhost:8084
 spring:
   security:
     oauth2:
@@ -21,4 +22,7 @@ spring:
                 - view_products
                 - edit_products
                 - microprofile-jwt
-
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB

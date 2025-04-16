@@ -16,6 +16,10 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:8082/realms/online-market-sellers
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
 keycloak:
   realms:
     uri:

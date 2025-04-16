@@ -9,6 +9,8 @@ public record NewProductPayload(
 
         String sellerSubject,
 
-        BigDecimal price
+        BigDecimal price,
+
+        String category
 ) {
 }

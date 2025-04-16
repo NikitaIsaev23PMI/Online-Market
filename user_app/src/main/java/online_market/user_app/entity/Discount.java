@@ -1,4 +1,4 @@
-package online_market.seller_app.entity;
+package online_market.user_app.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

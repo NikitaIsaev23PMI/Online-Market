@@ -9,6 +9,8 @@ public record UpdateProductPayload(
 
         String sellerSubject,
 
-        BigDecimal price
+        BigDecimal price,
+
+        String category
 ) {
 }

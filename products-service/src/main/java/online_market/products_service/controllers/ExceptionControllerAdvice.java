@@ -36,10 +36,17 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ProblemDetail> handleBadRequest(BadRequestException ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
-                "у товара может быть не более 6 фото или видео");
+                "ошибка");
         problemDetail.setProperty("errors", ex.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
     }
 
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ProblemDetail> handleIllegalStateException(IllegalStateException exception) {
+        ProblemDetail problemDetail = ProblemDetail
+                .forStatusAndDetail(HttpStatus.BAD_REQUEST, "Ошибка");
+        problemDetail.setProperty("errors", exception.getMessage());
+        return ResponseEntity.badRequest().body(problemDetail);
+    }
 }

@@ -22,4 +22,8 @@ public class Product {
     private List<ProductMedia> productMedia;
 
     private BigDecimal price;
+
+    private Discount discount;
+
+    private String category;
 }

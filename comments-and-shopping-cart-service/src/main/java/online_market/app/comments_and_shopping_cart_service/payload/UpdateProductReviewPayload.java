@@ -1,6 +1,9 @@
 package online_market.app.comments_and_shopping_cart_service.payload;
 
 import jakarta.validation.constraints.Size;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 public record UpdateProductReviewPayload(
         String username,
@@ -10,6 +13,8 @@ public record UpdateProductReviewPayload(
         @Size(max = 1000, message = "слишком большой отзыв, максимум 1000 символов")
         String review,
 
-        int rating
+        int rating,
+
+        List<MultipartFile> medias
 ) {
 }

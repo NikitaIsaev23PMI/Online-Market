@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ProductRestClient {
 
-    List<Product> getAllProduct(String filter);
+    List<Product> getAllProduct(String filter, String category);
 
     Product getProduct(int id);
 

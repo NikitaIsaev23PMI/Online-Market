@@ -1,6 +1,7 @@
 package online_market.products_service.services.productMedia;
 
 import online_market.products_service.entity.ProductMedia;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 

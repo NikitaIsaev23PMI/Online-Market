@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 @Document(collection = "product_review")
 @Data
 @AllArgsConstructor
@@ -27,4 +29,6 @@ public class ProductsReview {
     private String review;
 
     private int rating;
+
+    private List<String> medias;
 }

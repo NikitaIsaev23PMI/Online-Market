@@ -20,5 +20,8 @@ public record UpdateProductPayload(
 
         @NotNull(message = "Цена товара не может быть пустой")
         @Digits(integer = 8, fraction = 2, message = "Цена должна содержать не более 8 цифр до запятой и 2 после")
-        BigDecimal price
+        BigDecimal price,
+
+
+        String category
 ){}

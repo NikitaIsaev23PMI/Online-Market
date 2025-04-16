@@ -4,6 +4,26 @@
     <meta charset="UTF-8">
     <title>Детали товара</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f9fbff;
+        }
+
+        h2, h3 {
+            text-align: center;
+            color: #003366;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
         .product-image-container {
             display: flex;
             justify-content: center;
@@ -17,10 +37,24 @@
             height: 200px;
             object-fit: cover;
             border-radius: 8px;
+            transition: transform 0.3s ease;
         }
 
-        .product-image:hover {
+        .product-image:hover img {
             transform: scale(1.05);
+        }
+
+        .old-price {
+            text-decoration: line-through;
+            color: red;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .new-price {
+            color: #28a745;
+            font-weight: bold;
+            font-size: 1.2em;
         }
 
         .user-review {
@@ -34,6 +68,7 @@
             margin-top: 20px;
             display: flex;
             gap: 10px;
+            justify-content: center;
         }
 
         .cart-buttons button {
@@ -156,10 +191,18 @@
 
 <h2>Информация о товаре</h2>
 <ul>
-    <li><strong>ID</strong>: <span data-th-text="${product.id}"></span></li>
-    <li><strong>Название</strong>: <span data-th-text="${product.title}"></span></li>
-    <li><strong>Описание</strong>: <span data-th-text="${product.details}"></span></li>
-    <li><strong>Цена</strong>: <span data-th-text="${product.price} + ' ₽'"></span></li>
+    <li><strong>ID:</strong> <span data-th-text="${product.id}"></span></li>
+    <li><strong>Название:</strong> <span data-th-text="${product.title}"></span></li>
+    <li><strong>Описание:</strong> <span data-th-text="${product.details}"></span></li>
+    <li>
+        <strong>Цена:</strong>
+        <span data-th-if="${product.discount != null}">
+            <span class="old-price" data-th-text="${product.price} + ' ₽'">1000 ₽</span>
+            <span class="new-price"
+                  data-th-text="${#numbers.formatDecimal(product.price - (product.price * product.discount.amount / 100), 0, 'COMMA', 2, 'POINT')} + ' ₽'">800 ₽</span>
+        </span>
+        <span data-th-if="${product.discount == null}" class="new-price" data-th-text="${product.price} + ' ₽'">1000 ₽</span>
+    </li>
 </ul>
 
 <div class="product-image-container">
@@ -183,7 +226,9 @@
 </div>
 
 <h3>Оставить отзыв</h3>
-<form data-th-action="@{/online-market/buyer/products-review/upload-review}" method="post">
+<form data-th-action="@{/online-market/buyer/products-review/upload-review}"
+      method="post"
+      enctype="multipart/form-data">
     <input type="hidden" name="productId" data-th-value="${product.id}" />
     <input type="hidden" name="username" data-th-value="${user.getPreferredUsername()}" />
 
@@ -200,16 +245,51 @@
     </div>
     <input type="hidden" name="rating" id="rating" value="0" required>
 
+    <label for="medias">Добавьте фотографии:</label>
+    <input type="file" name="medias" id="medias" multiple accept="image/*"
+           style="margin: 10px 0; display: block; padding: 10px; border: 1px solid #ccc; border-radius: 8px; background-color: #fff;" />
+
     <button type="submit">Оставить отзыв</button>
 </form>
 
 <h3>Отзывы о товаре:</h3>
 <ul>
-    <li data-th-each="review : ${productReviews}" data-th-classappend="${review.userName.equals(user.getPreferredUsername())} ? 'user-review' : ''" data-th-attr="data-review-id=${review.id}">
+    <li data-th-each="review : ${productReviews}"
+        data-th-classappend="${review.userName.equals(user.getPreferredUsername())} ? 'user-review' : ''"
+        data-th-attr="data-review-id=${review.id}">
+
         <p><strong>Пользователь:</strong> <span data-th-text="${review.userName}"></span></p>
         <p><strong>Оценка:</strong> <span data-th-text="${review.rating}"></span></p>
         <p class="review-text" data-th-text="${review.review}"></p>
 
+        <div class="product-image-container" data-th-if="${review.medias != null}">
+            <div data-th-each="media : ${review.medias}">
+                <div class="product-image">
+                    <img data-th-src="${media}" alt="Фото отзыва">
+                    <!-- Кнопка удаления фото, показывается только если это отзыв текущего пользователя -->
+                    <form data-th-if="${review.userName.equals(user.getPreferredUsername())}"
+                          data-th-action="@{/online-market/buyer/products-review/{reviewId}/{mediaName}(reviewId=${review.id}, mediaName=${#strings.substring(media, media.lastIndexOf('/') + 1)})}"
+                          method="post">
+                        <button type="submit" style="color: red; margin-top: 5px;">Удалить фото</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Форма добавления фото к отзыву -->
+        <div data-th-if="${review.userName.equals(user.getPreferredUsername())}">
+            <form data-th-action="@{/online-market/buyer/products-review/add-media/{reviewId}(reviewId=${review.id})}"
+                  method="post" enctype="multipart/form-data"
+                  style="margin-top: 10px;">
+                <label for="media-${review.id}">Добавить фото:</label>
+                <input type="file" name="media" id="media-${review.id}" multiple
+                       accept="image/*"
+                       style="display: block; margin: 5px 0; border: 1px solid #ccc; border-radius: 8px; padding: 6px;">
+                <button type="submit">Загрузить</button>
+            </form>
+        </div>
+
+        <!-- Форма редактирования -->
         <form class="edit-form" data-th-action="@{/online-market/buyer/products-review/edit-review}" method="post">
             <input type="hidden" name="productId" data-th-value="${product.id}" />
             <input type="hidden" name="username" data-th-value="${user.getPreferredUsername()}" />
@@ -229,7 +309,8 @@
         <div data-th-if="${review.userName.equals(user.getPreferredUsername())}">
             <button type="button" class="edit-btn" onclick="enableEdit(this)">Редактировать</button>
 
-            <form data-th-action="@{/online-market/buyer/products-review/delete-review/{productId}(productId=${product.id})}" method="post">
+            <form data-th-action="@{/online-market/buyer/products-review/delete-review/{productId}(productId=${product.id})}"
+                  method="post">
                 <button type="submit" style="color: red;">Удалить</button>
             </form>
         </div>

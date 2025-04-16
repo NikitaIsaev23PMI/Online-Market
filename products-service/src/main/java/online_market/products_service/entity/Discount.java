@@ -1,5 +1,6 @@
 package online_market.products_service.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.constraints.Max;
@@ -9,7 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(schema = "products_schema", name = "t_discount")
-public class Discount implements Serializable {
+public class Discount{
 
     @Id
     private Integer id;
@@ -25,6 +25,7 @@ public class Discount implements Serializable {
     @MapsId
     @OneToOne
     @JoinColumn(name = "product_id", referencedColumnName = "id")
+    @JsonBackReference
     private Product product;
 
     @Column(name = "c_amount")

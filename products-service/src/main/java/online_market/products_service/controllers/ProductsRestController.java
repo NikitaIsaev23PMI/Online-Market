@@ -6,6 +6,7 @@ import online_market.products_service.entity.Product;
 import online_market.products_service.payload.NewDiscountPayload;
 import online_market.products_service.payload.NewProductPayload;
 import online_market.products_service.payload.UpdateProductPayload;
+import online_market.products_service.services.discount.DiscountService;
 import online_market.products_service.services.product.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,9 +29,9 @@ public class ProductsRestController {
     private final ProductService productService;
 
     @GetMapping()
-    public List<Product> getAllProducts(@RequestParam(name = "filter", required = false) String filter ,
-                                        JwtAuthenticationToken token) {
-        return this.productService.findAllProduct(filter);
+    public List<Product> getAllProducts(@RequestParam(name = "filter", required = false) String filter,
+                                        @RequestParam(name = "category", required = false) String category) {
+        return this.productService.findAllProduct(filter, category);
     }
 
     @GetMapping("product/{productId}")
@@ -48,7 +49,7 @@ public class ProductsRestController {
     }
 
     @GetMapping("{sub}")
-    public List<Product> findProductByUsername(@PathVariable("sub") String sellerSubject){
+    public List<Product> findProductsByUsername(@PathVariable("sub") String sellerSubject){
             return this.productService.findProductsBySellerSubject(sellerSubject);
     }
 
@@ -63,7 +64,8 @@ public class ProductsRestController {
                 throw new BindException(bindingResult);
             }
         } else {
-                Product product = this.productService.create(payload.title(), payload.details(), payload.sellerSubject(), payload.price());
+                Product product = this.productService.create(payload.title(), payload.details(),
+                        payload.sellerSubject(), payload.price(), payload.category());
                 return ResponseEntity.created(uriBuilder
                                 .replacePath("products-service-api/products/{productId}")
                                 .build(Map.of("productId", product.getId())))
@@ -85,7 +87,8 @@ public class ProductsRestController {
         } else {
             try {
                 this.productService.updateProduct(productId, payload.title(),
-                        payload.details(), jwt.getToken().getSubject(), payload.price());
+                        payload.details(),
+                        jwt.getToken().getSubject(), payload.price(), payload.category());
                 return ResponseEntity.noContent().build();
             } catch (AccessDeniedException e) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

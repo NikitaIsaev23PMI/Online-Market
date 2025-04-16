@@ -1,11 +1,14 @@
 package online_market.seller_app.client;
 
 import lombok.RequiredArgsConstructor;
+import online_market.seller_app.client.exception.BadRequestException;
 import online_market.seller_app.payload.NewDiscountPayload;
+import org.springframework.http.ProblemDetail;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
@@ -23,6 +26,9 @@ public class MainDiscountRestClient implements DiscountRestClient {
                     .toBodilessEntity();
         } catch (HttpClientErrorException.NotFound exception) {
             throw new NoSuchElementException("товар не найден");
+        } catch (HttpClientErrorException.BadRequest exception) {
+            ProblemDetail problemDetail = exception.getResponseBodyAs(ProblemDetail.class);
+            throw new BadRequestException(List.of((String) problemDetail.getProperties().get("errors")));
         }
     }
 

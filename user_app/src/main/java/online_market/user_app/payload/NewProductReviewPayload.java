@@ -1,5 +1,9 @@
 package online_market.user_app.payload;
 
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
 public record NewProductReviewPayload(
 
         String username,
@@ -8,6 +12,8 @@ public record NewProductReviewPayload(
 
         String review,
 
-        int rating
+        int rating,
+
+        List<MultipartFile> medias
 ) {
 }
