@@ -11,6 +11,8 @@ public record UpdateProductPayload(
 
         BigDecimal price,
 
-        String category
+        String category,
+
+        Integer count
 ) {
 }

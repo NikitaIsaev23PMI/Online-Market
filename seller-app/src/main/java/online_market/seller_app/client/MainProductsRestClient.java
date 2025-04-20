@@ -46,14 +46,22 @@ public class MainProductsRestClient implements ProductRestClient{
     }
 
     @Override
-    public Product createProduct(String title, String details,
-                                 String sellerSubject, BigDecimal price,
-                                 String category) {
+    public Product createProduct(String title,
+                                 String details,
+                                 String sellerSubject,
+                                 String email,
+                                 String preferredUsername,
+                                 BigDecimal price,
+                                 String category,
+                                 Integer count) {
         try {
             return this.restClient.post()
                     .uri("/products-service-api/products")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(new NewProductPayload(title, details, sellerSubject, price, category))
+                    .body(new NewProductPayload(title,
+                            details, sellerSubject,
+                            email, preferredUsername,
+                            price, category, count))
                     .retrieve()
                     .body(Product.class);
         } catch (HttpClientErrorException.BadRequest exception){
@@ -65,12 +73,12 @@ public class MainProductsRestClient implements ProductRestClient{
     @Override
     public void updateProduct(int id, String title, String details,
                               String sellerSubject, BigDecimal price,
-                              String category) {
+                              String category, Integer count) {
         try {
             this.restClient.patch()
                     .uri("products-service-api/products/" + id)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(new UpdateProductPayload(title, details, sellerSubject,price,category))
+                    .body(new UpdateProductPayload(title, details, sellerSubject,price,category, count))
                     .retrieve()
                     .toBodilessEntity();
         } catch (HttpClientErrorException.BadRequest exception){

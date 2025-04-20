@@ -203,7 +203,7 @@
                 <th:block th:if="${product.getProductMedia() != null and not #lists.isEmpty(product.getProductMedia()) and product.getProductMedia().getFirst() != null}">
                     <img class="product-image"
                          th:src="@{${product.getProductMedia().getFirst().getMediaPath()}}"
-                         alt="Product Image">
+                         alt="Product Image"
                 </th:block>
             </td>
         </tr>
@@ -225,6 +225,5 @@
         document.getElementById('selectedCategory').value = category;
     }
 </script>
-
 </body>
 </html>

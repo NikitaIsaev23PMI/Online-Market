@@ -1,0 +1,1 @@
+ALTER table products_schema.t_product add column c_count int;

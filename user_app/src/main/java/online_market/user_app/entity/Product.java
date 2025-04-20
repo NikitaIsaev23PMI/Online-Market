@@ -17,6 +17,8 @@ public class Product {
 
     private String title;
 
+    private Seller seller;
+
     private String details;
 
     private List<ProductMedia> productMedia;

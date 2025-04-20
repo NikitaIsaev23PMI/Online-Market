@@ -18,7 +18,7 @@ public class Product {
 
     private String details;
 
-    private String sellerSubject;
+    private Seller seller;
 
     private BigDecimal price;
 
@@ -27,4 +27,6 @@ public class Product {
     private Discount discount;
 
     private String category;
+
+    private Integer count;
 }

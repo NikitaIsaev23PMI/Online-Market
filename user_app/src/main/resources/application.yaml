@@ -7,6 +7,9 @@ market:
     products-from-cart:
       uri: http://localhost:8084
       registrationId: keycloak
+    orders-and-notification:
+      uri: http://localhost:8087
+      registrationId: keycloak
 spring:
   security:
     oauth2:

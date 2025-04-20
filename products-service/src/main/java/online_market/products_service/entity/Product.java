@@ -1,5 +1,6 @@
 package online_market.products_service.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.AssertTrue;
@@ -32,13 +33,15 @@ public class Product {
     @Size(min = 3,max = 100, message = "Название товара должно находиться в диапазоне от 3 до 100 символов")
     private String title;
 
+    @ManyToOne()
+    @JoinColumn(name = "c_seller", nullable = false)
+    @JsonBackReference
+    private Seller seller;
+
     @Column(name = "c_details")
     @NotNull(message = "Описание товара не может быть пустым")
     @Size(min = 5,max = 1000, message = "Описание товара должно находиться в диапазоне от 5 до 1000 символов")
     private String details;
-
-    @Column(name = "seller_subject")
-    private String sellerSubject;
 
     @OneToMany(mappedBy = "product",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
@@ -53,4 +56,7 @@ public class Product {
 
     @Column(name = "c_category")
     private String category;
+
+    @Column(name = "c_count")
+    private Integer count;
 }

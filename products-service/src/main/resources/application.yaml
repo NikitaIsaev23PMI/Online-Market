@@ -1,16 +1,7 @@
 server:
   port: 8081
 spring:
-  datasource:
-    username: postgres
-    password: nikita2005
-    url: jdbc:postgresql://localhost:5432/products
-  flyway:
-    schemas:
-    locations: classpath:db/migration
-    baseline-on-migrate: true
-  jpa:
-    show-sql: true
+
   security:
     oauth2:
       resourceserver:

@@ -173,6 +173,11 @@
                    placeholder="0.00" th:value="${payload?.price}">
         </label>
 
+        <label>
+            Укажите колличество товаров на складе:
+            <input type="number" name="count" th:value="${payload?.count}">
+        </label>
+
         <!-- Блок выбора категории -->
         <label>
             Категория:

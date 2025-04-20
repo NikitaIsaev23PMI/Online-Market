@@ -12,6 +12,104 @@
             margin: 0;
             padding: 2rem;
         }
+        .review-images {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .review-images img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 1rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .review-images img:hover {
+            transform: scale(1.05);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            padding-top: 4rem;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 80vh;
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
+        /* Кнопка закрытия */
+        .close {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            background: rgba(0,0,0,0.3);
+            border-radius: 50%;
+            padding: 0.2rem 0.6rem;
+            transition: background 0.3s ease;
+        }
+
+        .close:hover {
+            background: rgba(0,0,0,0.6);
+        }
+
+        .new-price {
+            color: #ef4444;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .product-images {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .product-images img {
+            max-width: 300px;
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .product-images img:hover {
+            transform: scale(1.05);
+        }
+
+        .product-image-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
 
         .container {
             max-width: 800px;
@@ -67,8 +165,24 @@
         <li><strong>ID:</strong> <span data-th-text="${product.id}">1</span></li>
         <li><strong>Название:</strong> <span data-th-text="${product.title}">Пример</span></li>
         <li><strong>Описание:</strong> <span data-th-text="${product.details}">Описание товара</span></li>
-        <li><strong>Цена:</strong> <span data-th-text="${product.price}">1000</span> ₽</li>
+        <li>
+            <strong>Цена:</strong>
+            <span data-th-if="${product.discount != null}">
+                <span class="old-price" data-th-text="${product.price} + ' ₽'">1000 ₽</span>
+                <span class="new-price"
+                      data-th-text="${product.price - (product.price * product.discount.amount / 100)} + ' ₽'">800 ₽</span>
+            </span>
+            <span data-th-if="${product.discount == null}" data-th-text="${product.price} + ' ₽'">1000 ₽</span>
+        </li>
     </ul>
+    <div>
+        <h2>Фотографии товара</h2>
+        <div class="product-images" data-th-each="media : ${product.productMedia}">
+            <img data-th-src="@{${media.mediaPath}}"
+                 alt="Product Image"
+                 th:attr="onclick=|openModal('@{${media.mediaPath}}')|">
+        </div>
+    </div>
 
     <div class="reviews">
         <h3>Отзывы о товаре</h3>
@@ -77,10 +191,31 @@
                 <p><strong>Пользователь:</strong> <span data-th-text="${review.userName}">User</span></p>
                 <p><strong>Оценка:</strong> <span data-th-text="${review.rating}">5</span></p>
                 <p class="review-text" data-th-text="${review.review}">Отличный товар!</p>
+                <div class="product-image-container" data-th-if="${review.medias != null}">
+                    <div class="review-images" data-th-if="${review.medias != null}">
+                        <img data-th-each="media : ${review.medias}" data-th-src="${media}" alt="Фото отзыва"
+                             th:attr="onclick=|openModal('@{${media}}')|">
+                    </div>
+                </div>
             </li>
         </ul>
     </div>
 </div>
+<div id="imageModal" class="modal" onclick="closeModal()">
+    <span class="close" onclick="closeModal()">×</span>
+    <img class="modal-content" id="modalImage">
+</div>
+<script>
+    function openModal(imageSrc) {
+        const modal = document.getElementById("imageModal");
+        const modalImg = document.getElementById("modalImage");
+        modal.style.display = "block";
+        modalImg.src = imageSrc;
+    }
 
+    function closeModal() {
+        document.getElementById("imageModal").style.display = "none";
+    }
+</script>
 </body>
 </html>

@@ -47,7 +47,6 @@ public class ProductsController {
         model.addAttribute("product", this.productRestClient.getProduct(productId));
         model.addAttribute("productReviews",
                 this.productReviewRestClient.getAllReviewsOfProduct(productId));
-//        System.out.println(this.productReviewRestClient.getAllReviewsOfProduct(productId).getFirst().getMedias().getFirst());
         model.addAttribute("user", principal);
         model.addAttribute("IsInCart",
                 this.productFromUserCartClient.productIsInUserCart(principal.getPreferredUsername(),productId));

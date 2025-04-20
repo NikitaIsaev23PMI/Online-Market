@@ -1,0 +1,34 @@
+server:
+  port: 8087
+keycloak:
+  realms:
+    uri:
+      buyers: http://localhost:8082/realms/online-market-buyers
+      sellers: http://localhost:8082/realms/online-market-sellers
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8082/realms/online-market-sellers
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: onlinemarketomi@gmail.com
+    password: nikita2005hhh
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  datasource:
+    username: postgres
+    password: nikita2005
+    url: jdbc:postgresql://localhost:5432/orders
+  flyway:
+    schemas:
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+  jpa:
+    show-sql: true

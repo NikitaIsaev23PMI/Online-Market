@@ -2,10 +2,13 @@ package online_market.products_service.services.product;
 
 import lombok.RequiredArgsConstructor;
 import online_market.products_service.entity.Product;
+import online_market.products_service.entity.Seller;
 import online_market.products_service.repository.DiscountRepository;
 import online_market.products_service.repository.ProductMediaRepository;
 import online_market.products_service.repository.ProductRepository;
+import online_market.products_service.repository.SellerRepository;
 import online_market.products_service.services.productMedia.ProductMediaStorageService;
+import online_market.products_service.services.seller.SellerService;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +24,8 @@ public class MainProductService implements ProductService {
     private final ProductRepository productRepository;
 
     private final DiscountRepository discountRepository;
+
+    private final SellerService sellerService;
 
     @Override
     public List<Product> findAllProduct(String filter, String category) {
@@ -41,21 +46,25 @@ public class MainProductService implements ProductService {
     }
 
     @Override
-    public Product create(String title, String details, String sellerSubject, BigDecimal price, String category) {
-        return productRepository.save(new Product(null,title,details,sellerSubject,null, price, null, category));
+    public Product create(String title, String details, String sellerSubject, String email,
+                          String preferredUsername, BigDecimal price, String category, Integer count) {
+        Seller seller = this.sellerService.CreateNewOrReturnExistSeller(sellerSubject, email, preferredUsername);
+        return productRepository.save(new Product(null,title,seller,details,
+                null, price, null, category, count));
     }
 
     @Override
     public void updateProduct(int id, String title, String details,
                               String sellerSubject, BigDecimal price,
-                              String category) {
+                              String category, Integer count) {
         this.productRepository.findById(id).ifPresentOrElse(
                 product -> {
-                    if (product.getSellerSubject().equals(sellerSubject)) {
+                    if (product.getSeller().getSubject().equals(sellerSubject)) {
                         product.setTitle(title);
                         product.setDetails(details);
                         product.setPrice(price);
                         product.setCategory(category);
+                        product.setCount(count);
                         productRepository.save(product);
                     } else throw new AccessDeniedException("Вы не являетесь владельцем товара, поэтому не можете его редпктировать");
                 }, () -> {
@@ -67,7 +76,7 @@ public class MainProductService implements ProductService {
     @Override
     public void deleteProduct(int id, String sellerSubject){
         if(this.productRepository.findById(id).isPresent()){
-            if(this.productRepository.findById(id).get().getSellerSubject().equals(sellerSubject)){
+            if(this.productRepository.findById(id).get().getSeller().getSubject().equals(sellerSubject)){
                 this.productRepository.deleteById(id);
             } else throw new AccessDeniedException("Вы не можете удалить этот товар");
         } else {

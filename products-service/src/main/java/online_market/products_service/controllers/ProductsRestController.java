@@ -65,7 +65,9 @@ public class ProductsRestController {
             }
         } else {
                 Product product = this.productService.create(payload.title(), payload.details(),
-                        payload.sellerSubject(), payload.price(), payload.category());
+                        payload.sellerSubject(), payload.email(),
+                        payload.preferredUsername(),
+                        payload.price(), payload.category(), payload.count());
                 return ResponseEntity.created(uriBuilder
                                 .replacePath("products-service-api/products/{productId}")
                                 .build(Map.of("productId", product.getId())))
@@ -88,7 +90,7 @@ public class ProductsRestController {
             try {
                 this.productService.updateProduct(productId, payload.title(),
                         payload.details(),
-                        jwt.getToken().getSubject(), payload.price(), payload.category());
+                        jwt.getToken().getSubject(), payload.price(), payload.category(), payload.count());
                 return ResponseEntity.noContent().build();
             } catch (AccessDeniedException e) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

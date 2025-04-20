@@ -35,6 +35,7 @@ public class MainProductReviewService implements ProductReviewService {
     @Value("${media.storage.location}")
     private String mediaDirectory;
 
+    @Override
     public Resource getMedia(String mediaName) throws IOException{
         Path filePath = Paths.get(mediaDirectory).resolve(mediaName);
         if (!Files.exists(filePath) || !Files.isReadable(filePath)) {

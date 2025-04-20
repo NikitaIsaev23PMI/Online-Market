@@ -1,5 +1,6 @@
 package online_market.user_app.config;
 
+import online_market.user_app.client.order.MainOrderRestClient;
 import online_market.user_app.client.product.MainProductRestClient;
 import online_market.user_app.client.productFromCart.MainProductFromUserCartClient;
 import online_market.user_app.client.productReview.MainProductReviewRestClient;
@@ -58,6 +59,23 @@ public class ClientBeans {
         return new MainProductReviewRestClient(RestClient
                 .builder()
                 .baseUrl(productsFromCartAndReviewApiUrl)
+                .requestInterceptor(
+                        new OAuthClientRequestInterceptor(
+                                new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository,
+                                        authorizedClientRepository),registrationId))
+                .build());
+    }
+
+    @Bean
+    MainOrderRestClient mainOrderRestClient(
+            @Value("${market.services.orders-and-notification.uri://localhost:8087}")
+            String orderAndNotificationServiceApiUrl,
+            @Value("${market.services.orders-and-notification.registrationId}") String registrationId,
+            ClientRegistrationRepository clientRegistrationRepository,
+            OAuth2AuthorizedClientRepository authorizedClientRepository){
+        return new MainOrderRestClient(RestClient
+                .builder()
+                .baseUrl(orderAndNotificationServiceApiUrl)
                 .requestInterceptor(
                         new OAuthClientRequestInterceptor(
                                 new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository,

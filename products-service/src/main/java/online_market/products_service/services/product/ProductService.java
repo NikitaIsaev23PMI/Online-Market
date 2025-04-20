@@ -12,9 +12,12 @@ public interface ProductService {
 
     Product findById(int id);
 
-    Product create(String title,String details, String sellerSubject, BigDecimal price,String category);
+    Product create(String title,String details, String sellerSubject, String email,
+                   String preferredUsername,
+                   BigDecimal price,String category, Integer count);
 
-    void updateProduct(int id, String title, String details, String sellerSubject, BigDecimal price, String category);
+    void updateProduct(int id, String title, String details,
+                       String sellerSubject, BigDecimal price, String category, Integer count);
 
     void deleteProduct(int id, String sellerSubject);
 

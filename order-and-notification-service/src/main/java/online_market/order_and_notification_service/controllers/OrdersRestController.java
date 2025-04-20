@@ -1,0 +1,55 @@
+package online_market.order_and_notification_service.controllers;
+
+import jakarta.validation.Valid;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import lombok.Value;
+import online_market.order_and_notification_service.entity.Order;
+import online_market.order_and_notification_service.payload.NewOrderPayload;
+import online_market.order_and_notification_service.services.OrderService;
+import org.springframework.http.ProblemDetail;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("order-api")
+@RequiredArgsConstructor
+public class OrdersRestController {
+
+    private final OrderService orderService;
+
+    @PostMapping("/new")
+    public ResponseEntity<?> newOrder(@RequestBody @Valid NewOrderPayload payload,
+                                      BindingResult bindingResult) throws BindException {
+        if (bindingResult.hasErrors()) {
+            if (bindingResult instanceof BindException exception) {
+                throw exception;
+            } else {
+                throw new BindException(bindingResult);
+            }
+        }
+            else{
+                Order order = this.orderService.createOrder(payload.productId(),
+                        payload.productTitle(), payload.count(),payload.sellerUsername(),
+                        payload.sellerEmail(),
+                        payload.buyerUsername(), payload.buyerEmail(),
+                        payload.buyerDetail(), payload.address(), payload.postcode(), payload.amount(),
+                        payload.paymentType());
+                return ResponseEntity.ok(order);
+            }
+    }
+
+    @GetMapping("/seller/{sellerSubject}")
+    public List<Order> getAllSellerOrders(@PathVariable("sellerSubject") String sellerSubject) {
+        return this.orderService.getAllSellerOrders(sellerSubject);
+    }
+
+    @GetMapping("/buyer/{buyerSubject}")
+    public List<Order> getAllBuyerOrders(@PathVariable("buyerSubject") String buyerSubject) {
+        return this.orderService.getAllBuyerOrders(buyerSubject);
+    }
+}

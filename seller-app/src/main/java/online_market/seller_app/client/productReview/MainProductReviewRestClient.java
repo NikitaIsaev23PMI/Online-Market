@@ -24,7 +24,7 @@ public class MainProductReviewRestClient implements ProductReviewRestClient{
     @Override
     public List<ProductReview> getAllReviewsOfProduct(Integer productId) {
         return this.restClient.get()
-                .uri("api/products-review/{productId}",productId)
+                .uri("api/products-review/product/{productId}",productId)
                 .retrieve()
                 .body(PRODUCTS_TYPE_REFERENCE);
     }
@@ -32,7 +32,7 @@ public class MainProductReviewRestClient implements ProductReviewRestClient{
     @Override
     public double getAverageRatingOfProduct(Integer productId) {
         List<ProductReview> reviews = this.restClient.get()
-                .uri("api/products-review/{productId}",productId)
+                .uri("api/products-review/product/{productId}",productId)
                 .retrieve()
                 .body(PRODUCTS_TYPE_REFERENCE);
         if(!reviews.isEmpty()) {

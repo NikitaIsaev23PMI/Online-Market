@@ -13,9 +13,17 @@ public interface ProductRestClient {
 
     List<Product> findAllProducts(String filter, String category);
 
-    Product createProduct(String title, String details, String sellerSubject, BigDecimal price, String category);
+    Product createProduct(String title,
+                          String details,
+                          String sellerSubject,
+                          String email,
+                          String preferredUsername,
+                          BigDecimal price,
+                          String category,
+                          Integer count);
 
-    void updateProduct(int id, String title, String details, String sellerSubject, BigDecimal price, String category);
+    void updateProduct(int id, String title, String details, String sellerSubject,
+                       BigDecimal price, String category, Integer count);
 
     Optional<Product> findProduct(int id);
 
