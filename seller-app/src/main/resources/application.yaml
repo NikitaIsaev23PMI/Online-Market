@@ -4,6 +4,8 @@ market:
       uri: http://localhost:8081
       registration-id: keycloak
     review-api: http://localhost:8084
+    orders-and-notification:
+      uri: http://localhost:8087
 spring:
   security:
     oauth2:

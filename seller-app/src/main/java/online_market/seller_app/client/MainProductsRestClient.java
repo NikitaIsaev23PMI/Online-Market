@@ -55,7 +55,7 @@ public class MainProductsRestClient implements ProductRestClient{
                                  String category,
                                  Integer count) {
         try {
-            return this.restClient.post()
+            Product product = this.restClient.post()
                     .uri("/products-service-api/products")
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(new NewProductPayload(title,
@@ -64,6 +64,7 @@ public class MainProductsRestClient implements ProductRestClient{
                             price, category, count))
                     .retrieve()
                     .body(Product.class);
+            return product;
         } catch (HttpClientErrorException.BadRequest exception){
             ProblemDetail problemDetail = exception.getResponseBodyAs(ProblemDetail.class);
             throw new BadRequestException((List<String>)problemDetail.getProperties().get("errors"));
