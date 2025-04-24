@@ -11,6 +11,7 @@ import online_market.products_service.services.productMedia.ProductMediaStorageS
 import online_market.products_service.services.seller.SellerService;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -46,6 +47,7 @@ public class MainProductService implements ProductService {
     }
 
     @Override
+    @Transactional
     public Product create(String title, String details, String sellerSubject, String email,
                           String preferredUsername, BigDecimal price, String category, Integer count) {
         Seller seller = this.sellerService.CreateNewOrReturnExistSeller(sellerSubject, email, preferredUsername);
@@ -98,6 +100,7 @@ public class MainProductService implements ProductService {
     }
 
     @Override
+    @Transactional
     public List<Product> findProductsByListIds(List<Integer> listOfId) {
         return this.productRepository.findByIdIn(listOfId);
     }

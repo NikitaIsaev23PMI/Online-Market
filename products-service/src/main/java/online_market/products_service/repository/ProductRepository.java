@@ -15,7 +15,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     List<Product> findAllByTitleContainsIgnoreCase(String filter);
 
-    @EntityGraph(attributePaths = {"productMedia"})
+    @EntityGraph(attributePaths = {"productMedia","seller"})
     Optional<Product> findById(int id);
 
     Product save(Product product);
@@ -24,6 +24,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     Optional<Product> findProductBySellerSubject(String sellerSubject);
 
+    @EntityGraph(attributePaths = {"seller"})
     List<Product> findByIdIn(List<Integer> listOfId);
 
     //  List<Product> findAllByTitleContainsAndCategoryIs(String filter, String category);

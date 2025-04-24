@@ -8,24 +8,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.math.BigDecimal;
 import java.util.List;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 public class Product {
 
     private int id;
 
     private String title;
 
-    private Seller seller;
-
     private String details;
 
-    private List<ProductMedia> productMedia;
+    private Seller seller;
 
     private BigDecimal price;
+
+    private List<ProductMedia> productMedia;
 
     private Discount discount;
 
     private String category;
+
+    private Integer count;
 }

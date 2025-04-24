@@ -1,10 +1,244 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Оформление заказа</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #f8f9fc;
+            --success-color: #1cc88a;
+            --danger-color: #e74a3b;
+            --warning-color: #f6c23e;
+        }
+
+        body {
+            background-color: #f8f9fc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .order-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+
+        .card {
+            border: none;
+            border-radius: 0.35rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            background-color: var(--secondary-color);
+            border-bottom: 1px solid #e3e6f0;
+            font-weight: 600;
+            padding: 1rem 1.35rem;
+        }
+
+        .error-card {
+            border-left: 4px solid var(--danger-color);
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .error-icon {
+            color: var(--danger-color);
+            margin-right: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            padding: 0.5rem 1.5rem;
+        }
+
+        .btn-primary:hover {
+            background-color: #2e59d9;
+            border-color: #2653d4;
+        }
+
+        .total-amount {
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-title {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+    </style>
 </head>
 <body>
-$END$
+<div class="order-container">
+    <!-- Красивый вывод ошибок -->
+    <div th:if="${errors != null and not errors.isEmpty()}" class="card error-card mb-4">
+        <div class="card-body py-3">
+            <h5 class="d-flex align-items-center mb-3">
+                <i class="fas fa-exclamation-circle error-icon"></i>
+                <span>Ошибки при оформлении заказа</span>
+            </h5>
+            <ul class="mb-0 ps-4">
+                <li th:each="error : ${errors}" th:text="${error}" class="mb-1"></li>
+            </ul>
+        </div>
+    </div>
+
+    <h2 class="mb-4 text-center">Оформление заказа</h2>
+
+    <form th:action="@{/online-market/buyer/order}" method="post" th:object="${payload}" class="needs-validation" novalidate>
+        <!-- Скрытые поля -->
+        <input type="hidden" th:field="*{sellerUsername}">
+        <input type="hidden" th:field="*{sellerEmail}">
+        <input type="hidden" th:field="*{productId}">
+        <input type="hidden" th:field="*{productTitle}">
+        <input type="hidden" th:field="*{buyerUsername}">
+        <input type="hidden" th:field="*{buyerEmail}">
+
+        <!-- Информация о товаре -->
+        <div class="card mb-4">
+            <div class="card-header d-flex align-items-center">
+                <i class="fas fa-box-open me-2"></i>
+                <span>Информация о товаре</span>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title product-title" th:text="${product.title}">Название товара</h5>
+                <p class="card-text" th:text="${'Цена: ' + product.price + ' ₽'}">Цена</p>
+            </div>
+        </div>
+
+        <!-- Информация о покупателе -->
+        <div class="card mb-4">
+            <div class="card-header d-flex align-items-center">
+                <i class="fas fa-user me-2"></i>
+                <span>Информация о покупателе</span>
+            </div>
+            <div class="card-body">
+                <p th:text="${'Имя: ' + buyer.getPreferredUsername()}">Имя покупателя</p>
+                <p th:text="${'Email: ' + buyer.email}">Email покупателя</p>
+            </div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-header d-flex align-items-center">
+                <i class="fas fa-store me-2"></i>
+                <span>Информация о продавце</span>
+            </div>
+            <div class="card-body">
+                <p th:text="${'Имя: ' + product.seller.preferredUsername}">Имя продавца</p>
+                <p th:text="${'Email: ' + product.seller.email}">Email продавца</p>
+            </div>
+        </div>
+
+        <!-- Детали заказа -->
+        <div class="card mb-4">
+            <div class="card-header d-flex align-items-center">
+                <i class="fas fa-clipboard-list me-2"></i>
+                <span>Детали заказа</span>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="count" class="form-label">Количество</label>
+                    <input type="number" id="count" class="form-control" th:field="*{count}" min="1" required>
+                    <div class="invalid-feedback">Укажите количество товара</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="buyerDetail" class="form-label">Дополнительная информация</label>
+                    <textarea class="form-control" th:field="*{buyerDetail}" rows="3" placeholder="Можете указать любые пожелания к заказу"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="address" class="form-label">Адрес доставки</label>
+                    <input type="text" class="form-control" th:field="*{address}" required placeholder="Город, улица, дом, квартира">
+                    <div class="invalid-feedback">Укажите адрес доставки</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="postcode" class="form-label">Почтовый индекс</label>
+                    <input type="text" class="form-control" th:field="*{postcode}" required>
+                    <div class="invalid-feedback">Укажите почтовый индекс</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="paymentType" class="form-label">Способ оплаты</label>
+                    <select class="form-select" th:field="*{paymentType}" required>
+                        <option value="" disabled selected>Выберите способ оплаты</option>
+                        <option value="CASH_ON_DELIVERY">Наличными при получении</option>
+                        <option value="CARD_ON_DELIVERY">Картой при получении</option>
+                    </select>
+                    <div class="invalid-feedback">Выберите способ оплаты</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Итоговая сумма</label>
+                    <div class="total-amount" id="totalAmount" th:text="${product.price + ' ₽'}">0 ₽</div>
+                    <input type="hidden" th:field="*{amount}" id="amountField">
+                </div>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <a th:href="@{/online-market/buyer/products}" class="btn btn-outline-secondary me-md-2">
+                <i class="fas fa-arrow-left me-1"></i> Вернуться к товарам
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-check me-1"></i> Оформить заказ
+            </button>
+        </div>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', function() {
+        // Валидация формы
+        const forms = document.querySelectorAll('.needs-validation');
+
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                form.classList.add('was-validated');
+            }, false);
+        });
+
+        // Расчет суммы
+        const price = /*[[${product.price}]]*/ 0;
+        const countInput = document.getElementById('count');
+        const totalAmountElement = document.getElementById('totalAmount');
+        const amountField = document.getElementById('amountField');
+
+        function calculateTotal() {
+            const count = parseInt(countInput.value) || 1;
+            const total = (price * count).toFixed(2);
+            totalAmountElement.textContent = total + ' ₽';
+            amountField.value = total;
+        }
+
+        countInput.addEventListener('input', calculateTotal);
+        calculateTotal();
+    });
+    /*]]>*/
+</script>
 </body>
 </html>

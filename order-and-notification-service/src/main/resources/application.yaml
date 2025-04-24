@@ -12,16 +12,14 @@ spring:
         jwt:
           issuer-uri: http://localhost:8082/realms/online-market-sellers
   mail:
-    host: smtp.gmail.com
+    host: smtp.yandex.ru
     port: 587
-    username: onlinemarketomi@gmail.com
-    password: nikita2005hhh
+    username: nikitaisaev139@yandex.com
+    password: sxrnujyinbuokaya
     properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
+      mail.smtp.auth: true
+      mail.smtp.ssl.enable: true
+    default-encoding: UTF-8
   datasource:
     username: postgres
     password: nikita2005

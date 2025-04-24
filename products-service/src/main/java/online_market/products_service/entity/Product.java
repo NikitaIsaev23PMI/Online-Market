@@ -33,9 +33,9 @@ public class Product {
     @Size(min = 3,max = 100, message = "Название товара должно находиться в диапазоне от 3 до 100 символов")
     private String title;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "c_seller", nullable = false)
-    @JsonBackReference
+    @JsonManagedReference
     private Seller seller;
 
     @Column(name = "c_details")
@@ -43,7 +43,7 @@ public class Product {
     @Size(min = 5,max = 1000, message = "Описание товара должно находиться в диапазоне от 5 до 1000 символов")
     private String details;
 
-    @OneToMany(mappedBy = "product",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<ProductMedia> productMedia;
 

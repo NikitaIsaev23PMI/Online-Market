@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Заказ #<span th:text="${order.id}">12345</span></title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <style>
+    .order-card {
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+    }
+    .order-header {
+      border-bottom: 2px solid #f0f0f0;
+      padding-bottom: 15px;
+    }
+    .info-label {
+      color: #6c757d;
+      font-weight: 500;
+    }
+    .info-value {
+      font-weight: 500;
+    }
+    .back-link {
+      text-decoration: none;
+    }
+    .product-image {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+    .status-badge {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    .edit-section {
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    .bg-processing { background-color: #0d6efd; }
+    .bg-assembly { background-color: #0dcaf0; }
+    .bg-on-the-way { background-color: #ffc107; }
+    .bg-delivered { background-color: #198754; }
+    .bg-completed { background-color: #6c757d; }
+  </style>
+</head>
+<body>
+<div class="container py-5">
+  <a href="/my-orders" class="back-link d-flex align-items-center mb-4">
+    <i class="bi bi-arrow-left me-2"></i>
+    <span>Назад к списку заказов</span>
+  </a>
+
+  <div class="card order-card mb-4">
+    <div class="card-header bg-light">
+      <h3 class="mb-0">Заказ #<span th:text="${order.id}">12345</span></h3>
+      <small class="text-muted" th:text="${#temporals.format(order.timeOfCreated, 'dd.MM.yyyy HH:mm')}">01.01.2023 12:00</small>
+    </div>
+    <div class="card-body">
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <h5 class="mb-3">Информация о заказе</h5>
+          <div class="row mb-2">
+            <div class="col-4 info-label">Товар:</div>
+            <div class="col-8 info-value" th:text="${order.productTitle} + ' (ID: ' + ${order.productId} + ')'">Название товара (ID: 789)</div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-4 info-label">Количество:</div>
+            <div class="col-8 info-value" th:text="${order.count} + ' шт.'">1 шт.</div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-4 info-label">Сумма:</div>
+            <div class="col-8 info-value text-success fw-bold" th:text="${#numbers.formatDecimal(order.amount, 1, 2)} + ' ₽'">1000.00 ₽</div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-4 info-label">Способ оплаты:</div>
+            <div class="col-8 info-value" th:text="${order.paymentType}">Карта</div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-4 info-label">Статус:</div>
+            <div class="col-8 info-value">
+              <span class="badge" th:classappend="${'bg-' + order.status.name().toLowerCase().replace('_', '-')}">
+                <i class="bi" th:classappend="${order.status.name() == 'DELIVERED' or order.status.name() == 'COMPLETED'} ? 'bi-check-circle-fill' : 'bi-arrow-repeat'"></i>
+                <span th:text="${order.status.name().replace('_', ' ')}">STATUS</span>
+              </span>
+            </div>
+          </div>
+          <div class="row mb-2" th:if="${order.timeOfDelivered != null}">
+            <div class="col-4 info-label">Время доставки:</div>
+            <div class="col-8 info-value" th:text="${#temporals.format(order.timeOfDelivered, 'dd.MM.yyyy HH:mm')}">01.01.2023 12:00</div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <h5 class="mb-3">Информация о покупателе</h5>
+          <div class="row mb-2">
+            <div class="col-4 info-label">Имя:</div>
+            <div class="col-8 info-value" th:text="${order.buyerUsername} ?: 'Не указано'">Покупатель</div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-4 info-label">Email:</div>
+            <div class="col-8 info-value" th:text="${order.buyerEmail}">buyer@example.com</div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-4 info-label">Телефон:</div>
+            <div class="col-8 info-value" th:text="${order.buyerDetail} ?: 'Не указан'">+7 (123) 456-78-90</div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-4 info-label">Адрес:</div>
+            <div class="col-8 info-value" th:text="${order.address} ?: 'Не указан'">г. Москва, ул. Примерная, д. 1</div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-4 info-label">Индекс:</div>
+            <div class="col-8 info-value" th:text="${order.postcode} ?: 'Не указан'">123456</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Секция редактирования статуса и времени доставки -->
+      <div class="edit-section">
+        <h5 class="mb-3"><i class="bi bi-pencil-square"></i> Изменить статус заказа</h5>
+        <form th:action="@{/online-market/order/edit/{orderId}(orderId=${order.id})}" method="post">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="status" class="form-label">Статус заказа</label>
+              <select class="form-select" id="status" name="status" required>
+                <option th:each="status : ${statuses}"
+                        th:value="${status.name()}"
+                        th:text="${status.displayName}"
+                        th:selected="${status == order.status}">
+                </option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="timeOfDelivery" class="form-label">Время доставки</label>
+              <input type="datetime-local" class="form-control" id="timeOfDelivery"
+                     name="timeOfDelivery"
+                     th:value="${order.timeOfDelivered != null ? #temporals.format(order.timeOfDelivered, 'yyyy-MM-dd''T''HH:mm') : #temporals.format(T(java.time.LocalDateTime).now(), 'yyyy-MM-dd''T''HH:mm')}">
+              <small class="text-muted">Оставьте пустым, если не требуется</small>
+            </div>
+            <div class="col-12">
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save"></i> Сохранить изменения
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center border-top pt-3 mt-3">
+        <div>
+          <span class="badge" th:classappend="${'bg-' + order.status.name().toLowerCase().replace('_', '-')}">
+            <i class="bi" th:classappend="${order.status.name() == 'DELIVERED' or order.status.name() == 'COMPLETED'} ? 'bi-check-circle-fill' : 'bi-arrow-repeat'"></i>
+            <span th:text="${order.status.name().replace('_', ' ')}">STATUS</span>
+          </span>
+        </div>
+        <div>
+          <button class="btn btn-outline-secondary me-2">
+            <i class="bi bi-printer"></i> Печать
+          </button>
+          <button class="btn btn-primary">
+            <i class="bi bi-chat-left-text"></i> Связаться с покупателем
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,32 +1,38 @@
 package online_market.user_app.payload;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 
-public record NewOrderPayload(
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+public class NewOrderPayload{
 
-        String sellerUsername,
+        private String sellerUsername;
 
-        String sellerEmail,
+        private String sellerEmail;
 
-        String productTitle,
+    private String productTitle;
 
-        Integer count,
+    private Integer count;
 
-        String buyerUsername,
+    private String buyerUsername;
 
-        Integer productId,
+    private Integer productId;
 
-        String buyerEmail,
+    private String buyerEmail;
 
-        String buyerDetail,
+    private String buyerDetail;
 
-        String address,
+    private String address;
 
-        String postcode,
+    private String postcode;
 
-        BigDecimal amount,
+    private BigDecimal amount;
 
-        String paymentType
-)
-{}
+    private String paymentType;
+}

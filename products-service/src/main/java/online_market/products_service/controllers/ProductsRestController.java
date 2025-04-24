@@ -56,7 +56,8 @@ public class ProductsRestController {
     @PostMapping()
     public ResponseEntity<Product> createProduct(@Valid @RequestBody NewProductPayload payload,
                                                  UriComponentsBuilder uriBuilder,
-                                                 BindingResult bindingResult) throws BindException {
+                                                 BindingResult bindingResult,
+                                                 JwtAuthenticationToken jwt) throws BindException {
         if (bindingResult.hasErrors()) {
             if(bindingResult instanceof BindException exception) {
                 throw exception;

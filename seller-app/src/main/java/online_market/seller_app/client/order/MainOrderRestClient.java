@@ -2,10 +2,13 @@ package online_market.seller_app.client.order;
 
 import lombok.RequiredArgsConstructor;
 import online_market.seller_app.entity.Order;
+import online_market.seller_app.payload.UpdateOrderPayload;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -24,7 +27,7 @@ public class MainOrderRestClient implements OrderRestClient {
         try {
             return this.restClient
                     .get()
-                    .uri("oder-api/{orderId}", orderId)
+                    .uri("order-api/{orderId}", orderId)
                     .retrieve()
                     .body(Order.class);
         } catch (HttpClientErrorException.NotFound exception) {
@@ -39,6 +42,19 @@ public class MainOrderRestClient implements OrderRestClient {
                 .get()
                 .uri("/order-api/seller/{sellerUsername}", username)
                 .retrieve()
-                .body(ORDER_TYPE_REFERENCE);                                            //TODO реализовать на вьюхах
+                .body(ORDER_TYPE_REFERENCE);
+    }
+
+    @Override
+    public void updateOrderStatusAndTimeOfDelivery(String status, LocalDateTime timeOfDelivery, Integer orderId) {
+        try {
+            this.restClient.patch()
+                    .uri("order-api/edit/{orderId}", orderId)
+                    .body(new UpdateOrderPayload(timeOfDelivery, status))
+                    .retrieve()
+                    .toBodilessEntity();
+        } catch (HttpClientErrorException.NotFound exception) {
+            throw new NoSuchElementException(exception.getResponseBodyAsString());
+        }
     }
 }

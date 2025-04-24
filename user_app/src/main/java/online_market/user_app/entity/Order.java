@@ -3,6 +3,7 @@ package online_market.user_app.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import online_market.user_app.enums.OrderStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,6 +16,12 @@ public class Order {
     private Integer id;
 
     private LocalDateTime timeOfCreated;
+
+    private LocalDateTime updatedAt;
+
+    private LocalDateTime timeOfDelivered;
+
+    private OrderStatus status;
 
     private Integer productId;
 

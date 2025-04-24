@@ -59,6 +59,7 @@
             border-radius: 8px;
             cursor: pointer;
             font-size: 14px;
+            margin-left: 8px;
         }
         .btn-remove {
             background-color: #ff4d4d;
@@ -70,13 +71,6 @@
         .btn-order {
             background-color: #4CAF50;
             color: white;
-            margin-top: 20px;
-            display: block;
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 18px;
         }
         .btn-order:hover {
             background-color: #45a049;
@@ -85,6 +79,9 @@
             color: #666;
             font-style: italic;
             padding: 20px;
+        }
+        .product-actions {
+            display: flex;
         }
     </style>
 </head>
@@ -99,11 +96,16 @@
             <img th:src="@{${product.getProductMedia().getFirst().getMediaPath()}}" alt="Product Image">
         </th:block>
         <span data-th-text="${product.title}"></span>
-        <form data-th-action="@{/online-market/buyer/products-from-cart/delete/{productId}(productId=${product.id})}" method="post">
-            <button type="submit" class="btn btn-remove">Удалить</button>
-        </form>
+        <div class="product-actions">
+            <form data-th-action="@{/online-market/buyer/products-from-cart/delete/{productId}(productId=${product.id})}" method="post">
+                <button type="submit" class="btn btn-remove">Удалить</button>
+            </form>
+            <form data-th-action="@{/online-market/buyer/order/new}" method="get">
+                <input type="hidden" name="productId" th:value="${product.id}">
+                <button type="submit" class="btn btn-order">Оформить заказ</button>
+            </form>
+        </div>
     </div>
-    <a href="/online-market" class="btn btn-order">Оформить заказ</a>
 </div>
 </body>
 </html>

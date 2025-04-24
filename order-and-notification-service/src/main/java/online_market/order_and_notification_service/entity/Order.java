@@ -4,6 +4,10 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import online_market.order_and_notification_service.converters.OrderStatusConverter;
+import online_market.order_and_notification_service.enums.OrderStatus;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,7 +24,19 @@ public class Order {
     private Integer id;
 
     @Column(name = "c_time_of_created")
+    @CreationTimestamp
     private LocalDateTime timeOfCreated;
+
+    @Column(name = "c_time_of_update")
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
+    @Column(name = "c_time_of_delivery")
+    private LocalDateTime timeOfDelivered;
+
+    @Column(name = "c_status")
+    @Convert(converter = OrderStatusConverter.class)
+    private OrderStatus status;
 
     @Column(name = "c_product_id")
     private Integer productId;

@@ -2,6 +2,7 @@ package online_market.order_and_notification_service.payload;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.NonNull;
@@ -16,6 +17,7 @@ public record NewOrderPayload(
 
         String productTitle,
 
+        @Min(value = 1,message = "вы не можете оформить заказ на 0 товаров")
         Integer count,
 
         String buyerUsername,
@@ -29,7 +31,7 @@ public record NewOrderPayload(
     @Size(min = 5, max = 150, message = "Слишком длинные или короткие контактные данные")
     String buyerDetail,
 
-        @Size(min = 30, max = 150, message = "Слишком длинные или короткий адрес")
+        @Size(min = 15, max = 150, message = "Слишком длинные или короткий адрес")
     String address,
 
     String postcode,

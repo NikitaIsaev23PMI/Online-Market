@@ -34,7 +34,6 @@ public class ProductsFromUserCartController {
         List<Integer> productsFromCart = this.productFromUserCartClient.
                 getAllProductsFromUserCart(principal.getPreferredUsername()).stream()
                 .map(ProductFromCart::getProductId).toList();
-
         model.addAttribute("products", productRestClient.findProductsByListOfId(productsFromCart));
         return "users/cart";
     }

@@ -1,19 +1,23 @@
 package online_market.user_app.client.order;
 
 import lombok.RequiredArgsConstructor;
+import online_market.user_app.client.exception.BadRequestException;
 import online_market.user_app.entity.Order;
 import online_market.user_app.entity.Product;
 import online_market.user_app.payload.NewOrderPayload;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.ProblemDetail;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
-public class MainOrderRestClient implements OrderRestClient {
+public class MainOrderRestClient implements OrderRestClient { //TODO добавить уменьшение в  БД при заказе
 
-    private static final ParameterizedTypeReference<List<Product>> PRODUCTS_TYPE_REFERENCE =
+    private static final ParameterizedTypeReference<List<Order>> PRODUCTS_TYPE_REFERENCE =
 
             new ParameterizedTypeReference<>() {
             };
@@ -34,12 +38,40 @@ public class MainOrderRestClient implements OrderRestClient {
                           String postcode,
                           BigDecimal amount,
                           String paymentType) {
-        return this.restClient.post()
-                .uri("order-api/new")
-                .body(new NewOrderPayload(sellerUsername,sellerEmail,productTitle,count,buyerUsername,
-                        productId,buyerEmail,buyerDetail,address,postcode,amount, paymentType))
-                .retrieve()
-                .body(Order.class);
+        try {
+            return this.restClient.post()
+                    .uri("order-api/new")
+                    .body(new NewOrderPayload(sellerUsername, sellerEmail, productTitle, count, buyerUsername,
+                            productId, buyerEmail, buyerDetail, address, postcode, amount, paymentType))
+                    .retrieve()
+                    .body(Order.class);
+        } catch (HttpClientErrorException.BadRequest exception){
+            ProblemDetail problemDetail = exception.getResponseBodyAs(ProblemDetail.class);
+            throw new BadRequestException((List<String>)problemDetail.getProperties().get("errors"));
+        }
     }
+
+    @Override
+    public List<Order> getAllUserOrders(String username) {
+        return this.restClient.get()
+                .uri("order-api/buyer/{buyerUsername}", username)
+                .retrieve()
+                .body(PRODUCTS_TYPE_REFERENCE);
+    }
+
+    @Override
+    public Order getUserOrder(Integer orderId) {
+        try {
+            return this.restClient.get()
+                    .uri("order-api/{orderId}", orderId)
+                    .retrieve()
+                    .body(Order.class);
+        } catch (HttpClientErrorException.NotFound exception){
+            ProblemDetail problemDetail = exception.getResponseBodyAs(ProblemDetail.class);
+            throw new NoSuchElementException((String)problemDetail.getProperties().get("errors"));
+        }
+    }
+
+
 }
 

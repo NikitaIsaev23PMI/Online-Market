@@ -1,0 +1,1 @@
+ALTER TABLE t_order ALTER COLUMN c_postcode TYPE INTEGER USING (c_postcode::integer)

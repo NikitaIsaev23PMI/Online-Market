@@ -1,10 +1,259 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Информация о заказе</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #f8f9fc;
+            --success-color: #1cc88a;
+            --info-color: #36b9cc;
+        }
+
+        body {
+            background-color: #f8f9fc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .order-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+
+        .order-header {
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .order-card {
+            border-left: 4px solid var(--primary-color);
+            border-radius: 0.35rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .order-card .card-header {
+            background-color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        .info-item {
+            display: flex;
+            margin-bottom: 0.75rem;
+        }
+
+        .info-label {
+            font-weight: 500;
+            color: #6c757d;
+            min-width: 180px;
+        }
+
+        .info-value {
+            font-weight: 400;
+        }
+
+        .status-badge {
+            font-size: 0.9rem;
+            padding: 0.35rem 0.75rem;
+        }
+
+        .total-amount {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--secondary-color);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 1.5rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -1.5rem;
+            top: 0.25rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary-color);
+        }
+    </style>
 </head>
 <body>
-$END$
+<div class="order-container">
+    <div class="order-header text-center">
+        <h2><i class="fas fa-receipt me-2"></i>Информация о заказе</h2>
+        <div class="d-flex justify-content-center align-items-center mt-3">
+            <span class="badge bg-success status-badge me-2">
+                <i class="fas fa-check-circle me-1"></i>Оформлен
+            </span>
+            <span class="text-muted" th:text="${#temporals.format(order.timeOfCreated, 'dd.MM.yyyy HH:mm')}"></span>
+        </div>
+        <div class="mt-2">
+            <span class="badge bg-primary status-badge">
+                Номер заказа: <span th:text="${order.id}"></span>
+            </span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card order-card h-100">
+                <div class="card-header d-flex align-items-center">
+                    <i class="fas fa-box-open me-2"></i>
+                    <span>Информация о товаре</span>
+                </div>
+                <div class="card-body">
+                    <div class="info-item">
+                        <div class="info-label">Название товара:</div>
+                        <div class="info-value" th:text="${order.productTitle}"></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Код товара:</div>
+                        <div class="info-value" th:text="${order.productId}"></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Количество:</div>
+                        <div class="info-value" th:text="${order.count}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card order-card h-100">
+                <div class="card-header d-flex align-items-center">
+                    <i class="fas fa-money-bill-wave me-2"></i>
+                    <span>Оплата</span>
+                </div>
+                <div class="card-body">
+                    <div class="info-item">
+                        <div class="info-label">Способ оплаты:</div>
+                        <div class="info-value" th:text="${#strings.capitalize(#strings.replace(order.paymentType, '_', ' '))}"></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Сумма заказа:</div>
+                        <div class="total-amount" th:text="${'₽' + #numbers.formatDecimal(order.amount, 1, 2, 'COMMA')}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card order-card h-100">
+                <div class="card-header d-flex align-items-center">
+                    <i class="fas fa-user-tie me-2"></i>
+                    <span>Продавец</span>
+                </div>
+                <div class="card-body">
+                    <div class="info-item">
+                        <div class="info-label">Имя:</div>
+                        <div class="info-value" th:text="${order.sellerUsername}"></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Email:</div>
+                        <div class="info-value" th:text="${order.sellerEmail}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card order-card h-100">
+                <div class="card-header d-flex align-items-center">
+                    <i class="fas fa-user me-2"></i>
+                    <span>Покупатель</span>
+                </div>
+                <div class="card-body">
+                    <div class="info-item">
+                        <div class="info-label">Имя:</div>
+                        <div class="info-value" th:text="${order.buyerUsername}"></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Email:</div>
+                        <div class="info-value" th:text="${order.buyerEmail}"></div>
+                    </div>
+                    <div th:if="${order.buyerDetail}" class="info-item">
+                        <div class="info-label">Комментарий:</div>
+                        <div class="info-value" th:text="${order.buyerDetail}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card order-card mb-4">
+        <div class="card-header d-flex align-items-center">
+            <i class="fas fa-truck me-2"></i>
+            <span>Доставка</span>
+        </div>
+        <div class="card-body">
+            <div class="info-item">
+                <div class="info-label">Адрес доставки:</div>
+                <div class="info-value" th:text="${order.address}"></div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Почтовый индекс:</div>
+                <div class="info-value" th:text="${order.postcode}"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card order-card">
+        <div class="card-header d-flex align-items-center">
+            <i class="fas fa-history me-2"></i>
+            <span>История заказа</span>
+        </div>
+        <div class="card-body">
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h6 class="mb-1">Заказ оформлен</h6>
+                    <p class="text-muted small mb-0" th:text="${#temporals.format(order.timeOfCreated, 'dd.MM.yyyy HH:mm')}"></p>
+                </div>
+                <div class="timeline-item">
+                    <h6 class="mb-1">Ожидается подтверждение</h6>
+                    <p class="text-muted small mb-0">Статус изменится после проверки заказа</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+        <a th:href="@{/online-market/orders}" class="btn btn-outline-secondary me-md-2">
+            <i class="fas fa-arrow-left me-1"></i> К списку заказов
+        </a>
+        <button class="btn btn-primary" onclick="window.print()">
+            <i class="fas fa-print me-1"></i> Печать
+        </button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
