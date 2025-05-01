@@ -1,5 +1,6 @@
 package online_market.user_app.config;
 
+import online_market.user_app.client.dadata.MainDadataRestClient;
 import online_market.user_app.client.order.MainOrderRestClient;
 import online_market.user_app.client.product.MainProductRestClient;
 import online_market.user_app.client.productFromCart.MainProductFromUserCartClient;
@@ -80,6 +81,17 @@ public class ClientBeans {
                         new OAuthClientRequestInterceptor(
                                 new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository,
                                         authorizedClientRepository),registrationId))
+                .build());
+    }
+
+
+    @Bean
+    MainDadataRestClient mainDadataRestClient(
+            @Value("${services.url.dadata}")
+            String dadataApiUrl){
+        return new MainDadataRestClient(RestClient
+                .builder()
+                .baseUrl(dadataApiUrl)
                 .build());
     }
 

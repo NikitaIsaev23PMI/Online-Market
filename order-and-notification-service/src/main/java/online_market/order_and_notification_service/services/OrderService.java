@@ -22,4 +22,6 @@ public interface OrderService {
     Order getOrderById(Integer orderId);
 
     void updateOrder(String status, LocalDateTime timeOfDelivery, Integer orderId);
+
+    void deleteOrderById(Integer orderId);
 }

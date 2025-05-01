@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>О нас | OMI - Учебный онлайн-магазин</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #FDF0D5;
+            --bg-light: #F0E2C4;
+            --bg-soft: #E8D9B5;
+            --accent: #C44536;
+            --accent-light: #D4A59A;
+            --accent-secondary: #6B8F71;
+            --text: #3A3335;
+            --text-light: #6D6D6D;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --shadow: 0 4px 12px rgba(58, 51, 53, 0.1);
+            --shadow-hover: 0 8px 24px rgba(58, 51, 53, 0.15);
+            --border-radius: 16px;
+            --border-radius-sm: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(to bottom, var(--bg), var(--bg-light));
+            color: var(--text);
+            min-height: 100vh;
+            padding: 0;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Навигационная панель */
+        .navbar {
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(107, 143, 113, 0.2);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-sm);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link:hover {
+            color: var(--accent);
+            background: rgba(196, 69, 54, 0.1);
+        }
+
+        .nav-link.active {
+            color: var(--accent);
+            background: rgba(196, 69, 54, 0.1);
+        }
+
+        .nav-link i {
+            font-size: 0.9em;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .cart-btn {
+            position: relative;
+            color: var(--text);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-sm);
+            transition: var(--transition);
+        }
+
+        .cart-btn:hover {
+            color: var(--accent);
+            background: rgba(196, 69, 54, 0.1);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--accent);
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        /* Логотип */
+        .logo {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .logo-icon {
+            color: var(--accent-secondary);
+            font-size: 1.8rem;
+        }
+
+        /* Стили для страницы "О нас" */
+        .about-container {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 3rem;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(107, 143, 113, 0.2);
+            margin-top: 1rem;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .about-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .about-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .about-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .about-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--accent-secondary);
+            border-radius: 2px;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
+        }
+
+        .about-section {
+            background: rgba(107, 143, 113, 0.05);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            border-left: 4px solid var(--accent-secondary);
+            transition: var(--transition);
+        }
+
+        .about-section:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--accent-secondary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .section-title i {
+            font-size: 1.3rem;
+        }
+
+        .section-content {
+            color: var(--text);
+            line-height: 1.8;
+        }
+
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .tech-item {
+            background: var(--card-bg);
+            border-radius: var(--border-radius-sm);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid rgba(107, 143, 113, 0.1);
+        }
+
+        .tech-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--accent);
+        }
+
+        .tech-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .tech-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .tech-desc {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .features-list {
+            list-style-type: none;
+            margin-top: 1rem;
+        }
+
+        .features-list li {
+            margin-bottom: 1rem;
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .features-list li::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: var(--accent-secondary);
+        }
+
+        .about-footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(107, 143, 113, 0.2);
+        }
+
+        .contact-btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: var(--accent);
+            color: white;
+            border-radius: var(--border-radius-sm);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            margin-top: 1rem;
+            box-shadow: 0 4px 16px rgba(196, 69, 54, 0.3);
+        }
+
+        .contact-btn:hover {
+            background: var(--accent-light);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(196, 69, 54, 0.4);
+            color: var(--text);
+        }
+
+        .bg-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            opacity: 0.2;
+        }
+
+        .bg-element {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+        }
+
+        .bg-element-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--accent);
+            top: -100px;
+            left: -100px;
+            animation: float 18s infinite ease-in-out;
+        }
+
+        .bg-element-2 {
+            width: 500px;
+            height: 500px;
+            background: var(--accent-secondary);
+            bottom: -150px;
+            right: -150px;
+            animation: float 22s infinite ease-in-out reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(30px, 30px) rotate(5deg); }
+            50% { transform: translate(60px, 0) rotate(0deg); }
+            75% { transform: translate(30px, -30px) rotate(-5deg); }
+        }
+
+        /* Адаптив */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .navbar {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                width: 100%;
+                gap: 0.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .nav-link {
+                justify-content: center;
+                padding: 0.8rem;
+            }
+
+            .user-actions {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .about-container {
+                padding: 1.5rem;
+            }
+
+            .about-title {
+                font-size: 2rem;
+            }
+
+            .tech-stack {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .about-section {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .tech-stack {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="bg-elements">
+    <div class="bg-element bg-element-1"></div>
+    <div class="bg-element bg-element-2"></div>
+</div>
+
+<div class="container">
+    <header class="animate-fade">
+        <div class="logo">
+            <i class="fas fa-leaf logo-icon"></i>
+            <span>OMI</span>
+        </div>
+    </header>
+
+    <!-- Навигационная панель -->
+    <nav class="navbar animate-fade">
+        <ul class="nav-links">
+            <li>
+                <a href="/online-market/buyer/products" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    Главная
+                </a>
+            </li>
+            <li>
+                <a href="/online-market/buyer/order/my-orders" class="nav-link">
+                    <i class="fas fa-store"></i>
+                    Заказы
+                </a>
+            </li>
+            <li>
+                <a href="/online-market/buyer/products/sale" class="nav-link">
+                    <i class="fas fa-tag"></i>
+                    Акции
+                </a>
+            </li>
+            <li>
+                <a href="/information-about-OMI" class="nav-link active">
+                    <i class="fas fa-info-circle"></i>
+                    О нас
+                </a>
+            </li>
+        </ul>
+
+        <div class="user-actions">
+            <a href="/online-market/buyer/products-from-cart" class="cart-btn">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Корзина</span>
+                <span class="cart-count" th:text="${cartCount}">0</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="about-container">
+        <div class="about-header">
+            <h1 class="about-title">OMI - Учебный онлайн-магазин</h1>
+            <p class="about-subtitle">Инновационный проект, разрабатываемый в рамках изучения современных веб-технологий и фреймворка Spring</p>
+        </div>
+
+        <div class="about-content">
+            <section class="about-section">
+                <h2 class="section-title"><i class="fas fa-code"></i> О проекте</h2>
+                <div class="section-content">
+                    <p>OMI (Online Market Internship) - это полнофункциональный учебный онлайн-магазин, созданный в качестве дипломного проекта для демонстрации навыков разработки современных веб-приложений.</p>
+                    <p>Проект разрабатывается с нуля, начиная от проектирования архитектуры и заканчивая реализацией сложных бизнес-процессов, характерных для электронной коммерции.</p>
+                    <p>Основная цель проекта - создание качественного продукта, который демонстрирует владение современным стеком технологий и лучшими практиками разработки.</p>
+                </div>
+            </section>
+
+            <section class="about-section">
+                <h2 class="section-title"><i class="fas fa-cogs"></i> Технологический стек</h2>
+                <div class="section-content">
+                    <p>Проект построен на современных и надежных технологиях, обеспечивающих производительность, безопасность и масштабируемость:</p>
+
+                    <div class="tech-stack">
+                        <div class="tech-item">
+                            <div class="tech-icon"><i class="fab fa-java"></i></div>
+                            <h3 class="tech-name">Java & Spring</h3>
+                            <p class="tech-desc">Backend на Spring Boot, Security, Data JPA</p>
+                        </div>
+                        <div class="tech-item">
+                            <div class="tech-icon"><i class="fas fa-database"></i></div>
+                            <h3 class="tech-name">PostgreSQL</h3>
+                            <p class="tech-desc">Надежная реляционная база данных</p>
+                        </div>
+                        <div class="tech-item">
+                            <div class="tech-icon"><i class="fab fa-html5"></i></div>
+                            <h3 class="tech-name">HTML5 & CSS3</h3>
+                            <p class="tech-desc">Семантическая верстка и современные стили</p>
+                        </div>
+                        <div class="tech-item">
+                            <div class="tech-icon"><i class="fab fa-js"></i></div>
+                            <h3 class="tech-name">JavaScript</h3>
+                            <p class="tech-desc">Интерактивность и AJAX-запросы</p>
+                        </div>
+                        <div class="tech-item">
+                            <div class="tech-icon"><i class="fas fa-server"></i></div>
+                            <h3 class="tech-name">REST API</h3>
+                            <p class="tech-desc">Архитектура RESTful сервисов</p>
+                        </div>
+                        <div class="tech-item">
+                            <div class="tech-icon"><i class="fas fa-shield-alt"></i></div>
+                            <h3 class="tech-name">OAuth2</h3>
+                            <p class="tech-desc">Безопасная аутентификация</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="about-section">
+                <h2 class="section-title"><i class="fas fa-star"></i> Ключевые особенности</h2>
+                <div class="section-content">
+                    <ul class="features-list">
+                        <li>Полноценная система аутентификации и авторизации</li>
+                        <li>Каталог товаров с фильтрацией и поиском</li>
+                        <li>Корзина покупок и процесс оформления заказа</li>
+                        <li>Личный кабинет пользователя с историей заказов</li>
+                        <li>Система скидок и акционных предложений</li>
+                        <li>Панель администратора для управления контентом</li>
+                        <li>Адаптивный дизайн для всех устройств</li>
+                        <li>Оптимизированная производительность</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="about-section">
+                <h2 class="section-title"><i class="fas fa-graduation-cap"></i> Учебные цели</h2>
+                <div class="section-content">
+                    <p>Этот проект создан в образовательных целях и призван продемонстрировать следующие навыки:</p>
+                    <ul class="features-list">
+                        <li>Проектирование и разработка полноценного веб-приложения</li>
+                        <li>Работа с современными Java-фреймворками (Spring)</li>
+                        <li>Создание безопасных и масштабируемых систем</li>
+                        <li>Реализация сложных бизнес-процессов</li>
+                        <li>Оптимизация производительности приложения</li>
+                        <li>Следование принципам чистого кода и лучшим практикам</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+
+        <div class="about-footer">
+            <h3>Хотите узнать больше о проекте или предложить сотрудничество?</h3>
+            <a href="nikitaisaev139@gmail.com" class="contact-btn">
+                <i class="fas fa-envelope"></i> Связаться с разработчиком
+            </a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

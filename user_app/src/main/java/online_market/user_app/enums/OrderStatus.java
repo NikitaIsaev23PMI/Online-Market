@@ -1,5 +1,6 @@
 package online_market.user_app.enums;
 
+import lombok.Data;
 import lombok.Getter;
 
 @Getter
@@ -14,6 +15,7 @@ public enum OrderStatus {
     DELIVERED,
 
     COMPLETED;
+
 
     public static OrderStatus fromString(String text) {
         for (OrderStatus order : OrderStatus.values()) {

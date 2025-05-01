@@ -2,209 +2,661 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Оформление заказа</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оформление заказа | OMI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #4e73df;
-            --secondary-color: #f8f9fc;
-            --success-color: #1cc88a;
-            --danger-color: #e74a3b;
-            --warning-color: #f6c23e;
+            --bg: #FDF0D5;
+            --bg-light: #F0E2C4;
+            --bg-soft: #E8D9B5;
+            --accent: #C44536;
+            --accent-light: #D4A59A;
+            --accent-secondary: #6B8F71;
+            --text: #3A3335;
+            --text-light: #6D6D6D;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --shadow: 0 4px 12px rgba(58, 51, 53, 0.1);
+            --shadow-hover: 0 8px 24px rgba(58, 51, 53, 0.15);
+            --border-radius: 16px;
+            --border-radius-sm: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            background-color: #f8f9fc;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(to bottom, var(--bg), var(--bg-light));
+            color: var(--text);
+            min-height: 100vh;
+            padding: 0;
+            overflow-x: hidden;
+            line-height: 1.6;
         }
 
-        .order-container {
+        .container {
             max-width: 800px;
-            margin: 2rem auto;
+            margin: 0 auto;
             padding: 2rem;
-            background: white;
-            border-radius: 0.5rem;
-            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
         }
 
-        .card {
-            border: none;
-            border-radius: 0.35rem;
-            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
-            margin-bottom: 1.5rem;
+        /* Навигационная панель */
+        .navbar {
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(107, 143, 113, 0.2);
         }
 
-        .card-header {
-            background-color: var(--secondary-color);
-            border-bottom: 1px solid #e3e6f0;
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-sm);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link:hover {
+            color: var(--accent);
+            background: rgba(196, 69, 54, 0.1);
+        }
+
+        .nav-link.active {
+            color: var(--accent);
+            background: rgba(196, 69, 54, 0.1);
+        }
+
+        .nav-link i {
+            font-size: 0.9em;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .cart-btn {
+            position: relative;
+            color: var(--text);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-sm);
+            transition: var(--transition);
+        }
+
+        .cart-btn:hover {
+            color: var(--accent);
+            background: rgba(196, 69, 54, 0.1);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--accent);
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
             font-weight: 600;
-            padding: 1rem 1.35rem;
         }
 
-        .error-card {
-            border-left: 4px solid var(--danger-color);
-            animation: fadeIn 0.3s ease-in-out;
+        /* Логотип */
+        .logo {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .logo-icon {
+            color: var(--accent-secondary);
+            font-size: 1.8rem;
+        }
+
+        /* Стили для оформления заказа */
+        .order-container {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(107, 143, 113, 0.2);
+            margin-top: 1rem;
+            animation: fadeIn 0.6s ease-out;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
+        .order-header {
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+
+        .order-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+            position: relative;
+            display: inline-block;
+        }
+
+        .order-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 3px;
+            background: var(--accent-secondary);
+            border-radius: 2px;
+        }
+
+        .order-title i {
+            margin-right: 0.8rem;
+            color: var(--accent-secondary);
+        }
+
+        /* Карточки */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(107, 143, 113, 0.1);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--accent);
+        }
+
+        .card-header {
+            background: rgba(107, 143, 113, 0.1);
+            border-bottom: 1px solid rgba(107, 143, 113, 0.2);
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--accent-secondary);
+            display: flex;
+            align-items: center;
+        }
+
+        .card-header i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Ошибки */
+        .error-card {
+            border-left: 4px solid var(--accent);
+            animation: fadeIn 0.5s ease;
+        }
+
         .error-icon {
-            color: var(--danger-color);
-            margin-right: 0.5rem;
+            color: var(--accent);
+            margin-right: 10px;
+            font-size: 1.3rem;
+        }
+
+        /* Форма */
+        .form-label {
+            display: block;
+            margin-bottom: 0.8rem;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .form-control, .form-select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: var(--card-bg);
+            border: 1px solid rgba(107, 143, 113, 0.2);
+            border-radius: var(--border-radius-sm);
+            color: var(--text);
+            font-family: inherit;
+            transition: var(--transition);
+            margin-bottom: 1.5rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(196, 69, 54, 0.1);
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .invalid-feedback {
+            color: var(--accent);
+            margin-top: -1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        /* Кнопки */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            text-decoration: none;
+            font-family: 'Montserrat', sans-serif;
         }
 
         .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            padding: 0.5rem 1.5rem;
+            background: var(--accent-secondary);
+            color: white;
+            box-shadow: 0 4px 16px rgba(107, 143, 113, 0.3);
         }
 
         .btn-primary:hover {
-            background-color: #2e59d9;
-            border-color: #2653d4;
+            background: #7DA383;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(107, 143, 113, 0.4);
         }
 
-        .total-amount {
-            font-size: 1.25rem;
-            color: var(--primary-color);
-            font-weight: 600;
+        .btn-outline-secondary {
+            background: transparent;
+            color: var(--accent-secondary);
+            border: 2px solid var(--accent-secondary);
         }
 
-        .form-label {
-            font-weight: 500;
-            margin-bottom: 0.5rem;
+        .btn-outline-secondary:hover {
+            background: rgba(107, 143, 113, 0.1);
+            transform: translateY(-2px);
         }
 
+        .btn i {
+            margin-right: 0.5rem;
+        }
+
+        /* Информация о товаре */
         .product-title {
-            color: var(--primary-color);
+            color: var(--accent);
             font-weight: 600;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-text {
+            margin-bottom: 0.8rem;
+            color: var(--text);
+        }
+
+        .info-text strong {
+            font-weight: 500;
+        }
+
+        /* Итоговая сумма */
+        .total-amount {
+            font-size: 1.5rem;
+            color: var(--accent);
+            font-weight: 700;
+            margin: 1.5rem 0;
+        }
+
+        /* Футер формы */
+        .form-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        /* Фоновые элементы */
+        .bg-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            opacity: 0.2;
+        }
+
+        .bg-element {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+        }
+
+        .bg-element-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--accent);
+            top: -100px;
+            left: -100px;
+            animation: float 18s infinite ease-in-out;
+        }
+
+        .bg-element-2 {
+            width: 500px;
+            height: 500px;
+            background: var(--accent-secondary);
+            bottom: -150px;
+            right: -150px;
+            animation: float 22s infinite ease-in-out reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(30px, 30px) rotate(5deg); }
+            50% { transform: translate(60px, 0) rotate(0deg); }
+            75% { transform: translate(30px, -30px) rotate(-5deg); }
+        }
+
+        /* Новые стили для информации о количестве */
+        .stock-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .stock-info i {
+            margin-right: 0.5rem;
+            color: var(--accent-secondary);
+        }
+
+        .stock-count {
+            font-weight: 600;
+            color: var(--accent-secondary);
+        }
+
+        /* Адаптив */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .navbar {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                width: 100%;
+                gap: 0.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .nav-link {
+                justify-content: center;
+                padding: 0.8rem;
+            }
+
+            .user-actions {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .order-container {
+                padding: 1.5rem;
+            }
+
+            .form-footer {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-<div class="order-container">
-    <!-- Красивый вывод ошибок -->
-    <div th:if="${errors != null and not errors.isEmpty()}" class="card error-card mb-4">
-        <div class="card-body py-3">
-            <h5 class="d-flex align-items-center mb-3">
-                <i class="fas fa-exclamation-circle error-icon"></i>
-                <span>Ошибки при оформлении заказа</span>
-            </h5>
-            <ul class="mb-0 ps-4">
-                <li th:each="error : ${errors}" th:text="${error}" class="mb-1"></li>
-            </ul>
-        </div>
-    </div>
-
-    <h2 class="mb-4 text-center">Оформление заказа</h2>
-
-    <form th:action="@{/online-market/buyer/order}" method="post" th:object="${payload}" class="needs-validation" novalidate>
-        <!-- Скрытые поля -->
-        <input type="hidden" th:field="*{sellerUsername}">
-        <input type="hidden" th:field="*{sellerEmail}">
-        <input type="hidden" th:field="*{productId}">
-        <input type="hidden" th:field="*{productTitle}">
-        <input type="hidden" th:field="*{buyerUsername}">
-        <input type="hidden" th:field="*{buyerEmail}">
-
-        <!-- Информация о товаре -->
-        <div class="card mb-4">
-            <div class="card-header d-flex align-items-center">
-                <i class="fas fa-box-open me-2"></i>
-                <span>Информация о товаре</span>
-            </div>
-            <div class="card-body">
-                <h5 class="card-title product-title" th:text="${product.title}">Название товара</h5>
-                <p class="card-text" th:text="${'Цена: ' + product.price + ' ₽'}">Цена</p>
-            </div>
-        </div>
-
-        <!-- Информация о покупателе -->
-        <div class="card mb-4">
-            <div class="card-header d-flex align-items-center">
-                <i class="fas fa-user me-2"></i>
-                <span>Информация о покупателе</span>
-            </div>
-            <div class="card-body">
-                <p th:text="${'Имя: ' + buyer.getPreferredUsername()}">Имя покупателя</p>
-                <p th:text="${'Email: ' + buyer.email}">Email покупателя</p>
-            </div>
-        </div>
-        <div class="card mb-4">
-            <div class="card-header d-flex align-items-center">
-                <i class="fas fa-store me-2"></i>
-                <span>Информация о продавце</span>
-            </div>
-            <div class="card-body">
-                <p th:text="${'Имя: ' + product.seller.preferredUsername}">Имя продавца</p>
-                <p th:text="${'Email: ' + product.seller.email}">Email продавца</p>
-            </div>
-        </div>
-
-        <!-- Детали заказа -->
-        <div class="card mb-4">
-            <div class="card-header d-flex align-items-center">
-                <i class="fas fa-clipboard-list me-2"></i>
-                <span>Детали заказа</span>
-            </div>
-            <div class="card-body">
-                <div class="mb-3">
-                    <label for="count" class="form-label">Количество</label>
-                    <input type="number" id="count" class="form-control" th:field="*{count}" min="1" required>
-                    <div class="invalid-feedback">Укажите количество товара</div>
-                </div>
-
-                <div class="mb-3">
-                    <label for="buyerDetail" class="form-label">Дополнительная информация</label>
-                    <textarea class="form-control" th:field="*{buyerDetail}" rows="3" placeholder="Можете указать любые пожелания к заказу"></textarea>
-                </div>
-
-                <div class="mb-3">
-                    <label for="address" class="form-label">Адрес доставки</label>
-                    <input type="text" class="form-control" th:field="*{address}" required placeholder="Город, улица, дом, квартира">
-                    <div class="invalid-feedback">Укажите адрес доставки</div>
-                </div>
-
-                <div class="mb-3">
-                    <label for="postcode" class="form-label">Почтовый индекс</label>
-                    <input type="text" class="form-control" th:field="*{postcode}" required>
-                    <div class="invalid-feedback">Укажите почтовый индекс</div>
-                </div>
-
-                <div class="mb-3">
-                    <label for="paymentType" class="form-label">Способ оплаты</label>
-                    <select class="form-select" th:field="*{paymentType}" required>
-                        <option value="" disabled selected>Выберите способ оплаты</option>
-                        <option value="CASH_ON_DELIVERY">Наличными при получении</option>
-                        <option value="CARD_ON_DELIVERY">Картой при получении</option>
-                    </select>
-                    <div class="invalid-feedback">Выберите способ оплаты</div>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Итоговая сумма</label>
-                    <div class="total-amount" id="totalAmount" th:text="${product.price + ' ₽'}">0 ₽</div>
-                    <input type="hidden" th:field="*{amount}" id="amountField">
-                </div>
-            </div>
-        </div>
-
-        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-            <a th:href="@{/online-market/buyer/products}" class="btn btn-outline-secondary me-md-2">
-                <i class="fas fa-arrow-left me-1"></i> Вернуться к товарам
-            </a>
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-check me-1"></i> Оформить заказ
-            </button>
-        </div>
-    </form>
+<div class="bg-elements">
+    <div class="bg-element bg-element-1"></div>
+    <div class="bg-element bg-element-2"></div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<div class="container">
+    <header class="animate-fade">
+        <div class="logo">
+            <i class="fas fa-leaf logo-icon"></i>
+            <span>OMI</span>
+        </div>
+    </header>
+
+    <!-- Навигационная панель -->
+    <nav class="navbar animate-fade">
+        <ul class="nav-links">
+            <li>
+                <a href="/online-market/buyer/products" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    Главная
+                </a>
+            </li>
+            <li>
+                <a href="/online-market/buyer/order/my-orders" class="nav-link">
+                    <i class="fas fa-store"></i>
+                    Заказы
+                </a>
+            </li>
+            <li>
+                <a href="/online-market/buyer/products/sale" class="nav-link">
+                    <i class="fas fa-tag"></i>
+                    Акции
+                </a>
+            </li>
+            <li>
+                <a href="/information-about-OMI" class="nav-link">
+                    <i class="fas fa-info-circle"></i>
+                    О нас
+                </a>
+            </li>
+        </ul>
+
+        <div class="user-actions">
+            <a href="/online-market/buyer/products-from-cart" class="cart-btn">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Корзина</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="order-container">
+        <!-- Ошибки -->
+        <div th:if="${errors != null and not errors.isEmpty()}" class="card error-card">
+            <div class="card-body">
+                <h5 class="d-flex align-items-center mb-3">
+                    <i class="fas fa-exclamation-circle error-icon"></i>
+                    <span>Ошибки при оформлении заказа</span>
+                </h5>
+                <ul class="mb-0 ps-4">
+                    <li th:each="error : ${errors}" th:text="${error}" class="mb-1"></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="order-header">
+            <h1 class="order-title"><i class="fas fa-shopping-bag"></i> Оформление заказа</h1>
+        </div>
+
+        <form th:action="@{/online-market/buyer/order}" method="post" th:object="${payload}" class="needs-validation" novalidate>
+            <!-- Скрытые поля -->
+            <input type="hidden" th:field="*{sellerUsername}">
+            <input type="hidden" th:field="*{sellerEmail}">
+            <input type="hidden" th:field="*{productId}">
+            <input type="hidden" th:field="*{productTitle}">
+            <input type="hidden" th:field="*{buyerUsername}">
+            <input type="hidden" th:field="*{buyerEmail}">
+
+            <!-- Информация о товаре -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-box-open"></i>
+                    <span>Информация о товаре</span>
+                </div>
+                <div class="card-body">
+                    <h5 class="product-title" th:text="${product.title}">Название товара</h5>
+                    <p class="info-text">
+                        <strong>Цена:</strong>
+                        <span th:if="${product.discount != null}">
+                            <span style="text-decoration: line-through; color: var(--text-light);"
+                                  th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 2, 'POINT')} + ' ₽'"></span>
+                            <span style="color: var(--accent);"
+                                  th:text="${#numbers.formatDecimal(product.price - (product.price * product.discount.amount / 100), 0, 'COMMA', 2, 'POINT')} + ' ₽'"></span>
+                        </span>
+                        <span th:unless="${product.discount != null}"
+                              th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 2, 'POINT')} + ' ₽'"></span>
+                    </p>
+                    <div class="stock-info">
+                        <i class="fas fa-warehouse"></i>
+                        <span>Доступно на складе: <span class="stock-count" th:text="${product.count} + ' шт.'"></span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Информация о покупателе -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-user"></i>
+                    <span>Информация о покупателе</span>
+                </div>
+                <div class="card-body">
+                    <p class="info-text"><strong>Имя:</strong> <span th:text="${buyer.getPreferredUsername()}"></span></p>
+                    <p class="info-text"><strong>Email:</strong> <span th:text="${buyer.email}"></span></p>
+                </div>
+            </div>
+
+            <!-- Информация о продавце -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-store"></i>
+                    <span>Информация о продавце</span>
+                </div>
+                <div class="card-body">
+                    <p class="info-text"><strong>Имя:</strong> <span th:text="${product.seller.preferredUsername}"></span></p>
+                    <p class="info-text"><strong>Email:</strong> <span th:text="${product.seller.email}"></span></p>
+                </div>
+            </div>
+
+            <!-- Детали заказа -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Детали заказа</span>
+                </div>
+                <div class="card-body">
+                    <div>
+                        <label for="count" class="form-label">Количество товара</label>
+                        <input type="number" id="count" class="form-control"
+                               th:field="*{count}"
+                               th:max="${product.count}"
+                               min="1"
+                               required
+                               oninput="calculateTotal()">
+                        <div class="invalid-feedback">
+                            Укажите количество от 1 до <span th:text="${product.count}"></span>
+                        </div>
+                        <div class="stock-info">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Максимально доступно: <span class="stock-count" th:text="${product.count} + ' шт.'"></span></span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="buyerDetail" class="form-label">Дополнительная информация</label>
+                        <textarea class="form-control" th:field="*{buyerDetail}" rows="3" placeholder="Можете указать любые пожелания к заказу"></textarea>
+                    </div>
+
+                    <div style="position: relative;">
+                        <label for="address" class="form-label">Адрес доставки</label>
+                        <input type="text" id="address" class="form-control" th:field="*{address}" required placeholder="Начните вводить адрес...">
+                        <ul id="suggestions" style="position: absolute; z-index: 1000; background: var(--card-bg); border-radius: var(--border-radius-sm); list-style: none; padding: 0; margin: 0; width: 100%; border: 1px solid rgba(107, 143, 113, 0.2); box-shadow: var(--shadow); display: none;"></ul>
+                    </div>
+
+                    <div>
+                        <label for="postcode" class="form-label">Почтовый индекс</label>
+                        <input type="text" class="form-control" th:field="*{postcode}" required>
+                        <div class="invalid-feedback">Укажите почтовый индекс</div>
+                    </div>
+
+                    <div>
+                        <label for="paymentType" class="form-label">Способ оплаты</label>
+                        <select class="form-select" th:field="*{paymentType}" required>
+                            <option value="" disabled selected>Выберите способ оплаты</option>
+                            <option value="CASH_ON_DELIVERY">Наличными при получении</option>
+                            <option value="CARD_ON_DELIVERY">Картой при получении</option>
+                        </select>
+                        <div class="invalid-feedback">Выберите способ оплаты</div>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Итоговая сумма</label>
+                        <div class="total-amount" id="totalAmount" th:text="${product.price + ' ₽'}">0 ₽</div>
+                        <input type="hidden" th:field="*{amount}" id="amountField">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-footer">
+                <a th:href="@{/online-market/buyer/products}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Вернуться к товарам
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-check"></i> Оформить заказ
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script th:inline="javascript">
     /*<![CDATA[*/
     document.addEventListener('DOMContentLoaded', function() {
@@ -223,13 +675,27 @@
         });
 
         // Расчет суммы
-        const price = /*[[${product.price}]]*/ 0;
+        const price = /*[[${product.discount != null ? (product.price - (product.price * product.discount.amount / 100)) : product.price}]]*/ 0;
         const countInput = document.getElementById('count');
         const totalAmountElement = document.getElementById('totalAmount');
         const amountField = document.getElementById('amountField');
+        const maxCount = parseInt(countInput.getAttribute('th:max')) || 9999;
 
         function calculateTotal() {
-            const count = parseInt(countInput.value) || 1;
+            let count = parseInt(countInput.value) || 1;
+
+            // Проверка на максимальное количество
+            if (count > maxCount) {
+                count = maxCount;
+                countInput.value = maxCount;
+            }
+
+            // Проверка на минимальное количество
+            if (count < 1) {
+                count = 1;
+                countInput.value = 1;
+            }
+
             const total = (price * count).toFixed(2);
             totalAmountElement.textContent = total + ' ₽';
             amountField.value = total;
@@ -237,6 +703,53 @@
 
         countInput.addEventListener('input', calculateTotal);
         calculateTotal();
+
+        // Автозаполнение адреса
+        const addressInput = document.getElementById('address');
+        const suggestionsList = document.getElementById('suggestions');
+
+        addressInput.addEventListener('input', async () => {
+            const query = addressInput.value.trim();
+            if (query.length < 3) {
+                suggestionsList.style.display = 'none';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/address/suggest?query=${encodeURIComponent(query)}`);
+                const addresses = await response.json();
+
+                if (addresses.length === 0) {
+                    suggestionsList.style.display = 'none';
+                    return;
+                }
+
+                suggestionsList.innerHTML = '';
+                addresses.forEach(addr => {
+                    const li = document.createElement('li');
+                    li.textContent = addr;
+                    li.style.padding = '10px';
+                    li.style.cursor = 'pointer';
+                    li.addEventListener('click', () => {
+                        addressInput.value = addr;
+                        suggestionsList.style.display = 'none';
+                    });
+                    li.addEventListener('mouseover', () => li.style.background = 'rgba(196, 69, 54, 0.1)');
+                    li.addEventListener('mouseout', () => li.style.background = 'transparent');
+                    suggestionsList.appendChild(li);
+                });
+
+                suggestionsList.style.display = 'block';
+            } catch (e) {
+                console.error('Ошибка при получении подсказок:', e);
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!suggestionsList.contains(e.target) && e.target !== addressInput) {
+                suggestionsList.style.display = 'none';
+            }
+        });
     });
     /*]]>*/
 </script>

@@ -2,376 +2,1088 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Детали товара</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детали товара | Премиальный дизайн</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-            background-color: #f9fbff;
+        :root {
+            --primary: #8B4513; /* Коричневый (как на логотипе ОМИ) */
+            --primary-light: rgba(139, 69, 19, 0.1);
+            --primary-hover: #A0522D; /* Более светлый коричневый */
+            --secondary: #F5F5DC; /* Бежевый фон */
+            --danger: #B22222; /* Красноватый для кнопок */
+            --danger-light: rgba(178, 34, 34, 0.1);
+            --success: #556B2F; /* Оливковый */
+            --text: #2F4F4F; /* Темно-серый/зеленый для текста */
+            --text-light: #8FBC8F; /* Светлый серо-зеленый */
+            --border-radius: 12px;
+            --border-radius-sm: 8px;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 6px 25px rgba(0, 0, 0, 0.12);
+            --transition: all 0.3s ease;
+            --glass-bg: rgba(245, 245, 220, 0.9); /* Полупрозрачный бежевый */
+            --glass-border: rgba(139, 69, 19, 0.1); /* Коричневая граница */
+            --backdrop-filter: blur(10px);
+            --accent: #C44536; /* Цвет для навигации */
+            --card-bg: rgba(255, 255, 255, 0.95);
         }
 
-        h2, h3 {
-            text-align: center;
-            color: #003366;
-        }
-
-        ul {
-            list-style: none;
+        * {
+            box-sizing: border-box;
+            margin: 0;
             padding: 0;
         }
 
-        li {
-            margin-bottom: 10px;
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background-color: var(--secondary);
+            background-image:
+                    radial-gradient(circle at 10% 20%, rgba(139, 69, 19, 0.05) 0%, transparent 20%),
+                    radial-gradient(circle at 90% 80%, rgba(85, 107, 47, 0.05) 0%, transparent 20%);
+            padding: 0;
+            min-height: 100vh;
         }
 
-        .product-image-container {
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* ===== Навигационная панель ===== */
+        .navbar {
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            padding: 0.8rem 1.5rem;
             display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(107, 143, 113, 0.2);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-sm);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link:hover {
+            color: var(--accent);
+            background: rgba(196, 69, 54, 0.1);
+        }
+
+        .nav-link.active {
+            color: var(--accent);
+            background: rgba(196, 69, 54, 0.1);
+        }
+
+        .nav-link i {
+            font-size: 0.9em;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .cart-btn {
+            position: relative;
+            color: var(--text);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-sm);
+            transition: var(--transition);
+        }
+
+        .cart-btn:hover {
+            color: var(--accent);
+            background: rgba(196, 69, 54, 0.1);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--accent);
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
             justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        /* ===== Логотип ===== */
+        .logo {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .logo-icon {
+            color: var(--success);
+            font-size: 1.8rem;
+        }
+
+        /* ===== Анимации ===== */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .animate-fade {
+            animation: fadeIn 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        /* ===== Заголовки ===== */
+        h2, h3 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            text-align: center;
+            position: relative;
+            padding-bottom: 1rem;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 0.5rem;
+        }
+
+        h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40%;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* ===== Карточка товара ===== */
+        .product-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--backdrop-filter);
+            -webkit-backdrop-filter: var(--backdrop-filter);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--glass-border);
+            transition: var(--transition);
+            overflow: hidden;
+        }
+
+        .product-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-3px);
+        }
+
+        .product-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .product-info {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .product-details ul {
+            list-style: none;
+        }
+
+        .product-details li {
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: flex-start;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+
+        .product-details li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.5em;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--primary);
+        }
+
+        .product-details strong {
+            min-width: 100px;
+            display: inline-block;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        /* ===== Галерея изображений ===== */
+        .product-image-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .product-image {
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--border-radius-sm);
+            aspect-ratio: 4/3;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(139, 69, 19, 0.1);
         }
 
         .product-image img {
-            width: 250px;
-            height: 200px;
+            width: 100%;
+            height: 100%;
             object-fit: cover;
-            border-radius: 8px;
-            transition: transform 0.3s ease;
+            transition: var(--transition);
+        }
+
+        .empty-media-container {
+            display: none !important;
+        }
+
+        .product-image:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
         }
 
         .product-image:hover img {
-            transform: scale(1.05);
+            transform: scale(1.03);
+        }
+
+        /* ===== Цена и скидка ===== */
+        .price-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
         }
 
         .old-price {
             text-decoration: line-through;
-            color: red;
-            margin-right: 10px;
-            font-weight: bold;
+            color: var(--text-light);
+            font-size: 1.1rem;
         }
 
         .new-price {
-            color: #28a745;
-            font-weight: bold;
-            font-size: 1.2em;
+            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: 700;
         }
 
-        .user-review {
-            background-color: #d0e8ff;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 10px;
+        .discount-badge {
+            background: var(--danger);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 3px 10px rgba(178, 34, 34, 0.2);
+            animation: float 3s ease infinite;
         }
 
+        /* ===== Кнопки ===== */
         .cart-buttons {
-            margin-top: 20px;
             display: flex;
-            gap: 10px;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
             justify-content: center;
-        }
-
-        .cart-buttons button {
-            background-color: #007bff;
-            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
             border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
         }
 
-        .cart-buttons button:hover {
-            background-color: #0056b3;
-        }
-
-        .review-text {
-            font-style: italic;
-        }
-
-        .edit-btn {
-            background-color: #28a745;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .edit-btn:hover {
-            background-color: #218838;
-        }
-
-        .edit-form {
-            display: none;
-            margin-top: 10px;
-        }
-
-        .edit-form textarea,
-        .edit-form select {
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            margin-bottom: 10px;
+            height: 100%;
+            background: linear-gradient(
+                    45deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.2),
+                    transparent
+            );
+            transform: translateX(-100%);
+            transition: 0.5s;
+            z-index: -1;
         }
 
-        #error-popup {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #ff4d4d;
+        .btn:hover::before {
+            transform: translateX(100%);
+        }
+
+        .btn-primary {
+            background: var(--primary);
             color: white;
-            padding: 15px 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            font-size: 16px;
-            z-index: 9999;
-            opacity: 1;
-            transition: opacity 1s ease;
-            display: none;
         }
 
-        #error-popup .close-btn {
-            margin-left: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            background: none;
-            border: none;
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 69, 19, 0.2);
+        }
+
+        .btn-danger {
+            background: var(--danger);
             color: white;
-            font-size: 18px;
         }
 
-        #error-popup .close-btn:hover {
-            color: #eee;
+        .btn-danger:hover {
+            background: #9B1C1C;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(178, 34, 34, 0.2);
         }
 
-        .star-rating {
-            display: flex;
-            gap: 5px;
-            font-size: 30px;
-            cursor: pointer;
-            justify-content: center;
-            margin: 10px 0;
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            box-shadow: none;
         }
 
-        .star {
-            color: #007bff;
-            transition: color 0.2s;
+        .btn-outline:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 69, 19, 0.1);
         }
 
-        .star.filled {
-            color: gold;
+        .btn i {
+            margin-right: 0.5rem;
         }
 
-        .rating-label {
-            text-align: center;
-            font-weight: bold;
-            margin-bottom: 5px;
+        /* ===== Отзывы ===== */
+        .reviews-container {
+            background: var(--glass-bg);
+            backdrop-filter: var(--backdrop-filter);
+            -webkit-backdrop-filter: var(--backdrop-filter);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            border: 1px solid var(--glass-border);
+        }
+
+        .review-form {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 2rem;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+            border: 1px solid rgba(139, 69, 19, 0.1);
+        }
+
+        .review-form:hover {
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        textarea, input[type="file"], select {
+            width: 100%;
+            padding: 0.8rem 1.2rem;
+            border: 1px solid rgba(139, 69, 19, 0.2);
+            border-radius: var(--border-radius-sm);
+            font-family: inherit;
+            transition: var(--transition);
+            background: white;
         }
 
         textarea {
-            display: block;
-            width: 100%;
-            margin-bottom: 10px;
+            min-height: 120px;
             resize: vertical;
         }
 
-        button[type="submit"] {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 8px;
+        textarea:focus, input[type="file"]:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
+        }
+
+        /* ===== Загрузка файлов ===== */
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            font-size: 100px;
+            opacity: 0;
+            right: 0;
+            top: 0;
             cursor: pointer;
         }
 
-        button[type="submit"]:hover {
-            background-color: #0056b3;
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.2rem;
+            background: white;
+            border: 2px dashed rgba(139, 69, 19, 0.2);
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .file-input-label:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        .file-input-label i {
+            margin-right: 0.5rem;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        /* ===== Рейтинг звездами ===== */
+        .star-rating {
+            display: flex;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .star {
+            font-size: 2rem;
+            color: #e0e0e0;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .star:hover {
+            transform: scale(1.1);
+            color: #FFD700;
+        }
+
+        .star.filled {
+            color: #FFD700;
+        }
+
+        /* ===== Список отзывов ===== */
+        .review-list {
+            list-style: none;
+        }
+
+        .review-item {
+            padding: 1.5rem;
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 1.5rem;
+            background: white;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(139, 69, 19, 0.1);
+        }
+
+        .review-item:hover {
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transform: translateY(-3px);
+        }
+
+        .review-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: var(--primary);
+        }
+
+        .user-review {
+            background: var(--primary-light);
+            border-left: 3px solid var(--primary);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .review-user {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .review-rating {
+            display: flex;
+            align-items: center;
+        }
+
+        .review-rating .star.filled {
+            font-size: 1rem;
+            color: #FFD700;
+        }
+
+        .review-text {
+            margin-bottom: 1rem;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .review-actions {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .review-actions .btn {
+            padding: 0.6rem 1.2rem;
+            font-size: 0.8rem;
+        }
+
+        /* ===== Форма редактирования ===== */
+        .edit-form {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: var(--border-radius-sm);
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(139, 69, 19, 0.1);
+        }
+
+        /* ===== Ошибки ===== */
+        .error-popup {
+            position: fixed;
+            top: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--danger);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: var(--border-radius-sm);
+            box-shadow: var(--shadow-hover);
+            display: flex;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .error-popup.show {
+            opacity: 1;
+        }
+
+        .close-btn {
+            margin-left: 1rem;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.3s ease;
+        }
+
+        .close-btn:hover {
+            transform: rotate(90deg);
+        }
+
+        /* ===== Улучшения для форм ===== */
+        .form-row {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .file-preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .file-preview {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: var(--border-radius-sm);
+            overflow: hidden;
+            border: 1px solid rgba(139, 69, 19, 0.1);
+        }
+
+        .file-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .file-preview .remove-btn {
+            position: absolute;
+            top: 0.3rem;
+            right: 0.3rem;
+            background: var(--danger);
+            color: white;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .file-preview:hover .remove-btn {
+            opacity: 1;
+        }
+
+        .no-media {
+            display: none !important;
+        }
+
+        /* ===== Адаптив ===== */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+
+            .product-card, .reviews-container {
+                padding: 1.5rem;
+            }
+
+            .product-image-container {
+                grid-template-columns: 1fr;
+            }
+
+            .cart-buttons {
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            /* Адаптив для навигации */
+            .navbar {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                width: 100%;
+                gap: 0.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .nav-link {
+                justify-content: center;
+                padding: 0.8rem;
+            }
+
+            .user-actions {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
+<div class="bg-elements">
+    <div class="bg-element bg-element-1"></div>
+    <div class="bg-element bg-element-2"></div>
+</div>
 
-<h2>Информация о товаре</h2>
-<ul>
-    <li><strong>ID:</strong> <span data-th-text="${product.id}"></span></li>
-    <li><strong>Название:</strong> <span data-th-text="${product.title}"></span></li>
-    <li><strong>Описание:</strong> <span data-th-text="${product.details}"></span></li>
-    <li>
-        <strong>Цена:</strong>
-        <span data-th-if="${product.discount != null}">
-            <span class="old-price" data-th-text="${product.price} + ' ₽'">1000 ₽</span>
-            <span class="new-price"
-                  data-th-text="${#numbers.formatDecimal(product.price - (product.price * product.discount.amount / 100), 0, 'COMMA', 2, 'POINT')} + ' ₽'">800 ₽</span>
-        </span>
-        <span data-th-if="${product.discount == null}" class="new-price" data-th-text="${product.price} + ' ₽'">1000 ₽</span>
-    </li>
-</ul>
-
-<div class="product-image-container">
-    <div data-th-each="media : ${product.productMedia}">
-        <div class="product-image">
-            <img data-th-src="${media.mediaPath}" alt="Изображение товара">
+<div class="container">
+    <header class="animate-fade">
+        <div class="logo">
+            <i class="fas fa-leaf logo-icon"></i>
+            <span>OMI</span>
         </div>
-    </div>
-</div>
+    </header>
 
-<div class="cart-buttons">
-    <form data-th-if="${IsInCart}" data-th-action="@{/online-market/buyer/products-from-cart/delete/{productId}(productId=${product.id})}" method="post">
-        <button type="submit" style="background-color: red;">Удалить из корзины</button>
-    </form>
-    <form data-th-if="${!IsInCart}" data-th-action="@{/online-market/buyer/products-from-cart/add/{productId}(productId=${product.id})}" method="post">
-        <button type="submit">Добавить в корзину</button>
-    </form>
-    <a href="/online-market/buyer/products-from-cart">
-        <button>Перейти в корзину</button>
-    </a>
-</div>
+    <!-- Навигационная панель -->
+    <nav class="navbar animate-fade">
+        <ul class="nav-links">
+            <li>
+                <a href="/online-market/buyer/products" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    Главная
+                </a>
+            </li>
+            <li>
+                <a href="/online-market/buyer/order/my-orders" class="nav-link">
+                    <i class="fas fa-store"></i>
+                    Заказы
+                </a>
+            </li>
+            <li>
+                <a href="/online-market/buyer/products/sale" class="nav-link">
+                    <i class="fas fa-tag"></i>
+                    Акции
+                </a>
+            </li>
+            <li>
+                <a href="/information-about-OMI" class="nav-link">
+                    <i class="fas fa-info-circle"></i>
+                    О нас
+                </a>
+            </li>
+        </ul>
 
-<h3>Оставить отзыв</h3>
-<form data-th-action="@{/online-market/buyer/products-review/upload-review}"
-      method="post"
-      enctype="multipart/form-data">
-    <input type="hidden" name="productId" data-th-value="${product.id}" />
-    <input type="hidden" name="username" data-th-value="${user.getPreferredUsername()}" />
+        <div class="user-actions">
+            <a href="/online-market/buyer/products-from-cart" class="cart-btn">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Корзина</span>
+            </a>
+        </div>
+    </nav>
 
-    <label for="review">Ваш отзыв:</label>
-    <textarea id="review" name="review" required></textarea>
+    <h2 class="animate-fade">Информация о товаре</h2>
 
-    <div class="rating-label">Оценка:</div>
-    <div class="star-rating" id="starRating">
-        <span class="star" data-value="1">&#9734;</span>
-        <span class="star" data-value="2">&#9734;</span>
-        <span class="star" data-value="3">&#9734;</span>
-        <span class="star" data-value="4">&#9734;</span>
-        <span class="star" data-value="5">&#9734;</span>
-    </div>
-    <input type="hidden" name="rating" id="rating" value="0" required>
+    <div class="product-card animate-fade">
+        <div class="product-info">
+            <div class="product-details">
+                <ul>
+                    <li><strong>Название:</strong> <span data-th-text="${product.title}"></span></li>
+                    <li><strong>Описание:</strong> <span data-th-text="${product.details}"></span></li>
+                    <li>
+                        <strong>Цена:</strong>
+                        <div class="price-container">
+                            <span data-th-if="${product.discount != null}">
+                                <span class="old-price" data-th-text="${product.price} + ' ₽'">1000 ₽</span>
+                                <span class="new-price"
+                                      data-th-text="${#numbers.formatDecimal(product.price - (product.price * product.discount.amount / 100), 0, 'COMMA', 2, 'POINT')} + ' ₽'">800 ₽</span>
+                                <span class="discount-badge" data-th-text="'-' + ${product.discount.amount} + '%'">-20%</span>
+                            </span>
+                            <span data-th-if="${product.discount == null}" class="new-price" data-th-text="${product.price} + ' ₽'">1000 ₽</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
 
-    <label for="medias">Добавьте фотографии:</label>
-    <input type="file" name="medias" id="medias" multiple accept="image/*"
-           style="margin: 10px 0; display: block; padding: 10px; border: 1px solid #ccc; border-radius: 8px; background-color: #fff;" />
-
-    <button type="submit">Оставить отзыв</button>
-</form>
-
-<h3>Отзывы о товаре:</h3>
-<ul>
-    <li data-th-each="review : ${productReviews}"
-        data-th-classappend="${review.userName.equals(user.getPreferredUsername())} ? 'user-review' : ''"
-        data-th-attr="data-review-id=${review.id}">
-
-        <p><strong>Пользователь:</strong> <span data-th-text="${review.userName}"></span></p>
-        <p><strong>Оценка:</strong> <span data-th-text="${review.rating}"></span></p>
-        <p class="review-text" data-th-text="${review.review}"></p>
-
-        <div class="product-image-container" data-th-if="${review.medias != null}">
-            <div data-th-each="media : ${review.medias}">
+        <div class="product-image-container">
+            <div data-th-each="media : ${product.productMedia}">
                 <div class="product-image">
-                    <img data-th-src="${media}" alt="Фото отзыва">
-                    <!-- Кнопка удаления фото, показывается только если это отзыв текущего пользователя -->
-                    <form data-th-if="${review.userName.equals(user.getPreferredUsername())}"
-                          data-th-action="@{/online-market/buyer/products-review/{reviewId}/{mediaName}(reviewId=${review.id}, mediaName=${#strings.substring(media, media.lastIndexOf('/') + 1)})}"
-                          method="post">
-                        <button type="submit" style="color: red; margin-top: 5px;">Удалить фото</button>
-                    </form>
+                    <img data-th-src="${media.mediaPath}" alt="Изображение товара" class="animate-fade" style="animation-delay: 0.1s">
                 </div>
             </div>
         </div>
 
-        <!-- Форма добавления фото к отзыву -->
-        <div data-th-if="${review.userName.equals(user.getPreferredUsername())}">
-            <form data-th-action="@{/online-market/buyer/products-review/add-media/{reviewId}(reviewId=${review.id})}"
-                  method="post" enctype="multipart/form-data"
-                  style="margin-top: 10px;">
-                <label for="media-${review.id}">Добавить фото:</label>
-                <input type="file" name="media" id="media-${review.id}" multiple
-                       accept="image/*"
-                       style="display: block; margin: 5px 0; border: 1px solid #ccc; border-radius: 8px; padding: 6px;">
-                <button type="submit">Загрузить</button>
+        <div class="cart-buttons">
+            <form data-th-if="${IsInCart}" data-th-action="@{/online-market/buyer/products-from-cart/delete/{productId}(productId=${product.id})}" method="post">
+                <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Удалить из корзины</button>
             </form>
+            <form data-th-if="${!IsInCart}" data-th-action="@{/online-market/buyer/products-from-cart/add/{productId}(productId=${product.id})}" method="post">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-cart-plus"></i> Добавить в корзину</button>
+            </form>
+            <a href="/online-market/buyer/products-from-cart" class="btn btn-outline"><i class="fas fa-shopping-cart"></i> Перейти в корзину</a>
         </div>
+    </div>
 
-        <!-- Форма редактирования -->
-        <form class="edit-form" data-th-action="@{/online-market/buyer/products-review/edit-review}" method="post">
+    <div class="reviews-container animate-fade" style="animation-delay: 0.2s">
+        <h3>Оставить отзыв</h3>
+        <form class="review-form" data-th-action="@{/online-market/buyer/products-review/upload-review}"
+              method="post"
+              enctype="multipart/form-data"
+              id="reviewForm">
             <input type="hidden" name="productId" data-th-value="${product.id}" />
             <input type="hidden" name="username" data-th-value="${user.getPreferredUsername()}" />
-            <textarea name="review" class="edit-textarea" required></textarea>
-            <label for="rating">Оценка (1-5):</label>
-            <select name="rating" class="edit-rating" required>
-                <option value="1" data-th-selected="${review.rating == 1}">1</option>
-                <option value="2" data-th-selected="${review.rating == 2}">2</option>
-                <option value="3" data-th-selected="${review.rating == 3}">3</option>
-                <option value="4" data-th-selected="${review.rating == 4}">4</option>
-                <option value="5" data-th-selected="${review.rating == 5}">5</option>
-            </select>
-            <button type="submit">Сохранить</button>
-            <button type="button" onclick="cancelEdit(this)">Отмена</button>
+
+            <div class="form-row">
+                <div class="form-group" style="flex: 2;">
+                    <label for="review">Ваш отзыв:</label>
+                    <textarea id="review" name="review" required></textarea>
+                </div>
+
+                <div class="form-group" style="flex: 1;">
+                    <label>Оценка:</label>
+                    <div class="star-rating" id="starRating">
+                        <span class="star" data-value="1">★</span>
+                        <span class="star" data-value="2">★</span>
+                        <span class="star" data-value="3">★</span>
+                        <span class="star" data-value="4">★</span>
+                        <span class="star" data-value="5">★</span>
+                    </div>
+                    <input type="hidden" name="rating" id="rating" value="0" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Добавьте фотографии:</label>
+                <div class="file-input-wrapper">
+                    <label class="file-input-label" for="medias">
+                        <i class="fas fa-camera"></i> <span>Выберите файлы</span>
+                    </label>
+                    <input type="file" name="medias" id="medias" multiple accept="image/*">
+                </div>
+                <div class="file-preview-container" id="filePreview"></div>
+            </div>
+
+            <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Оставить отзыв</button>
         </form>
 
-        <div data-th-if="${review.userName.equals(user.getPreferredUsername())}">
-            <button type="button" class="edit-btn" onclick="enableEdit(this)">Редактировать</button>
+        <h3>Отзывы о товаре</h3>
+        <ul class="review-list">
+            <li class="review-item animate-fade"
+                data-th-each="review : ${productReviews}"
+                data-th-classappend="${review.userName.equals(user.getPreferredUsername())} ? 'user-review' : ''"
+                data-th-attr="data-review-id=${review.id}"
+                data-th-style="'animation-delay: ' + ${0.3 + 0.1 * reviewStat.index} + 's'">
 
-            <form data-th-action="@{/online-market/buyer/products-review/delete-review/{productId}(productId=${product.id})}"
-                  method="post">
-                <button type="submit" style="color: red;">Удалить</button>
-            </form>
-        </div>
-    </li>
-</ul>
+                <div class="review-header">
+                    <span class="review-user" data-th-text="${review.userName}"></span>
+                    <div class="review-rating">
+                        <span class="star filled" data-th-each="star : ${#numbers.sequence(1, review.rating)}">★</span>
+                        <span class="star" data-th-each="star : ${#numbers.sequence(review.rating + 1, 5)}">★</span>
+                    </div>
+                </div>
 
-<div id="error-popup" data-th-if="${errors}">
+                <p class="review-text" data-th-text="${review.review}"></p>
+
+                <!-- Измененная часть: блок с фотографиями отображается только если они есть -->
+                <div data-th-if="${review.medias != null and not review.medias.isEmpty()}">
+                    <div class="product-image-container">
+                        <div data-th-each="media : ${review.medias}">
+                            <div class="product-image">
+                                <img data-th-src="${media}" alt="Фото отзыва">
+                                <form data-th-if="${review.userName.equals(user.getPreferredUsername())}"
+                                      data-th-action="@{/online-market/buyer/products-review/{reviewId}/{mediaName}(reviewId=${review.id}, mediaName=${#strings.substring(media, media.lastIndexOf('/') + 1)})}"
+                                      method="post">
+                                    <button type="submit" class="btn btn-danger mt-3" style="padding: 0.5rem 1rem;"><i class="fas fa-trash-alt"></i> Удалить фото</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div data-th-if="${review.userName.equals(user.getPreferredUsername())}">
+                    <form data-th-action="@{/online-market/buyer/products-review/add-media/{reviewId}(reviewId=${review.id})}"
+                          method="post" enctype="multipart/form-data"
+                          class="mt-3">
+                        <div class="file-input-wrapper">
+                            <label class="file-input-label" data-th-attr="for='media-' + ${review.id}">
+                                <i class="fas fa-camera"></i> <span>Добавить фото к отзыву</span>
+                            </label>
+                            <input type="file" name="media" data-th-attr="id='media-' + ${review.id}" multiple
+                                   accept="image/*">
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3"><i class="fas fa-upload"></i> Загрузить</button>
+                    </form>
+                </div>
+
+                <form class="edit-form" data-th-action="@{/online-market/buyer/products-review/edit-review}" method="post">
+                    <input type="hidden" name="productId" data-th-value="${product.id}" />
+                    <input type="hidden" name="username" data-th-value="${user.getPreferredUsername()}" />
+                    <div class="form-group">
+                        <textarea name="review" class="edit-textarea" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="rating">Оценка (1-5):</label>
+                        <select name="rating" class="edit-rating" required>
+                            <option value="1" data-th-selected="${review.rating == 1}">1</option>
+                            <option value="2" data-th-selected="${review.rating == 2}">2</option>
+                            <option value="3" data-th-selected="${review.rating == 3}">3</option>
+                            <option value="4" data-th-selected="${review.rating == 4}">4</option>
+                            <option value="5" data-th-selected="${review.rating == 5}">5</option>
+                        </select>
+                    </div>
+                    <div class="review-actions">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Сохранить</button>
+                        <button type="button" class="btn btn-outline" onclick="cancelEdit(this)"><i class="fas fa-times"></i> Отмена</button>
+                    </div>
+                </form>
+
+                <div data-th-if="${review.userName.equals(user.getPreferredUsername())}" class="review-actions">
+                    <button type="button" class="btn btn-primary" onclick="enableEdit(this)"><i class="fas fa-edit"></i> Редактировать</button>
+                    <form data-th-action="@{/online-market/buyer/products-review/delete-review/{productId}(productId=${product.id})}"
+                          method="post">
+                        <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Удалить отзыв</button>
+                    </form>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div id="error-popup" class="error-popup" data-th-if="${errors}">
     <span data-th-text="${errors}"></span>
     <button class="close-btn" onclick="closeErrorPopup()">×</button>
 </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const animatedElements = document.querySelectorAll('.animate-fade');
+        animatedElements.forEach((el, index) => {
+            const delay = el.style.animationDelay || '0s';
+            el.style.animationDelay = `${index * 0.1}s`;
+        });
+
+        const errorPopup = document.getElementById('error-popup');
+        if (errorPopup) {
+            setTimeout(() => {
+                errorPopup.classList.add('show');
+            }, 100);
+
+            setTimeout(() => {
+                closeErrorPopup();
+            }, 5000);
+        }
+
+        // Инициализация предпросмотра файлов
+        initFilePreviews();
+    });
+
     function enableEdit(button) {
-        let listItem = button.closest('li');
-        let textReview = listItem.querySelector('.review-text');
-        let editForm = listItem.querySelector('.edit-form');
-        let textarea = editForm.querySelector('.edit-textarea');
+        const reviewItem = button.closest('.review-item');
+        const textReview = reviewItem.querySelector('.review-text');
+        const editForm = reviewItem.querySelector('.edit-form');
+        const textarea = editForm.querySelector('.edit-textarea');
+        const editButtons = reviewItem.querySelector('.review-actions');
 
         textarea.value = textReview.textContent;
 
         textReview.style.display = 'none';
         editForm.style.display = 'block';
-        button.style.display = 'none';
+        editButtons.style.display = 'none';
     }
 
     function cancelEdit(button) {
-        let listItem = button.closest('li');
-        let textReview = listItem.querySelector('.review-text');
-        let editForm = listItem.querySelector('.edit-form');
-        let editButton = listItem.querySelector('.edit-btn');
+        const reviewItem = button.closest('.review-item');
+        const textReview = reviewItem.querySelector('.review-text');
+        const editForm = reviewItem.querySelector('.edit-form');
+        const editButtons = reviewItem.querySelector('.review-actions');
 
         textReview.style.display = 'block';
         editForm.style.display = 'none';
-        editButton.style.display = 'inline-block';
+        editButtons.style.display = 'flex';
     }
 
-    function closeErrorPopup() {
-        const errorPopup = document.getElementById("error-popup");
-        errorPopup.style.opacity = "0";
-        setTimeout(() => {
-            errorPopup.style.display = "none";
-        }, 1000);
-    }
+    document.getElementById('reviewForm').addEventListener('submit', function(e) {
+        const fileInput = document.getElementById('medias');
 
-    window.addEventListener("DOMContentLoaded", () => {
-        const errorPopup = document.getElementById("error-popup");
-        if (errorPopup && errorPopup.textContent.trim() !== "") {
-            errorPopup.style.display = "block";
-
-            setTimeout(() => {
-                errorPopup.style.opacity = "0";
-            }, 4000);
-
-            setTimeout(() => {
-                errorPopup.style.display = "none";
-            }, 5000);
+        // Если файлы не выбраны, удаляем input из формы
+        if (fileInput.files.length === 0) {
+            fileInput.remove();
         }
     });
 
-    // Звездочный рейтинг
-    const stars = document.querySelectorAll('.star');
+    function closeErrorPopup() {
+        const errorPopup = document.getElementById('error-popup');
+        if (errorPopup) {
+            errorPopup.classList.remove('show');
+            setTimeout(() => {
+                errorPopup.remove();
+            }, 300);
+        }
+    }
+
+    const stars = document.querySelectorAll('.star-rating .star');
     const ratingInput = document.getElementById('rating');
     let currentRating = 0;
 
@@ -393,16 +1105,90 @@
     });
 
     function highlightStars(rating) {
+        const starsContainer = document.querySelector('.star-rating');
+        if (!starsContainer) return;
+
+        const stars = starsContainer.querySelectorAll('.star');
         stars.forEach(star => {
             const starValue = parseInt(star.dataset.value);
-            if (starValue <= rating) {
-                star.classList.add('filled');
-            } else {
-                star.classList.remove('filled');
+            star.classList.toggle('filled', starValue <= rating);
+        });
+    }
+
+    function initFilePreviews() {
+        document.querySelectorAll('input[type="file"]').forEach(input => {
+            const label = input.previousElementSibling;
+            if (label && label.classList.contains('file-input-label')) {
+                input.addEventListener('change', (e) => {
+                    const files = e.target.files;
+                    if (files.length > 0) {
+                        if (files.length === 1) {
+                            label.querySelector('span').textContent = files[0].name;
+                        } else {
+                            label.querySelector('span').textContent = `${files.length} файлов выбрано`;
+                        }
+
+                        // Создаем превью для выбранных файлов
+                        const previewContainer = input.closest('.form-group').querySelector('.file-preview-container') ||
+                            document.getElementById('filePreview');
+                        if (previewContainer) {
+                            previewContainer.innerHTML = '';
+
+                            Array.from(files).forEach(file => {
+                                if (file.type.startsWith('image/')) {
+                                    const reader = new FileReader();
+                                    reader.onload = (event) => {
+                                        const preview = document.createElement('div');
+                                        preview.className = 'file-preview';
+
+                                        const img = document.createElement('img');
+                                        img.src = event.target.result;
+                                        img.alt = 'Превью файла';
+
+                                        const removeBtn = document.createElement('div');
+                                        removeBtn.className = 'remove-btn';
+                                        removeBtn.innerHTML = '×';
+                                        removeBtn.addEventListener('click', () => {
+                                            preview.remove();
+                                            // Удаляем файл из input
+                                            const dataTransfer = new DataTransfer();
+                                            Array.from(input.files).forEach(f => {
+                                                if (f !== file) {
+                                                    dataTransfer.items.add(f);
+                                                }
+                                            });
+                                            input.files = dataTransfer.files;
+
+                                            // Обновляем label
+                                            if (input.files.length === 0) {
+                                                label.querySelector('span').textContent = 'Выберите файлы';
+                                            } else if (input.files.length === 1) {
+                                                label.querySelector('span').textContent = input.files[0].name;
+                                            } else {
+                                                label.querySelector('span').textContent = `${input.files.length} файлов выбрано`;
+                                            }
+                                        });
+
+                                        preview.appendChild(img);
+                                        preview.appendChild(removeBtn);
+                                        previewContainer.appendChild(preview);
+                                    };
+                                    reader.readAsDataURL(file);
+                                }
+                            });
+                        }
+                    } else {
+                        label.querySelector('span').textContent = 'Выберите файлы';
+                        const previewContainer = input.closest('.form-group').querySelector('.file-preview-container') ||
+                            document.getElementById('filePreview');
+                        if (previewContainer) {
+                            previewContainer.innerHTML = '';
+                        }
+                    }
+                });
             }
         });
     }
 </script>
-
 </body>
 </html>

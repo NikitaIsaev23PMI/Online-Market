@@ -53,4 +53,14 @@ public class ProductsController {
         return "products/product";
     }
 
+    @GetMapping("sale")
+    public String getSalePage(Model model){
+        System.out.println(this.productRestClient.getAllProductsWithDiscount().size());
+        model.addAttribute("products", this.productRestClient.getAllProductsWithDiscount());
+
+        return "products/sale";
+    }
+
+
+
 }

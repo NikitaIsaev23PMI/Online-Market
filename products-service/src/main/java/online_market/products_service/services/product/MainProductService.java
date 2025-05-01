@@ -9,9 +9,11 @@ import online_market.products_service.repository.ProductRepository;
 import online_market.products_service.repository.SellerRepository;
 import online_market.products_service.services.productMedia.ProductMediaStorageService;
 import online_market.products_service.services.seller.SellerService;
+import org.apache.coyote.BadRequestException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -103,6 +105,23 @@ public class MainProductService implements ProductService {
     @Transactional
     public List<Product> findProductsByListIds(List<Integer> listOfId) {
         return this.productRepository.findByIdIn(listOfId);
+    }
+
+    @Override
+    public void updateProductCount(Integer productId, Integer count) throws BadRequestException {
+        if(this.productRepository.findById(productId).isPresent()){
+                Product product = this.productRepository.findById(productId).get();
+                Integer productCount = product.getCount();
+                if(productCount >= count){
+                    product.setCount(productCount - count);
+                    productRepository.save(product);
+                } else throw new BadRequestException("Недостаточно товаров на складе!");
+        } else throw new NoSuchElementException("товар не найден");
+    }
+
+    @Override
+    public List<Product> getAllProductsWithDiscount() {
+        return this.productRepository.getAllByDiscountIsNotNull();
     }
 
 

@@ -1,226 +1,1120 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Список товаров</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #f1f5f9;
-            color: #1f2937;
+        :root {
+            --bg: #FDF0D5;
+            --bg-light: #F0E2C4;
+            --bg-soft: #E8D9B5;
+            --accent: #C44536;
+            --accent-light: #D4A59A;
+            --accent-secondary: #6B8F71;
+            --text: #3A3335;
+            --text-light: #6D6D6D;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --shadow: 0 4px 12px rgba(58, 51, 53, 0.1);
+            --shadow-hover: 0 8px 24px rgba(58, 51, 53, 0.15);
+            --border-radius: 16px;
+            --border-radius-sm: 12px;
+        }
+
+        * {
             margin: 0;
-            padding: 2rem;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(to bottom, var(--bg), var(--bg-light));
+            color: var(--text);
+            min-height: 100vh;
+            padding: 0;
+            overflow-x: hidden;
+            line-height: 1.6;
         }
 
         .container {
-            max-width: 1000px;
-            margin: auto;
-            background: white;
-            border-radius: 2rem;
-            padding: 2.5rem 3rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
         }
 
-        h1 {
-            text-align: center;
-            color: #1e3a8a;
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        /* Навигационная панель */
+        .navbar {
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
             margin-bottom: 2rem;
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(107, 143, 113, 0.2);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-sm);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link:hover {
+            color: var(--accent);
+            background: rgba(196, 69, 54, 0.1);
+        }
+
+        .nav-link.active {
+            color: var(--accent);
+            background: rgba(196, 69, 54, 0.1);
+        }
+
+        .nav-link i {
+            font-size: 0.9em;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .cart-btn {
+            position: relative;
+            color: var(--text);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-sm);
+            transition: var(--transition);
+        }
+
+        .cart-btn:hover {
+            color: var(--accent);
+            background: rgba(196, 69, 54, 0.1);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--accent);
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .logo {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .logo-icon {
+            color: var(--accent-secondary);
+            font-size: 1.8rem;
         }
 
         .search-section {
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
+            position: relative;
         }
 
         .search-form {
             display: flex;
             gap: 1rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 2;
         }
 
-        input[type="text"] {
+        .search-input {
             flex: 1;
-            padding: 0.6rem 1rem;
-            border-radius: 1rem;
-            border: 1.5px solid #cbd5e1;
-            background: #f8fafc;
-            transition: border 0.3s ease;
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            border: 2px solid rgba(58, 51, 53, 0.1);
+            background: var(--card-bg);
+            font-size: 1rem;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            font-family: 'Montserrat', sans-serif;
         }
 
-        input[type="text"]:focus {
-            border-color: #3b82f6;
+        .search-input:focus {
             outline: none;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(196, 69, 54, 0.2);
         }
 
-        button {
-            padding: 0.6rem 1.2rem;
-            background: #3b82f6;
+        .search-btn {
+            padding: 1rem 2rem;
+            background: var(--accent);
             color: white;
             border: none;
-            border-radius: 1rem;
+            border-radius: 50px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.3s ease;
+            transition: var(--transition);
+            box-shadow: 0 4px 16px rgba(196, 69, 54, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Montserrat', sans-serif;
         }
 
-        button:hover {
-            background: #2563eb;
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(196, 69, 54, 0.4);
+            background: var(--accent-light);
+            color: var(--text);
         }
 
         .categories-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 1.5rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 3rem;
+            display: none; /* Скрываем категории по умолчанию */
+        }
+
+        .categories-grid.show {
+            display: grid; /* Показываем при активации */
+            animation: fadeIn 0.4s ease-out;
         }
 
         .category-card {
             cursor: pointer;
-            border-radius: 1rem;
-            padding: 1rem;
-            text-align: center;
-            transition: all 0.3s ease;
-            background: #f8fafc;
-            border: 2px solid transparent;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            background: var(--card-bg);
+            border: 1px solid rgba(107, 143, 113, 0.2);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            height: 240px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
         }
 
         .category-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-            border-color: #3b82f6;
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--accent);
         }
 
         .category-card.active {
-            border-color: #3b82f6;
-            background: #dbeafe;
+            border: 2px solid var(--accent);
+            background: rgba(196, 69, 54, 0.05);
+            box-shadow: 0 0 0 4px rgba(196, 69, 54, 0.1);
+        }
+
+        .category-card.active::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            background-color: var(--accent);
+            border-radius: 50%;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            content: '\f00c';
+            font-size: 10px;
+        }
+
+        .category-image-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            z-index: 1;
+        }
+
+        .category-card:hover .category-image-container {
+            transform: scale(1.05);
         }
 
         .category-image {
-            width: 80px;
-            height: 80px;
+            width: 100%;
+            height: 100%;
             object-fit: cover;
-            border-radius: 0.75rem;
-            margin-bottom: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .category-name-container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            padding: 1.5rem 1rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .category-icon {
+            font-size: 1.5rem;
+            color: white;
+            opacity: 0.8;
+            transition: var(--transition);
+        }
+
+        .category-card:hover .category-icon {
+            transform: translateY(-5px);
+            opacity: 1;
         }
 
         .category-name {
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #1e293b;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
             margin: 0;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+            transition: var(--transition);
+        }
+
+        .category-card:hover .category-name {
+            transform: translateY(-3px);
         }
 
         #selectedCategory {
             display: none;
         }
 
-        .button-link {
+        .products-container {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(107, 143, 113, 0.2);
+        }
+
+        .products-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent);
+            position: relative;
             display: inline-block;
-            margin: 1rem 0;
-            padding: 0.6rem 1.2rem;
-            background: #2563eb;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 60%;
+            height: 3px;
+            background: var(--accent-secondary);
+            border-radius: 2px;
+        }
+
+        .filter-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-toggle-btn {
+            padding: 0.6rem 1rem;
+            background: var(--accent-secondary);
             color: white;
-            border-radius: 1rem;
-            text-decoration: none;
-            font-weight: 600;
-            transition: background 0.3s ease;
+            border: none;
+            border-radius: var(--border-radius-sm);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
         }
 
-        .button-link:hover {
-            background: #1e40af;
+        .filter-toggle-btn:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1.5rem;
+        .category-toggle-btn {
+            padding: 0.6rem 1rem;
+            background: var(--accent-secondary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-sm);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
         }
 
-        thead {
-            background: #dbeafe;
+        .category-toggle-btn:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
         }
 
-        th, td {
+        .sort-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .sort-btn {
+            padding: 0.5rem 1rem;
+            background: var(--bg-soft);
+            color: var(--text);
+            border: none;
+            border-radius: var(--border-radius-sm);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .sort-btn:hover {
+            background: var(--accent-light);
+        }
+
+        .sort-btn.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .price-filter-container {
+            display: none;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
             padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(107, 143, 113, 0.2);
+            animation: fadeIn 0.3s ease-out;
         }
 
-        tbody tr:hover {
-            background: #f0f9ff;
+        .price-filter-container.show {
+            display: block;
+        }
+
+        .price-filter-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .price-range-inputs {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .price-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .price-input-wrapper::before {
+            content: '₽';
+            position: absolute;
+            left: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        .price-input {
+            width: 100%;
+            padding: 0.5rem 0.5rem 0.5rem 1.8rem;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid rgba(58, 51, 53, 0.2);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .price-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .price-filter-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        .price-filter-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: var(--border-radius-sm);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .price-filter-apply {
+            background: var(--accent);
+            color: white;
+        }
+
+        .price-filter-apply:hover {
+            background: var(--accent-light);
+            color: var(--text);
+        }
+
+        .price-filter-cancel {
+            background: transparent;
+            color: var(--text-light);
+        }
+
+        .price-filter-cancel:hover {
+            color: var(--accent);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            position: relative;
+            border: 1px solid rgba(107, 143, 113, 0.1);
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--accent);
+        }
+
+        .product-image-container {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+            background: var(--bg-soft);
         }
 
         .product-image {
-            max-width: 100px;
-            border-radius: 0.75rem;
-            margin-top: 0.5rem;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--accent-secondary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 2;
+        }
+
+        .product-content {
+            padding: 1.5rem;
+        }
+
+        .product-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-link {
+            text-decoration: none;
+            color: inherit;
+            transition: color 0.2s ease;
+        }
+
+        .product-link:hover {
+            color: var(--accent);
+        }
+
+        .product-price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 0.5rem 0;
+        }
+
+        .product-old-price {
+            text-decoration: line-through;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-right: 0.5rem;
+        }
+
+        .product-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+
+        .view-btn {
+            padding: 0.6rem 1.2rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-sm);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            flex: 1;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .view-btn:hover {
+            background: var(--accent-light);
+            transform: translateY(-2px);
+            color: var(--text);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: translateY(-10px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .animate-fade {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+
+        .bg-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            opacity: 0.2;
+        }
+
+        .bg-element {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+        }
+
+        .bg-element-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--accent);
+            top: -100px;
+            left: -100px;
+            animation: float 18s infinite ease-in-out;
+        }
+
+        .bg-element-2 {
+            width: 500px;
+            height: 500px;
+            background: var(--accent-secondary);
+            bottom: -150px;
+            right: -150px;
+            animation: float 22s infinite ease-in-out reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(30px, 30px) rotate(5deg); }
+            50% { transform: translate(60px, 0) rotate(0deg); }
+            75% { transform: translate(30px, -30px) rotate(-5deg); }
+        }
+
+        @media (max-width: 768px) {
+            .categories-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
+
+            .category-card {
+                height: 200px;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .navbar {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                width: 100%;
+                gap: 0.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .nav-link {
+                justify-content: center;
+                padding: 0.8rem;
+            }
+
+            .user-actions {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .search-form {
+                flex-direction: column;
+            }
+
+            .price-range-inputs {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .filter-controls {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .sort-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .sort-btn {
+                flex: 1;
+                text-align: center;
+            }
         }
     </style>
 </head>
 <body>
+<div class="bg-elements">
+    <div class="bg-element bg-element-1"></div>
+    <div class="bg-element bg-element-2"></div>
+</div>
 
 <div class="container">
-    <h1>Список товаров</h1>
+    <header class="animate-fade">
+        <div class="logo">
+            <i class="fas fa-leaf logo-icon"></i>
+            <span>OMI</span>
+        </div>
+    </header>
 
-    <div class="search-section">
+    <!-- Навигационная панель -->
+    <nav class="navbar animate-fade">
+        <ul class="nav-links">
+            <li>
+                <a href="/online-market/buyer/products" class="nav-link active">
+                    <i class="fas fa-home"></i>
+                    Главная
+                </a>
+            </li>
+            <li>
+                <a href="/online-market/buyer/order/my-orders" class="nav-link">
+                    <i class="fas fa-store"></i>
+                    Заказы
+                </a>
+            </li>
+            <li>
+                <a href="/online-market/buyer/products/sale" class="nav-link">
+                    <i class="fas fa-tag"></i>
+                    Акции
+                </a>
+            </li>
+            <li>
+                <a href="/information-about-OMI" class="nav-link">
+                    <i class="fas fa-info-circle"></i>
+                    О нас
+                </a>
+            </li>
+        </ul>
+
+        <div class="user-actions">
+            <a href="/online-market/buyer/products-from-cart" class="cart-btn">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Корзина</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="search-section animate-fade delay-1">
         <form method="get" class="search-form" data-th-action="@{/online-market/buyer/products}">
-            <input type="text" name="filter" placeholder="Поиск по названию..." data-th-value="${filter}">
+            <input type="text" name="filter"
+                   class="search-input"
+                   placeholder="Найти товары мечты..."
+                   data-th-value="${filter}">
             <input type="hidden" name="category" id="selectedCategory" th:value="${filterCategory}">
-            <button type="submit">Поиск</button>
+            <button type="submit" class="search-btn">
+                <i class="fas fa-search"></i> Поиск
+            </button>
         </form>
 
-        <div class="categories-grid">
-            <div th:each="cat : ${categories}"
-                 class="category-card"
-                 th:data-category="${cat.name()}"
+        <!-- Кнопка для выбора категории -->
+        <button class="category-toggle-btn animate-fade" th:default="false" onclick="toggleCategories()">
+            <i class="fas fa-tags"></i> Выбрать категорию
+        </button>
+
+        <div class="categories-grid" id="categoriesGrid">
+            <div th:each="cat, stat : ${categories}"
+                 class="category-card animate-fade"
                  th:classappend="${cat.name() == filterCategory} ? 'active' : ''"
+                 th:attr="data-category=${cat.name()}, style='animation-delay: calc(0.1s * ${stat.index})'"
                  onclick="selectCategory(this)">
-                <img th:src="@{${cat.imagePath}}"
-                     alt="Category image"
-                     class="category-image">
-                <p class="category-name" th:text="${cat.displayName}"></p>
+                <div class="category-image-container">
+                    <img th:src="@{${cat.imagePath}}"
+                         alt="Category image"
+                         class="category-image">
+                </div>
+                <div class="category-name-container">
+                    <p class="category-name" th:text="${cat.displayName}"></p>
+                </div>
             </div>
         </div>
     </div>
 
-    <table>
-        <thead>
-        <tr>
-            <th>#</th>
-            <th>Товар</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr data-th-each="product : ${products}">
-            <td data-th-text="${product.id}">1</td>
-            <td>
-                <a data-th-href="@{/online-market/buyer/products/{productId}(productId=${product.id})}"
-                   data-th-text="${product.title}">Название товара</a>
-                <th:block th:if="${product.getProductMedia() != null and not #lists.isEmpty(product.getProductMedia()) and product.getProductMedia().getFirst() != null}">
-                    <img class="product-image"
-                         th:src="@{${product.getProductMedia().getFirst().getMediaPath()}}"
-                         alt="Product Image">
-                </th:block>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <div class="products-container animate-fade delay-2">
+        <div class="products-header">
+            <h2 class="section-title">Наши товары</h2>
+        </div>
+
+        <div class="filter-controls">
+            <button class="filter-toggle-btn" onclick="togglePriceFilter()">
+                <i class="fas fa-sliders-h"></i> Фильтры
+            </button>
+
+            <div class="sort-controls">
+                <button class="sort-btn" onclick="sortProducts('asc')">
+                    <i class="fas fa-arrow-up"></i> Дешевые
+                </button>
+                <button class="sort-btn" onclick="sortProducts('desc')">
+                    <i class="fas fa-arrow-down"></i> Дорогие
+                </button>
+            </div>
+        </div>
+
+        <div class="price-filter-container" id="priceFilterContainer">
+            <div class="price-filter-content">
+                <div class="price-range-inputs">
+                    <div class="price-input-wrapper">
+                        <input type="number" id="minPrice" class="price-input" placeholder="От" min="0">
+                    </div>
+                    <div class="price-input-wrapper">
+                        <input type="number" id="maxPrice" class="price-input" placeholder="До" min="0">
+                    </div>
+                </div>
+                <div class="price-filter-actions">
+                    <button class="price-filter-btn price-filter-cancel" onclick="togglePriceFilter()">
+                        Отмена
+                    </button>
+                    <button class="price-filter-btn price-filter-apply" onclick="applyPriceFilter()">
+                        Применить
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="products-grid">
+            <div th:each="product, stat : ${products}"
+                 class="product-card animate-fade"
+                 th:attr="data-price=${product.price}, style='animation-delay: calc(0.05s * ${stat.index})'">
+                <div class="product-image-container">
+                    <th:block th:if="${product.getProductMedia() != null and not #lists.isEmpty(product.getProductMedia()) and product.getProductMedia().getFirst() != null}">
+                        <img class="product-image"
+                             th:src="@{${product.getProductMedia().getFirst().getMediaPath()}}"
+                             alt="Product Image">
+                    </th:block>
+                    <th:block th:unless="${product.getProductMedia() != null and not #lists.isEmpty(product.getProductMedia()) and product.getProductMedia().getFirst() != null}">
+                        <img class="product-image"
+                             src="https://via.placeholder.com/400x300?text=No+Image"
+                             alt="Placeholder">
+                    </th:block>
+                    <th:block th:if="${product.discount != null}">
+                        <span class="product-badge">-<span th:text="${product.discount.amount}"></span>%</span>
+                    </th:block>
+                </div>
+                <div class="product-content">
+                    <h3 class="product-title">
+                        <a th:href="@{/online-market/buyer/products/{productId}(productId=${product.id})}"
+                           class="product-link"
+                           th:text="${product.title}">Название товара</a>
+                    </h3>
+                    <div class="product-price">
+                        <th:block th:if="${product.discount != null}">
+                            <span class="product-old-price" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 2, 'POINT')} + ' ₽'"></span>
+                            <span th:text="${#numbers.formatDecimal(product.price - (product.price * product.discount.amount / 100), 0, 'COMMA', 2, 'POINT')} + ' ₽'"></span>
+                        </th:block>
+                        <th:block th:unless="${product.discount != null}">
+                            <span th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 2, 'POINT')} + ' ₽'"></span>
+                        </th:block>
+                    </div>
+                    <div class="product-actions">
+                        <a th:href="@{'/online-market/buyer/products/' + ${product.id}}"
+                           class="view-btn">
+                            Подробнее
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
-    function selectCategory(card) {
-        document.querySelectorAll('.category-card').forEach(c => {
-            c.classList.remove('active');
+    // Глобальные переменные для хранения всех товаров
+    let allProducts = [];
+    let currentSort = 'none';
+
+    // Инициализация при загрузке
+    document.addEventListener('DOMContentLoaded', () => {
+        // Сохраняем все товары в массив
+        allProducts = Array.from(document.querySelectorAll('.product-card')).map(card => {
+            // Получаем цену из data-атрибута
+            const price = parseFloat(card.getAttribute('data-price')) || 0;
+
+            return {
+                element: card,
+                price: price
+            };
         });
 
-        card.classList.add('active');
+        // Восстанавливаем значения фильтров из URL (если нужно)
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('minPrice') || urlParams.has('maxPrice')) {
+            document.getElementById('minPrice').value = urlParams.get('minPrice') || '';
+            document.getElementById('maxPrice').value = urlParams.get('maxPrice') || '';
+            applyPriceFilter();
+        }
 
-        const category = card.getAttribute('data-category');
+        // Если есть выбранная категория, показываем категории
+        if (urlParams.has('category')) {
+            toggleCategories();
+        }
+
+        // Анимация карточек
+        document.querySelectorAll('.product-card, .category-card').forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.animationDelay = `${index * 0.05}s`;
+            card.style.animationFillMode = 'forwards';
+        });
+
+        // Подсветка активной навигационной ссылки
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                navLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    });
+
+    // Показать/скрыть категории
+    function toggleCategories() {
+        const categoriesGrid = document.getElementById('categoriesGrid');
+        const toggleBtn = document.querySelector('.category-toggle-btn');
+
+        categoriesGrid.classList.toggle('show');
+
+        if (categoriesGrid.classList.contains('show')) {
+            toggleBtn.innerHTML = '<i class="fas fa-times"></i> Скрыть категории';
+        } else {
+            toggleBtn.innerHTML = '<i class="fas fa-tags"></i> Выбрать категорию';
+        }
+    }
+
+    // Применить фильтр по цене (чисто клиентский)
+    function applyPriceFilter() {
+        const minPrice = parseFloat(document.getElementById('minPrice').value) || 0;
+        const maxPrice = parseFloat(document.getElementById('maxPrice').value) || Infinity;
+
+        let hasVisibleProducts = false;
+
+        allProducts.forEach(product => {
+            const showProduct = product.price >= minPrice && product.price <= maxPrice;
+            product.element.style.display = showProduct ? 'block' : 'none';
+            if (showProduct) hasVisibleProducts = true;
+        });
+
+        // Если есть активная сортировка, применяем её снова
+        if (currentSort !== 'none') {
+            sortProducts(currentSort);
+        }
+
+        if (!hasVisibleProducts) {
+            alert('Товаров в выбранном диапазоне цен не найдено');
+        }
+    }
+
+    // Сортировка товаров (чисто клиентская)
+    function sortProducts(order) {
+        currentSort = order;
+        const productsGrid = document.querySelector('.products-grid');
+
+        // Сбрасываем активные кнопки
+        document.querySelectorAll('.sort-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // Активируем текущую кнопку
+        event.target.classList.add('active');
+
+        // Сортируем массив товаров
+        const sortedProducts = [...allProducts];
+        sortedProducts.sort((a, b) => {
+            return order === 'asc' ? a.price - b.price : b.price - a.price;
+        });
+
+        // Переставляем элементы в DOM
+        productsGrid.innerHTML = '';
+        sortedProducts.forEach(product => {
+            if (product.element.style.display !== 'none') {
+                productsGrid.appendChild(product.element);
+            }
+        });
+    }
+
+    // Сброс фильтров
+    function resetFilters() {
+        document.getElementById('minPrice').value = '';
+        document.getElementById('maxPrice').value = '';
+
+        allProducts.forEach(product => {
+            product.element.style.display = 'block';
+        });
+
+        document.querySelectorAll('.sort-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        currentSort = 'none';
+    }
+
+    // Показать/скрыть фильтр по цене
+    function togglePriceFilter() {
+        const container = document.getElementById('priceFilterContainer');
+        container.classList.toggle('show');
+    }
+
+    // Выбор категории
+    function selectCategory(element) {
+        const category = element.getAttribute('data-category');
         document.getElementById('selectedCategory').value = category;
+
+        // Удаляем класс active у всех категорий
+        document.querySelectorAll('.category-card').forEach(card => {
+            card.classList.remove('active');
+        });
+
+        // Добавляем класс active выбранной категории
+        element.classList.add('active');
+
+        // Автоматически отправляем форму при выборе категории
+        document.querySelector('.search-form').submit();
     }
 </script>
-
 </body>
 </html>

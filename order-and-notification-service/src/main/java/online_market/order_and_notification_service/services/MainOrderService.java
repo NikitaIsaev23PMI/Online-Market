@@ -71,4 +71,13 @@ public class MainOrderService implements OrderService {
 
     }
 
+    @Override
+    public void deleteOrderById(Integer orderId) {
+        this.orderRepository.findById(orderId).ifPresentOrElse(
+                order -> {
+                    this.orderRepository.delete(order);
+                }, () -> {throw new NoSuchElementException("товар не найден");}
+        );
+    }
+
 }

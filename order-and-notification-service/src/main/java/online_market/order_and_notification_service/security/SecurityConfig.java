@@ -6,11 +6,22 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 @Configuration
 public class SecurityConfig {
@@ -44,6 +55,23 @@ public class SecurityConfig {
             } catch (JwtException e) {
                 return jwtDecoder2.decode(token);
             }
+        };
+    }
+
+    @Bean
+    public OAuth2UserService<OidcUserRequest, OidcUser> oAuth2UserService() {
+        OidcUserService oidcUserService = new OidcUserService();
+        return userRequest -> {
+            OidcUser oidcUser = oidcUserService.loadUser(userRequest);
+            List<GrantedAuthority> authorities =
+                    Stream.concat(oidcUser.getAuthorities().stream(), Optional.ofNullable(oidcUser.getClaimAsStringList("groups"))
+                                    .orElseGet(List::of)
+                                    .stream()
+                                    .filter(role -> role.startsWith("ROLE_"))
+                                    .map(SimpleGrantedAuthority::new))
+                            .toList();
+
+            return new DefaultOidcUser(authorities, oidcUser.getIdToken(), oidcUser.getUserInfo());
         };
     }
 }

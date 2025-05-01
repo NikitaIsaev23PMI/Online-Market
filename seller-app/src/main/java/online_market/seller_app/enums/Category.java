@@ -56,6 +56,22 @@ public enum Category {
     ZOO(
             "Зоотовары",
             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcsBfOjNKGfFPObLnHOIhUlxdh_XqSYoBC1g&s"
+    ),
+    JEWELRY(
+            "Ювелирные украшения",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSb7KBXWauV34BdO0RpG6BPl2AdpO8XauMgEg&s"
+    ),
+    REPAIR(
+            "Для ремонта",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvw5Yte3idU0LXfF4CPmvk2RFxtfY6izyYQQ&s"
+    ),
+    MOTORCYCLES(
+            "Мототехника",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSNWLsatjAzDNjditAUDZdGS9d7lJBQrxtXw&s"
+    ),
+    STATIONERY(
+            "Концтовары",
+            "https://cdn.nur.kz/images/1200x675/923f876e276ea51e.jpeg"
     );
 
     private final String displayName;

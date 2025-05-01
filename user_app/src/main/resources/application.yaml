@@ -29,3 +29,9 @@ spring:
               - microprofile-jwt
 server:
   port: 8083
+services:
+  url:
+    dadata: http://suggestions.dadata.ru
+  api:
+    keys:
+      dadata-key-public: 17461938ab7bdfc004651e0a57d7bfdb1279ebdc

@@ -2,6 +2,7 @@ package online_market.user_app.client.order;
 
 import lombok.RequiredArgsConstructor;
 import online_market.user_app.client.exception.BadRequestException;
+import online_market.user_app.client.exception.CreatingOrderException;
 import online_market.user_app.entity.Order;
 import online_market.user_app.entity.Product;
 import online_market.user_app.payload.NewOrderPayload;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
-public class MainOrderRestClient implements OrderRestClient { //TODO добавить уменьшение в  БД при заказе
+public class MainOrderRestClient implements OrderRestClient {
 
     private static final ParameterizedTypeReference<List<Order>> PRODUCTS_TYPE_REFERENCE =
 
@@ -47,7 +48,7 @@ public class MainOrderRestClient implements OrderRestClient { //TODO добав�
                     .body(Order.class);
         } catch (HttpClientErrorException.BadRequest exception){
             ProblemDetail problemDetail = exception.getResponseBodyAs(ProblemDetail.class);
-            throw new BadRequestException((List<String>)problemDetail.getProperties().get("errors"));
+            throw new CreatingOrderException((List<String>)problemDetail.getProperties().get("errors"));
         }
     }
 
@@ -66,6 +67,19 @@ public class MainOrderRestClient implements OrderRestClient { //TODO добав�
                     .uri("order-api/{orderId}", orderId)
                     .retrieve()
                     .body(Order.class);
+        } catch (HttpClientErrorException.NotFound exception){
+            ProblemDetail problemDetail = exception.getResponseBodyAs(ProblemDetail.class);
+            throw new NoSuchElementException((String)problemDetail.getProperties().get("errors"));
+        }
+    }
+
+    @Override
+    public void deleteOrder(Integer orderId) {
+        try {
+            this.restClient.delete()
+                    .uri("order-api/{orderId}", orderId)
+                    .retrieve()
+                    .toBodilessEntity();
         } catch (HttpClientErrorException.NotFound exception){
             ProblemDetail problemDetail = exception.getResponseBodyAs(ProblemDetail.class);
             throw new NoSuchElementException((String)problemDetail.getProperties().get("errors"));

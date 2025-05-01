@@ -52,20 +52,23 @@ public class MainProductReviewRestClient implements ProductReviewRestClient{
                     .retrieve()
                     .body(ProductReview.class);
             MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
-            for (MultipartFile file : medias) {
-                formData.add("files", new ByteArrayResource(file.getBytes()) {
-                    @Override
-                    public String getFilename() {
-                        return file.getOriginalFilename();
-                    }
-                });
+            if(medias != null) {
+                for (MultipartFile file : medias) {
+                    formData.add("files", new ByteArrayResource(file.getBytes()) {
+                        @Override
+                        public String getFilename() {
+                            return file.getOriginalFilename();
+                        }
+                    });
+                }
+
+                this.restClient.post()
+                        .uri("api/products-review/medias/{reviewId}", productReview.getId())
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .body(formData)
+                        .retrieve()
+                        .toBodilessEntity();
             }
-            this.restClient.post()
-                    .uri("api/products-review/medias/{reviewId}", productReview.getId())
-                    .contentType(MediaType.MULTIPART_FORM_DATA)
-                    .body(formData)
-                    .retrieve()
-                    .toBodilessEntity();
             return productReview;
         } catch (HttpClientErrorException.BadRequest exception) {
             ProblemDetail problemDetail = exception.getResponseBodyAs(ProblemDetail.class);

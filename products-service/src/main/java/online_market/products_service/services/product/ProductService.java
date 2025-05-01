@@ -1,6 +1,7 @@
 package online_market.products_service.services.product;
 
 import online_market.products_service.entity.Product;
+import org.apache.coyote.BadRequestException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -26,4 +27,8 @@ public interface ProductService {
     Product findProductBySellerSubject(String sellerSubject);
 
     List<Product> findProductsByListIds(List<Integer> listOfId);
+
+    void updateProductCount(Integer productId, Integer count) throws BadRequestException;
+
+    List<Product> getAllProductsWithDiscount();
 }

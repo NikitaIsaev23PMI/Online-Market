@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import online_market.order_and_notification_service.client.MainProductRestClient;
+import online_market.order_and_notification_service.client.exception.BadRequestException;
 import online_market.order_and_notification_service.entity.Order;
 import online_market.order_and_notification_service.payload.NewOrderPayload;
 import online_market.order_and_notification_service.payload.UpdateOrderPayload;
@@ -24,6 +26,8 @@ public class OrdersRestController {
 
     private final OrderService orderService;
 
+    private final MainProductRestClient mainProductRestClient;
+
     @PostMapping("/new")
     public ResponseEntity<?> newOrder(@RequestBody @Valid NewOrderPayload payload,
                                       BindingResult bindingResult) throws BindException {
@@ -35,13 +39,18 @@ public class OrdersRestController {
             }
         }
             else{
-                Order order = this.orderService.createOrder(payload.productId(),
-                        payload.productTitle(), payload.count(),payload.sellerUsername(),
-                        payload.sellerEmail(),
-                        payload.buyerUsername(), payload.buyerEmail(),
-                        payload.buyerDetail(), payload.address(), payload.postcode(), payload.amount(),
-                        payload.paymentType());
-                return ResponseEntity.ok(order);
+                try {
+                    Order order = this.orderService.createOrder(payload.productId(),
+                            payload.productTitle(), payload.count(), payload.sellerUsername(),
+                            payload.sellerEmail(),
+                            payload.buyerUsername(), payload.buyerEmail(),
+                            payload.buyerDetail(), payload.address(), payload.postcode(), payload.amount(),
+                            payload.paymentType());
+                    this.mainProductRestClient.updateProductCount(payload.productId(), payload.count());
+                    return ResponseEntity.ok(order);
+                } catch (BadRequestException exception){
+                    return ResponseEntity.badRequest().body(exception.getMessage());
+                }
             }
     }
 
@@ -72,6 +81,16 @@ public class OrdersRestController {
             this.orderService.updateOrder(payload.status(), payload.timeOfDelivery(), orderId);
             return ResponseEntity.noContent().build();
         } catch (NoSuchElementException exception){
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("{orderId}")
+    public ResponseEntity<?> deleteOrder(@PathVariable("orderId") Integer orderId) {
+        try {
+            this.orderService.deleteOrderById(orderId);
+            return ResponseEntity.noContent().build();
+        } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         }
     }

@@ -49,4 +49,12 @@ public class MainProductRestClient implements ProductRestClient {
                 .retrieve()
                 .body(PRODUCTS_TYPE_REFERENCE);
     }
+
+    @Override
+    public List<Product> getAllProductsWithDiscount() {
+        return this.restClient.get()
+                .uri("products-service-api/products/with-discount")
+                .retrieve()
+                .body(PRODUCTS_TYPE_REFERENCE);
+    }
 }

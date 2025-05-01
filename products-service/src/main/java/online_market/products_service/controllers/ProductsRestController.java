@@ -8,6 +8,7 @@ import online_market.products_service.payload.NewProductPayload;
 import online_market.products_service.payload.UpdateProductPayload;
 import online_market.products_service.services.discount.DiscountService;
 import online_market.products_service.services.product.ProductService;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -56,8 +57,7 @@ public class ProductsRestController {
     @PostMapping()
     public ResponseEntity<Product> createProduct(@Valid @RequestBody NewProductPayload payload,
                                                  UriComponentsBuilder uriBuilder,
-                                                 BindingResult bindingResult,
-                                                 JwtAuthenticationToken jwt) throws BindException {
+                                                 BindingResult bindingResult) throws BindException {
         if (bindingResult.hasErrors()) {
             if(bindingResult instanceof BindException exception) {
                 throw exception;
@@ -117,6 +117,24 @@ public class ProductsRestController {
     @PostMapping("products-by-list-id")
     public List<Product> findProductsByListId(@RequestBody List<Integer> listOfId){
         return this.productService.findProductsByListIds(listOfId);
+    }
+
+    @PatchMapping("/edit-count/{productId}/{count}")
+    public ResponseEntity<?> editProductCount(@PathVariable("productId") Integer productId,
+                                              @PathVariable("count") Integer count){
+        try {
+            this.productService.updateProductCount(productId, count);
+            return ResponseEntity.noContent().build();
+        } catch (BadRequestException exception){
+            return ResponseEntity.badRequest().body(exception);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/with-discount")
+    public List<Product> getAllProductsWithDiscount(){
+        return this.productService.getAllProductsWithDiscount();
     }
 }
 

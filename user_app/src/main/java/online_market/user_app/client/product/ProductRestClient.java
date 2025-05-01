@@ -12,5 +12,7 @@ public interface ProductRestClient {
 
     List<Product> findProductsByListOfId(List<Integer> productIds);
 
+    List<Product> getAllProductsWithDiscount();
+
 
 }

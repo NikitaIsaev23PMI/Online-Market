@@ -37,5 +37,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             @Param("category") String category
     );
 
+    List<Product> getAllByDiscountIsNotNull();
+
 
 }

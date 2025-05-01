@@ -23,4 +23,6 @@ public interface OrderRestClient {
     List<Order> getAllUserOrders(String username);
 
     Order getUserOrder(Integer orderId);
+
+    void deleteOrder(Integer orderId);
 }

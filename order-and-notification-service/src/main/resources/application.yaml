@@ -11,6 +11,22 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:8082/realms/online-market-sellers
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8082/realms/online-market-buyers
+            user-name-attribute: preferred_username
+        registration:
+          keycloak:
+            provider: keycloak
+            client-id: order-service
+            client-secret: TftdninCQPnafP871nzM5K0BATcKBeJi
+            authorization-grant-type: client_credentials
+            scope:
+              - openid
+              - view_products
+              - edit_products
+              - microprofile-jwt
   mail:
     host: smtp.yandex.ru
     port: 587
@@ -30,3 +46,8 @@ spring:
     baseline-on-migrate: true
   jpa:
     show-sql: true
+market:
+  services:
+    products:
+      uri: http://localhost:8081
+      registration-id: keycloak
