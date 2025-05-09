@@ -2,8 +2,8 @@
 
 Онлайн-магазин — это платформа, которая позволяет пользователям удобно просматривать и приобретать товары через интернет. Проект решает задачу упрощения процесса покупок и улучшения пользовательского опыта, а продавцам позволяет с удобством реализовывать свой товар.
 
-![Статус разработки](https://img.shields.io/badge/Статус%20разработки-На%20стадии%20разработки%20ТЗ%20и%20архитектуры%20проекта-red)
-![Покрытие тестами](https://img.shields.io/badge/Покрытие%20тестами-0%25-red)
+![Статус разработки](https://img.shields.io/badge/Статус%20разработки-На%20финальной%20стадии%20разработки%20проекта-red)
+![Покрытие тестами](https://img.shields.io/badge/Покрытие%20тестами-25%25-red)
 
 ## Содержание
 - [Технологии](#технологии)
@@ -22,7 +22,7 @@
 ### [Spring Data JPA](https://spring.io/projects/spring-data-jpa)   <img src="https://velog.velcdn.com/images/french_ruin/post/fec1758a-1276-475e-9f61-9c2f0d622a86/image.png" width="55">
 ### [PostgreSQL](https://www.postgresql.org)   <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWv01yAi3_UXYmFRvCNA47hkhzRuTnNtcNkA&s" width="55">
 ### [Spring WEB](https://spring.io/guides/gs/rest-service/)   <img src="https://i0.wp.com/blog.knoldus.com/wp-content/uploads/2019/05/D3mZIxMUUAA4XzE.png?fit=730%2C200&ssl=1" width="55">
-### [Keycloak](https://spring.io/guides/gs/rest-service/](https://www.keycloak.org/)   <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-FhNdYf2Lfap1HDp4GRF53iFG3460KINGc0WO6kaah7dI9Q0YwwxS6SgopG82SZNPqgJwaQx2y_V7KSmAk2dR0bpeOb41kH0EIYpk83k" width="55">
+### [Keycloak](https://www.keycloak.org/)   <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-FhNdYf2Lfap1HDp4GRF53iFG3460KINGc0WO6kaah7dI9Q0YwwxS6SgopG82SZNPqgJwaQx2y_V7KSmAk2dR0bpeOb41kH0EIYpk83k" width="55">
 
 
 
@@ -43,7 +43,7 @@
 
 На данный момент проект находится на стадии составления технического задания (ТЗ) и продумывания архитектуры. Я активно работаю над планированием функционала и проектированием системы, чтобы предоставить пользователям качественный и удобный продукт.
 
-Этот раздел будет постепенно дополняться в процессе разработки                  ![Процесс разработки](https://img.shields.io/badge/Процесс%20разработки-0%25-red)
+Этот раздел будет постепенно дополняться в процессе разработки                  ![Процесс разработки](https://img.shields.io/badge/Процесс%20разработки-90%25-red)
 
 ### Требования
 Для того чтобы воспользоваться Онлайн-Магазином вам потребуется только интернет и браузер
@@ -71,9 +71,9 @@
 
 ## To do
 - [x] Добавить README
-- [ ] Составить ТЗ
-- [ ] Продумать Архитектуру Приложения
-- [ ] Приступить к разработке
+- [x] Составить ТЗ
+- [x] Продумать Архитектуру Приложения
+- [x] Приступить к разработке
 - [ ] Провести полное тестирование проекта
 - [ ] развернуть проект на сервере
 
